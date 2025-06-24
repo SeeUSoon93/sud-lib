@@ -1,0 +1,25 @@
+{
+  "name": "sud",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r dev",
+    "clean": "pnpm -r clean"
+  },
+  "dependencies": {
+    "sud-icons": "^1.0.3",
+    "sud-ui": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.2",
+    "vite": "^5.2.6"
+  }
+}
