@@ -1,161 +1,115 @@
-<p align="center">
-  <a href="https://sud.co.kr" target="_blank">
-    <img src="https://www.sud.co.kr/sud-logo.svg" alt="Sud UI 로고" width="400"/>
-  </a>
-</p>
+# Sud UI
 
-# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-0.4.2-blue)](https://www.npmjs.com/package/sud-ui)
+쉽고 빠르게 사용할 수 있는 React UI 컴포넌트 라이브러리입니다.
 
-**Soon UI Design (SUD)** is a React UI library that helps you quickly build responsive and polished interfaces using reusable components and customizable design tokens.
+## ✨ 특징
 
-<p align="center">
-  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdna%2FY76K2%2FbtsOQoqAXPl%2FAAAAAAAAAAAAAAAAAAAAAJx-tJsO5qplVMQjcswjVmtB2iQvTNqc_dmN8IRWFrDR%2Fimg.png%3Fcredential%3DyqXZFxpELC7KVnFOS48ylbz2pIh7yKj8%26expires%3D1751295599%26allow_ip%3D%26allow_referer%3D%26signature%3DFqUntFzjghIepJz7UUHV7M7NpD8%253D" alt="Sud UI Components Preview"/>
-</p>
+- 다양한 실무형 UI 컴포넌트 제공
+- 다크/라이트 테마 지원
+- 직관적인 API와 타입 지원
+- 커스텀 스타일 및 테마 확장 가능
 
 ---
 
-## ✨ Features
-
-- 🎨 Consistent design system with Tailwind-like syntax
-- 🧩 50+ reusable components (Button, Modal, Table, etc.)
-- 🌗 Light/Dark theme support
-- ⚙️ Fully customizable theme and styles
-- 🌀 Utility-first class support (e.g., `pd-10`, `mg-4`)
-
-## 📦 Installation
+## 📦 설치
 
 ```bash
-npm install sud-ui
+npm install @sud/ui
+# 또는
+yarn add @sud/ui
 ```
 
-## 🧪 Examples Built with Soon UI
+---
 
-Check out real projects built using the SUD component library:
-
-- [🗂️ CBT Exam App](https://cbt-app-self.vercel.app/)
-- [📍 Korea Map Vector Tool](https://map-vector.vercel.app/)
-- [🎣 어기어때 - Fishing Spot Search](https://fishing-search.vercel.app/)
-- [📝 Soonlog - Personal Blog](https://soonlog.site/)
-
-👉 These showcase the flexibility and visual consistency of SUD components in actual products.
-
-## 🚀 Quick Start
+## 🔨 빠른 시작
 
 ```jsx
 import React from "react";
-import { Card, Typography, Avatar, Tag } from "sud-ui";
-import { LogoGithub } from "sud-icons";
+import { Button, Modal } from "@sud/ui";
+import "@sud/ui/dist/index.css"; // 스타일 적용
 
-export default function App() {
+function App() {
+  const [open, setOpen] = React.useState(false);
+
   return (
-    <Card
-      colorType="gold"
-      borderType="dashed"
-      borderWeight={2}
-      borderColor="red"
-      style={{
-        width: "100%"
-      }}
-    >
-      <div className="flex gap-10">
-        <Avatar colorType="orange" size="lg" />
-        <div className="flex flex-col gap-5">
-          <Typography suite="EB" size="2xl">
-            SeeUSoon
-          </Typography>
-          <Typography color="black-10">
-            Hello I'm SeeUSoon.
-            <br />
-            I'm Web Developer.
-          </Typography>
-
-          <Tag>
-            <a
-              href="https://github.com/SeeUSoon93"
-              target="_blank"
-              className="flex flex-row gap-5 item-cen"
-            >
-              <LogoGithub size="14" />
-              <Typography suite="EB">github.com/SeeUSoon93</Typography>
-            </a>
-          </Tag>
-        </div>
-      </div>
-    </Card>
+    <div>
+      <Button type="primary" onClick={() => setOpen(true)}>
+        모달 열기
+      </Button>
+      <Modal open={open} onClose={() => setOpen(false)} title="안녕하세요">
+        Sud UI를 사용해주셔서 감사합니다!
+      </Modal>
+    </div>
   );
 }
 ```
 
-## 🧩 Components
+---
 
-Sud UI provides a comprehensive suite of ready-to-use components:
+## 🧩 주요 컴포넌트
 
-- **Button** – Styles, states, sizes
-- **Modal** – Alert, confirm, custom modal
-- **Accordion**, **Tabs**, **Tooltip**
-- **Table** – Sort, filter, pagination
-- **Input**, **Select** – Single/multi, number, password
-- **Toast**, **Notification**, **Spinner**
-- ...and **45+ more components**
+- **Button**: 다양한 스타일과 크기 지원
+- **Modal**: 알림, 확인, 커스텀 모달
+- **Accordion**: 아코디언 UI
+- **Table**: 정렬/필터/페이지네이션 지원
+- **Input**: 텍스트, 숫자, 패스워드 등 다양한 입력
+- **Select**: 싱글/멀티 셀렉트
+- **Tabs**: 탭 UI
+- **Tooltip**: 툴팁
+- **Toast/Notification**: 알림 메시지
+- **Spinner/Progress**: 로딩 표시
+- ...외 다수
 
-📘 [See full list and API →](https://www.sud.co.kr/component/component-overview)
+전체 컴포넌트 목록과 상세 API는 [문서](https://sud-ui-docs.example.com)에서 확인하세요.
 
-## 🎨 Theme & Customization
+---
 
-SUD provides full theming support via `SoonUIDesign`.
+## 🎨 테마 & 커스터마이징
+
+- 기본 제공 테마 외에, 직접 색상/폰트/사이즈를 커스터마이징할 수 있습니다.
+- ThemeProvider로 전역 테마 적용 가능
 
 ```jsx
-import { SoonUIDesign, defaultTheme, darkTheme } from "sud-ui";
+import { ThemeProvider, darkTheme } from "@sud/ui";
 
-const customTheme = {
-  ...defaultTheme,
-  colors: {
-    ocean: {
-      1: "#e6f7ff",
-      2: "#b3e5ff",
-      3: "#80d3ff",
-      4: "#4dc2ff",
-      5: "#1ab0ff",
-      6: "#0096e6",
-      7: "#007abf",
-      8: "#005f99",
-      9: "#004473",
-      10: "#00294d"
-    }
-  },
-  components: {
-    button: {
-      primary: {
-        bg: "ocean-6",
-        txt: "white-10",
-        border: "ocean-7"
-      }
-    }
-  }
-};
-
-export default function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  return (
-    <SoonUIDesign
-      theme={customTheme}
-      darkTheme={darkTheme}
-      isDarkMode={isDarkMode}
-    >
-      <Button onClick={() => setIsDarkMode(!isDarkMode)}>
-        Toggle Dark Mode
-      </Button>
-    </SoonUIDesign>
-  );
-}
+<ThemeProvider theme={darkTheme}>
+  <App />
+</ThemeProvider>;
 ```
 
-## 📚 Documentation
+---
 
-- 🧾 [Get Started](https://sud.co.kr/start/start)
-- 🧩 [Components](https://sud.co.kr/component/component-overview)
+## 📚 문서 & 데모
 
-## 📄 License
+- [공식 문서](https://sud-ui-docs.example.com)
+- [Storybook 데모](https://sud-ui-storybook.example.com)
 
-MIT License ©SeeUSoon93
+---
+
+## 🛠️ 개발 및 빌드
+
+```bash
+# 개발 서버 실행
+npm run dev
+
+# 라이브러리 빌드
+npm run build
+```
+
+---
+
+## 🤝 기여하기
+
+- 이슈/PR 환영합니다!
+- 컨트리뷰션 가이드는 [CONTRIBUTING.md](./CONTRIBUTING.md) 참고
+
+---
+
+## 📄 라이선스
+
+MIT
+
+---
+
+> Sud UI는 실무에서 바로 쓸 수 있는 컴포넌트와 개발 경험을 제공합니다.  
+> 더 많은 정보와 예제는 공식 문서를 참고하세요!
