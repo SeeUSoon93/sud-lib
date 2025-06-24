@@ -3,16 +3,18 @@
   "version": "0.4.3",
   "private": false,
   "type": "module",
-  "description": "React UI component library",
+  "description": "A customizable React UI component library with light/dark theme support and utility-style class names",
   "keywords": [
     "react",
+    "react-ui",
     "ui",
     "component-library",
     "design-system",
     "dark-mode",
     "customizable",
-    "react-ui",
-    "react-components"
+    "react-components",
+    "react-component-library",
+    "frontend"
   ],
   "main": "dist/index.js",
   "module": "dist/index.js",
