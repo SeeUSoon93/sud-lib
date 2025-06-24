@@ -13,7 +13,6 @@ import { useTheme } from "../../theme/ThemeContext";
 import { Typography } from "../general/Typography";
 import { Divider } from "../navigation/Divider";
 
-// 서브 메뉴
 const SubMenuWrapper = ({ isOpen, children }) => {
   const ref = useRef(null);
 
@@ -64,7 +63,6 @@ const SubMenuWrapper = ({ isOpen, children }) => {
   );
 };
 
-// 메뉴 아이템
 const MenuItem = ({
   item,
   level = 0,
@@ -88,7 +86,7 @@ const MenuItem = ({
 
   if (item.mode === "group") {
     return (
-      <li className="mg-b-6" key={`group-${item.title}`}>
+      <li key={`group-${item.title}`} style={{ marginBottom: 6 }}>
         {typeof item.title === "string" ? (
           <Typography
             className="sud-accordion__group-title"
@@ -138,16 +136,22 @@ const MenuItem = ({
   }
 
   return (
-    <li className="sud-accordion__item mg-b-6 ">
+    <li className="sud-accordion__item" style={{ marginBottom: 6 }}>
       <div
-        className="sud-accordion__item-inner rad-10 cursor-pointer pd-12 flex jus-bet item-cen"
+        className="sud-accordion__item-inner"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
           paddingLeft,
           backgroundColor,
           color,
-          transition: "all 0.2s ease"
+          transition: "all 0.2s ease",
+          borderRadius: 10,
+          cursor: "pointer",
+          padding: 12,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
         }}
         onClick={() => {
           if (isLeaf) {
@@ -166,7 +170,10 @@ const MenuItem = ({
         aria-label={item.label}
         {...rest}
       >
-        <div className="sud-accordion__item-content flex item-cen gap-8">
+        <div
+          className="sud-accordion__item-content"
+          style={{ display: "flex", alignItems: "center", gap: 8 }}
+        >
           {item.icon && <span>{React.cloneElement(item.icon, { color })}</span>}
           {typeof item.label === "string" ? (
             <Typography
@@ -218,10 +225,7 @@ const MenuItem = ({
                   finalDividerColor={finalDividerColor}
                 />
                 {divider && index < item.children.length - 1 && (
-                  <Divider
-                    borderColor={finalDividerColor}
-                    style={{ margin: "0.5rem 0" }}
-                  />
+                  <Divider borderColor={finalDividerColor} />
                 )}
               </React.Fragment>
             ))}
