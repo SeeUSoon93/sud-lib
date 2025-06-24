@@ -1,8 +1,19 @@
 {
   "name": "sud",
-  "version": "1.0.0",
+  "version": "0.4.3",
   "private": false,
   "type": "module",
+  "description": "React UI component library",
+  "keywords": [
+    "react",
+    "ui",
+    "component-library",
+    "design-system",
+    "dark-mode",
+    "customizable",
+    "react-ui",
+    "react-components"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
