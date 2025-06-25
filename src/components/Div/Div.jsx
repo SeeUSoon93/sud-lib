@@ -36,9 +36,6 @@ export const Div = ({
     <div
       className={mergeClassNames("sud-div", className)}
       style={{
-        margin: 0,
-        padding: 0,
-        border: 0,
         color: finalTxtColor,
         backgroundColor: finalBgColor,
         ...style

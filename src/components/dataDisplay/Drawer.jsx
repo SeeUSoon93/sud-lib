@@ -43,24 +43,38 @@ export const Drawer = ({
   const [mounted, setMounted] = useState(false);
   const drawerRef = useRef();
 
+  // 1. open이 true로 바뀌면 mounted를 true로 먼저 설정
   useEffect(() => {
     if (open) {
       setMounted(true);
-      // requestAnimationFrame을 사용하여 다음 프레임에서 visible을 true로 설정
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setVisible(true);
-        });
+    }
+  }, [open]);
+
+  // 2. mounted가 true가 되면 다음 프레임에 visible을 true로 설정
+  useEffect(() => {
+    if (mounted) {
+      // visible을 false로 먼저 초기화
+      setVisible(false);
+      // 다음 프레임에 true로 변경
+      const raf = requestAnimationFrame(() => {
+        setVisible(true);
       });
+      return () => cancelAnimationFrame(raf);
     } else {
       setVisible(false);
-      // 애니메이션이 완료된 후에 mounted를 false로 설정
+    }
+  }, [mounted]);
+
+  // 3. open이 false가 되면 visible을 false로 하고, 300ms 후 mounted를 false로
+  useEffect(() => {
+    if (!open && mounted) {
+      setVisible(false);
       const timer = setTimeout(() => {
         setMounted(false);
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [open]);
+  }, [open, mounted]);
 
   // 위치에 따른 위치, border-radius 조정
   const positionStyle = useMemo(() => {

@@ -211,50 +211,77 @@ export const PopupBase = ({
       transition: "opacity 0.2s ease"
     };
 
-    let newPos = {};
-    switch (placement) {
-      case "top":
-        newPos = {
-          top:
-            triggerRect.top -
-            contentRect.height -
-            ARROW_SIZE -
-            TRIGGER_GAP +
-            scrollY,
-          left: triggerRect.left + triggerRect.width / 2 + scrollX,
-          transform: "translateX(-50%)"
-        };
-        break;
-      case "bottom":
-        newPos = {
-          top: triggerRect.bottom + ARROW_SIZE + TRIGGER_GAP + scrollY,
-          left: triggerRect.left + triggerRect.width / 2 + scrollX,
-          transform: "translateX(-50%)"
-        };
-        break;
-      case "left":
-        newPos = {
-          top: triggerRect.top + triggerRect.height / 2 + scrollY,
-          left:
-            triggerRect.left -
-            contentRect.width -
-            ARROW_SIZE -
-            TRIGGER_GAP +
-            scrollX,
-          transform: "translateY(-50%)"
-        };
-        break;
-      case "right":
-        newPos = {
-          top: triggerRect.top + triggerRect.height / 2 + scrollY,
-          left: triggerRect.right + ARROW_SIZE + TRIGGER_GAP + scrollX,
-          transform: "translateY(-50%)"
-        };
-        break;
-      default:
-        newPos = {};
+    // 위치 계산 함수
+    const getPos = (place) => {
+      switch (place) {
+        case "top":
+          return {
+            top:
+              triggerRect.top -
+              contentRect.height -
+              ARROW_SIZE -
+              TRIGGER_GAP +
+              scrollY,
+            left: triggerRect.left + triggerRect.width / 2 + scrollX,
+            transform: "translateX(-50%)"
+          };
+        case "bottom":
+          return {
+            top: triggerRect.bottom + ARROW_SIZE + TRIGGER_GAP + scrollY,
+            left: triggerRect.left + triggerRect.width / 2 + scrollX,
+            transform: "translateX(-50%)"
+          };
+        case "left":
+          return {
+            top: triggerRect.top + triggerRect.height / 2 + scrollY,
+            left:
+              triggerRect.left -
+              contentRect.width -
+              ARROW_SIZE -
+              TRIGGER_GAP +
+              scrollX,
+            transform: "translateY(-50%)"
+          };
+        case "right":
+          return {
+            top: triggerRect.top + triggerRect.height / 2 + scrollY,
+            left: triggerRect.right + ARROW_SIZE + TRIGGER_GAP + scrollX,
+            transform: "translateY(-50%)"
+          };
+        default:
+          return {};
+      }
+    };
+
+    // 실제 위치 계산
+    let pos = getPos(placement);
+
+    // 화면 벗어나는지 체크
+    const winW = window.innerWidth;
+    const winH = window.innerHeight;
+    const popupLeft = pos.left ?? 0;
+    const popupTop = pos.top ?? 0;
+
+    let isOut = false;
+    if (placement === "right" && popupLeft + contentRect.width > winW)
+      isOut = true;
+    if (placement === "left" && popupLeft < 0) isOut = true;
+    if (placement === "top" && popupTop < 0) isOut = true;
+    if (placement === "bottom" && popupTop + contentRect.height > winH)
+      isOut = true;
+
+    // 반대 방향으로 한 번 더 시도
+    if (isOut) {
+      const opposite = {
+        right: "left",
+        left: "right",
+        top: "bottom",
+        bottom: "top"
+      }[placement];
+      pos = getPos(opposite);
     }
-    return { ...base, ...newPos };
+
+    return { ...base, ...pos };
   }, [placement]);
 
   useLayoutEffect(() => {
