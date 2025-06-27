@@ -376,15 +376,6 @@ export const Calendar = ({
               fontSize: sizeStyles.itemFontSize
             }}
           >
-            <div
-              style={{
-                width: sizeStyles.dotSize,
-                height: sizeStyles.dotSize,
-                borderRadius: "50%",
-                backgroundColor: finalTxtColor,
-                marginRight: 4
-              }}
-            />
             <Typography
               as="span"
               style={{
@@ -561,7 +552,7 @@ export const Calendar = ({
                 value={viewDate.month()}
                 onChange={(m) => updateDate(year, m, day)}
                 options={months.map((m) => ({
-                  label: `${m}`,
+                  label: `${m + 1}`,
                   value: m
                 }))}
                 size="sm"
@@ -608,15 +599,6 @@ export const Calendar = ({
                         key={item.key}
                         colorType={item.colorType || "apricot"}
                       >
-                        <div
-                          style={{
-                            width: sizeStyles.dotSize,
-                            height: sizeStyles.dotSize,
-                            borderRadius: "50%",
-                            backgroundColor: finalTxtColor,
-                            marginRight: 6
-                          }}
-                        />
                         <Typography
                           as="span"
                           style={{
