@@ -80,7 +80,7 @@ export const PopupBase = ({
     left: "-9999px",
     opacity: 0,
     pointerEvents: "none",
-    zIndex: 1000,
+    zIndex: 10000,
     transition: "opacity 0.2s ease"
   });
   const [isPositioned, setIsPositioned] = useState(false);
@@ -207,7 +207,7 @@ export const PopupBase = ({
 
     const base = {
       position: "fixed",
-      zIndex: 1000,
+      zIndex: 10000,
       transition: "opacity 0.2s ease"
     };
 

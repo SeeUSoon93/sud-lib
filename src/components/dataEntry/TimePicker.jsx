@@ -46,7 +46,8 @@ export const TimePicker = ({
   ariaLabel,
   ariaRequired,
   ariaInvalid,
-  ariaDescribedby
+  ariaDescribedby,
+  style
 }) => {
   const [open, setOpen] = useState(false);
   const actualFormat = useMemo(() => {
@@ -185,6 +186,7 @@ export const TimePicker = ({
             }
           }
         }}
+        style={style}
         {...inputProps}
       />
     </PopConfirm>

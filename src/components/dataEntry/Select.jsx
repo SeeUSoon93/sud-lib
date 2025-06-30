@@ -559,7 +559,7 @@ export const Select = ({
               borderRadius: 6,
               boxShadow: getShadowStyle("md", theme),
               color: finalTxtColor,
-              zIndex: 1500,
+              zIndex: 10000,
               background: finalBgColor,
               ...dropdownStyle
             }}

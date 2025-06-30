@@ -44,7 +44,8 @@ export const DatePicker = ({
   ariaLabel,
   ariaRequired,
   ariaInvalid,
-  ariaDescribedby
+  ariaDescribedby,
+  style = {}
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -155,6 +156,7 @@ export const DatePicker = ({
             }
           }
         }}
+        style={style}
         {...inputProps}
       />
     </PopConfirm>
