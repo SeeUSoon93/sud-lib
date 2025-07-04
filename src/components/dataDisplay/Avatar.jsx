@@ -88,7 +88,11 @@ export const Avatar = ({
 
     if (finalSrc) {
       if (typeof finalSrc === "string") {
-        if (finalSrc.startsWith("http") || finalSrc.startsWith("/")) {
+        if (
+          finalSrc.startsWith("http") ||
+          finalSrc.startsWith("/") ||
+          finalSrc.startsWith("data:image")
+        ) {
           return (
             <img
               className="sud-avatar-img"
