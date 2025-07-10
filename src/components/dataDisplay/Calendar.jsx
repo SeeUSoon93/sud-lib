@@ -97,6 +97,7 @@ export const Calendar = ({
   endDate: propEnd,
   size = "md",
   style = {},
+  holidays = [], // 공휴일 리스트 추가 (YYYY-MM-DD 문자열 배열)
   ...rest
 }) => {
   const theme = useTheme();
@@ -242,7 +243,15 @@ export const Calendar = ({
       ? `${borderWeight}px ${borderType} ${finalBorColor}`
       : "none";
 
-  const getDayColor = (dayIndex) => {
+  // 공휴일 여부 확인 함수
+  const isHoliday = (date) => {
+    if (!holidays || holidays.length === 0) return false;
+    const dateStr = dayjs(date).format("YYYY-MM-DD");
+    return holidays.includes(dateStr);
+  };
+
+  const getDayColor = (dayIndex, date) => {
+    if (isHoliday(date)) return resolveColor("red-6", theme); // 공휴일이면 빨간색
     if (dayIndex === 0 || dayIndex === 6) return resolveColor("red-6", theme);
     return "inherit";
   };
@@ -738,7 +747,7 @@ export const Calendar = ({
                   isRangeEdge || isSelected || isInRange
                     ? finalTxtColor
                     : inCurrentMonth
-                    ? getDayColor(dayIndex)
+                    ? getDayColor(dayIndex, dayjsDate)
                     : resolveColor("neutral-4", theme);
 
                 const cellBg =

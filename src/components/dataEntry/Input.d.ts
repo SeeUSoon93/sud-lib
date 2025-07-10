@@ -1,4 +1,4 @@
-import { ReactNode, MouseEvent } from "react";
+import { ReactNode, MouseEvent, KeyboardEvent } from "react";
 import { shapeType, borderType, shadowType } from "../commonType";
 
 export type InputSize = "sm" | "md" | "lg";
@@ -75,6 +75,10 @@ export interface InputProps {
   value?: string;
   /** 값 변경 시 호출되는 콜백 */
   onChange?: (e: { target: { value: string } }) => void;
+  /** Enter 키 입력 시 호출되는 콜백 */
+  onEnter?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  /** 키보드 이벤트 시 호출되는 콜백 */
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   /** 모양 (rounded | square | capsule) */
   shape?: shapeType;
   /** 그림자 효과 (none | sm | md | lg) */

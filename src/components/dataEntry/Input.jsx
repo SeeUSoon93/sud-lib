@@ -33,6 +33,8 @@ export const Input = ({
   placeholder,
   value = "",
   onChange = () => {},
+  onEnter = () => {},
+  onKeyDown = () => {},
   shape = "rounded",
   shadow = "sm",
   size = "md",
@@ -117,6 +119,16 @@ export const Input = ({
     }
 
     onChange({ target: { value: newValue } });
+  };
+
+  const handleKeyDown = (e) => {
+    // Enter 키 처리
+    if (e.key === "Enter") {
+      onEnter(e);
+    }
+
+    // 일반적인 키보드 이벤트 처리
+    onKeyDown(e);
   };
 
   const displayValue = thousandSeparator ? value : value;
@@ -231,6 +243,7 @@ export const Input = ({
           type={thousandSeparator ? "text" : inputType}
           value={displayValue}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
           readOnly={readOnly}
@@ -351,6 +364,8 @@ export const Textarea = ({
   placeholder,
   value = "",
   onChange = () => {},
+  onEnter = () => {},
+  onKeyDown = () => {},
   shape = "rounded",
   shadow = "sm",
   size = "md",
@@ -419,6 +434,16 @@ export const Textarea = ({
       el.style.height = scrollHeight + "px";
     }
   }, [value, autoSize]);
+
+  const handleKeyDown = (e) => {
+    // Enter 키 처리
+    if (e.key === "Enter") {
+      onEnter(e);
+    }
+
+    // 일반적인 키보드 이벤트 처리
+    onKeyDown(e);
+  };
 
   return (
     <div
@@ -515,6 +540,7 @@ export const Textarea = ({
             }`}
             value={value}
             onChange={onChange}
+            onKeyDown={handleKeyDown}
             placeholder={placeholder}
             disabled={disabled}
             readOnly={readOnly}
