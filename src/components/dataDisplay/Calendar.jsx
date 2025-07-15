@@ -97,7 +97,8 @@ export const Calendar = ({
   endDate: propEnd,
   size = "md",
   style = {},
-  holidays = [], // 공휴일 리스트 추가 (YYYY-MM-DD 문자열 배열)
+  holidays = [], // 공휴일 리스트
+  holidaysStyle = {}, // 공휴일 칸 스타일 추가
   ...rest
 }) => {
   const theme = useTheme();
@@ -743,6 +744,7 @@ export const Calendar = ({
                   endDate &&
                   dayjsDate.isAfter(startDate, "day") &&
                   dayjsDate.isBefore(endDate, "day");
+                const isHolidayCell = isHoliday(dayjsDate);
                 const cellColor =
                   isRangeEdge || isSelected || isInRange
                     ? finalTxtColor
@@ -778,7 +780,8 @@ export const Calendar = ({
                       borderBottom: isLastRow ? finalBorStyle : "none",
                       border: currentSize === "miniView" && "none",
                       color: cellColor,
-                      backgroundColor: cellBg
+                      backgroundColor: cellBg,
+                      ...(isHolidayCell ? holidaysStyle : {}) // 공휴일 스타일 적용
                     }}
                   >
                     <div

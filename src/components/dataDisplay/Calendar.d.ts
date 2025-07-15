@@ -94,6 +94,10 @@ export interface CalendarProps {
   style?: React.CSSProperties;
   /** 추가 HTML 속성 */
   [key: string]: any;
+  /** 공휴일 날짜 리스트 (YYYY-MM-DD) */
+  holidays?: string[];
+  /** 공휴일 칸에 적용할 스타일 */
+  holidaysStyle?: React.CSSProperties;
 }
 
 export declare const Calendar: React.FC<CalendarProps>;
