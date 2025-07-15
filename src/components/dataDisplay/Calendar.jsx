@@ -198,15 +198,20 @@ export const Calendar = ({
     const base = dayjs(viewDate);
     const startOfMonth = base.startOf("month");
     const startDay = startOfMonth.day(); // 0 ~ 6
-    const prevMonthLastDate = startOfMonth.subtract(1, "day").date(); // 이전 달 마지막 날짜
     const daysInMonth = base.daysInMonth(); // 이 달의 총 날짜 수
-    const totalCells = 42;
+    const endOfMonth = base.endOf("month");
+    const endDay = endOfMonth.day(); // 마지막 날짜의 요일
+
+    // 첫 주의 시작(이전달 포함)부터 마지막 주의 끝(다음달 포함)까지 동적으로 계산
+    // 첫 칸: 이전달, 마지막 칸: 다음달로 채우되, 마지막 주까지만
+    const totalCells = startDay + daysInMonth + (6 - endDay);
 
     for (let i = 0; i < totalCells; i++) {
       let cellDate;
       let inCurrentMonth = true;
 
       if (i < startDay) {
+        const prevMonthLastDate = startOfMonth.subtract(1, "day").date();
         const dateNum = prevMonthLastDate - (startDay - i - 1);
         cellDate = base.subtract(1, "month").date(dateNum);
         inCurrentMonth = false;
@@ -744,7 +749,8 @@ export const Calendar = ({
                   endDate &&
                   dayjsDate.isAfter(startDate, "day") &&
                   dayjsDate.isBefore(endDate, "day");
-                const isHolidayCell = isHoliday(dayjsDate);
+                const isHolidayCell =
+                  isHoliday(dayjsDate) || dayIndex === 0 || dayIndex === 6;
                 const cellColor =
                   isRangeEdge || isSelected || isInRange
                     ? finalTxtColor
@@ -758,6 +764,26 @@ export const Calendar = ({
                     : isHovered
                     ? finalHoverBgColor
                     : "transparent";
+
+                // holidaysStyle의 색상 관련 값 resolveColor로 변환
+                let resolvedHolidayStyle = { ...holidaysStyle };
+                if (isHolidayCell) {
+                  if (holidaysStyle.background)
+                    resolvedHolidayStyle.backgroundColor = resolveColor(
+                      holidaysStyle.background,
+                      theme
+                    );
+                  if (holidaysStyle.color)
+                    resolvedHolidayStyle.color = resolveColor(
+                      holidaysStyle.color,
+                      theme
+                    );
+                  if (holidaysStyle.borderColor)
+                    resolvedHolidayStyle.borderColor = resolveColor(
+                      holidaysStyle.borderColor,
+                      theme
+                    );
+                }
 
                 return (
                   <div
@@ -781,7 +807,7 @@ export const Calendar = ({
                       border: currentSize === "miniView" && "none",
                       color: cellColor,
                       backgroundColor: cellBg,
-                      ...(isHolidayCell ? holidaysStyle : {}) // 공휴일 스타일 적용
+                      ...(isHolidayCell ? resolvedHolidayStyle : {}) // 주말 또는 공휴일 스타일 적용
                     }}
                   >
                     <div
