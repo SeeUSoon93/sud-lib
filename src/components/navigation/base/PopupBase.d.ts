@@ -7,7 +7,19 @@ import {
 } from "../../commonType";
 
 export type PopupTrigger = "click" | "hover" | "contextMenu";
-export type PopupPlacement = "top" | "bottom" | "left" | "right";
+export type PopupPlacement =
+  | "top"
+  | "bottom"
+  | "left"
+  | "right"
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right"
+  | "left-top"
+  | "left-bottom"
+  | "right-top"
+  | "right-bottom";
 export type PopupVariant =
   | "popup"
   | "popover"

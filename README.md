@@ -4,12 +4,12 @@
   </a>
 </p>
 
-# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-0.5.9-blue)](https://www.npmjs.com/package/sud-ui)
+# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-0.6.3-blue)](https://www.npmjs.com/package/sud-ui)
 
 **Soon UI Design (SUD)** is a React UI library that helps you quickly build responsive and polished interfaces using reusable components and customizable design tokens.
 
 <p align="center">
-  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdna%2FY76K2%2FbtsOQoqAXPl%2FAAAAAAAAAAAAAAAAAAAAAJx-tJsO5qplVMQjcswjVmtB2iQvTNqc_dmN8IRWFrDR%2Fimg.png%3Fcredential%3DyqXZFxpELC7KVnFOS48ylbz2pIh7yKj8%26expires%3D1751295599%26allow_ip%3D%26allow_referer%3D%26signature%3DFqUntFzjghIepJz7UUHV7M7NpD8%253D" alt="Sud UI Components Preview"/>
+  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdna%2FbtRhyi%2FbtsOO8VbNm1%2FAAAAAAAAAAAAAAAAAAAAAJQ7ZrjHvQP0ibh2VnYpFA9AYuvUPgkFpFKfLMAVyY-z%2Fimg.png%3Fcredential%3DyqXZFxpELC7KVnFOS48ylbz2pIh7yKj8%26expires%3D1753973999%26allow_ip%3D%26allow_referer%3D%26signature%3DlwvrqCVV70OtiZXnxprySVHTBiI%253D" alt="Sud UI Components Preview"/>
 </p>
 
 ---

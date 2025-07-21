@@ -211,10 +211,22 @@ export const PopupBase = ({
       transition: "opacity 0.2s ease"
     };
 
+    // 세부 placement 파싱
+    const [mainPlacement, subPlacement] = placement.split("-");
+
     // 위치 계산 함수
-    const getPos = (place) => {
-      switch (place) {
-        case "top":
+    const getPos = (main, sub) => {
+      switch (main) {
+        case "top": {
+          let left = triggerRect.left + triggerRect.width / 2 + scrollX;
+          let transform = "translateX(-50%)";
+          if (sub === "left") {
+            left = triggerRect.left + scrollX;
+            transform = "none";
+          } else if (sub === "right") {
+            left = triggerRect.right + scrollX - contentRect.width;
+            transform = "none";
+          }
           return {
             top:
               triggerRect.top -
@@ -222,66 +234,103 @@ export const PopupBase = ({
               ARROW_SIZE -
               TRIGGER_GAP +
               scrollY,
-            left: triggerRect.left + triggerRect.width / 2 + scrollX,
-            transform: "translateX(-50%)"
+            left,
+            transform
           };
-        case "bottom":
+        }
+        case "bottom": {
+          let left = triggerRect.left + triggerRect.width / 2 + scrollX;
+          let transform = "translateX(-50%)";
+          if (sub === "left") {
+            left = triggerRect.left + scrollX;
+            transform = "none";
+          } else if (sub === "right") {
+            left = triggerRect.right + scrollX - contentRect.width;
+            transform = "none";
+          }
           return {
             top: triggerRect.bottom + ARROW_SIZE + TRIGGER_GAP + scrollY,
-            left: triggerRect.left + triggerRect.width / 2 + scrollX,
-            transform: "translateX(-50%)"
+            left,
+            transform
           };
-        case "left":
+        }
+        case "left": {
+          let top = triggerRect.top + triggerRect.height / 2 + scrollY;
+          let transform = "translateY(-50%)";
+          if (sub === "top") {
+            top = triggerRect.top + scrollY;
+            transform = "none";
+          } else if (sub === "bottom") {
+            top = triggerRect.bottom + scrollY - contentRect.height;
+            transform = "none";
+          }
           return {
-            top: triggerRect.top + triggerRect.height / 2 + scrollY,
+            top,
             left:
               triggerRect.left -
               contentRect.width -
               ARROW_SIZE -
               TRIGGER_GAP +
               scrollX,
-            transform: "translateY(-50%)"
+            transform
           };
-        case "right":
+        }
+        case "right": {
+          let top = triggerRect.top + triggerRect.height / 2 + scrollY;
+          let transform = "translateY(-50%)";
+          if (sub === "top") {
+            top = triggerRect.top + scrollY;
+            transform = "none";
+          } else if (sub === "bottom") {
+            top = triggerRect.bottom + scrollY - contentRect.height;
+            transform = "none";
+          }
           return {
-            top: triggerRect.top + triggerRect.height / 2 + scrollY,
+            top,
             left: triggerRect.right + ARROW_SIZE + TRIGGER_GAP + scrollX,
-            transform: "translateY(-50%)"
+            transform
           };
+        }
         default:
           return {};
       }
     };
 
     // 실제 위치 계산
-    let pos = getPos(placement);
+    let pos = getPos(mainPlacement, subPlacement);
 
-    // 화면 벗어나는지 체크
+    // 화면 벗어남 보정
     const winW = window.innerWidth;
     const winH = window.innerHeight;
-    const popupLeft = pos.left ?? 0;
-    const popupTop = pos.top ?? 0;
+    let popupLeft = pos.left ?? 0;
+    let popupTop = pos.top ?? 0;
+    let width = contentRect.width;
+    let height = contentRect.height;
+    let adjusted = false;
 
-    let isOut = false;
-    if (placement === "right" && popupLeft + contentRect.width > winW)
-      isOut = true;
-    if (placement === "left" && popupLeft < 0) isOut = true;
-    if (placement === "top" && popupTop < 0) isOut = true;
-    if (placement === "bottom" && popupTop + contentRect.height > winH)
-      isOut = true;
-
-    // 반대 방향으로 한 번 더 시도
-    if (isOut) {
-      const opposite = {
-        right: "left",
-        left: "right",
-        top: "bottom",
-        bottom: "top"
-      }[placement];
-      pos = getPos(opposite);
+    // 좌우 화면 벗어남 보정
+    if (popupLeft < 0) {
+      popupLeft = 8; // 좌측 최소 여백
+      adjusted = true;
+    } else if (popupLeft + width > winW) {
+      popupLeft = winW - width - 8; // 우측 최소 여백
+      adjusted = true;
+    }
+    // 상하 화면 벗어남 보정
+    if (popupTop < 0) {
+      popupTop = 8;
+      adjusted = true;
+    } else if (popupTop + height > winH) {
+      popupTop = winH - height - 8;
+      adjusted = true;
     }
 
-    return { ...base, ...pos };
+    // transform은 중앙정렬이 필요할 때만 적용
+    if (adjusted) {
+      pos.transform = undefined;
+    }
+
+    return { ...base, ...pos, left: popupLeft, top: popupTop };
   }, [placement]);
 
   useLayoutEffect(() => {

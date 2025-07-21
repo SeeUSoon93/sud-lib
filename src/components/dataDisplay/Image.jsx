@@ -102,12 +102,12 @@ export const Image = ({
   const containerStyle = {
     position: "relative",
     display: "inline-block",
-    width: typeof width === "number" ? `${width}px` : width || "100%",
-    height:
-      height ||
-      (ratio && width && typeof width === "number"
-        ? `${width * aspectRatio}px`
-        : undefined),
+    width: width ? (typeof width === "number" ? `${width}px` : width) : "auto",
+    height: height
+      ? typeof height === "number"
+        ? `${height}px`
+        : height
+      : "auto",
     borderStyle: borderColor ? borderType : undefined,
     borderWidth: borderColor ? `${borderWeight}px` : undefined,
     borderColor: borderColor ? resolveColor(borderColor, theme) : undefined,
@@ -118,12 +118,24 @@ export const Image = ({
     ...style
   };
 
-  const imgStyle = {
-    width: "100%",
-    height: "100%",
+  let imgStyle = {
     objectFit: "cover",
     display: "block"
   };
+
+  if (width && !height) {
+    imgStyle.width = "100%";
+    imgStyle.height = "auto";
+  } else if (!width && height) {
+    imgStyle.width = "auto";
+    imgStyle.height = "100%";
+  } else if (width && height) {
+    imgStyle.width = "100%";
+    imgStyle.height = "100%";
+  } else {
+    imgStyle.width = "100%";
+    imgStyle.height = "auto";
+  }
 
   return (
     <>
