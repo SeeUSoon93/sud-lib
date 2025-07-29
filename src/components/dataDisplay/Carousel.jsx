@@ -22,6 +22,7 @@ export const Carousel = ({
   rightBtnIcon = <AngleRight size={30} />,
   effectType = "fade", // "overlap" | "fade" | "slide" | "scale" | "stack"
   drag = true,
+  onChange, // 추가
   ...rest
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -209,6 +210,12 @@ export const Carousel = ({
 
     return () => clearInterval(timer);
   }, [autoPlay, currentIndex]);
+
+  useEffect(() => {
+    if (typeof onChange === "function") {
+      onChange(currentIndex);
+    }
+  }, [currentIndex, onChange]);
 
   return (
     <div

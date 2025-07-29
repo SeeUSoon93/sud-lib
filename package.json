@@ -1,7 +1,7 @@
 {
   "name": "sud-ui",
   "description": "A React UI component library with dark mode support, customizable styles, reusable components, and utility-style class names.",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "private": false,
   "type": "module",
   "main": "./dist/index.js",
@@ -33,7 +33,7 @@
     "sud-icons": "^1.0.3"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^9.21.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
