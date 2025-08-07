@@ -22,10 +22,25 @@ export const Carousel = ({
   rightBtnIcon = <AngleRight size={30} />,
   effectType = "fade", // "overlap" | "fade" | "slide" | "scale" | "stack"
   drag = true,
-  onChange, // 추가
+  onChange, // 기존
+  currentIndex, // 외부에서 넘길 수 있음
   ...rest
 }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [internalIndex, setInternalIndex] = useState(currentIndex ?? 0);
+
+  // 외부 currentIndex가 바뀌면 내부 상태를 덮어씀
+  useEffect(() => {
+    if (currentIndex !== undefined && currentIndex !== internalIndex) {
+      setInternalIndex(currentIndex);
+    }
+  }, [currentIndex]);
+
+  // 인덱스 변경 함수
+  const setCurrentIndex = (idx) => {
+    setInternalIndex(idx);
+    onChange?.(idx);
+  };
+
   const containerRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
@@ -39,7 +54,7 @@ export const Carousel = ({
       ...itemRefs.current.map((el) => el?.offsetHeight || 0)
     );
     setContainerSize((prev) => ({ ...prev, maxItemHeight: maxHeight }));
-  }, [items, currentIndex]);
+  }, [items, internalIndex]);
 
   // 컨테이너 크기 감지
   useLayoutEffect(() => {
@@ -54,13 +69,11 @@ export const Carousel = ({
   const itemWidth = containerSize.width * itemWidthRatio;
 
   const handlePrev = () => {
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + items.length) % items.length
-    );
+    setCurrentIndex((internalIndex - 1 + items.length) % items.length);
   };
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length);
+    setCurrentIndex((internalIndex + 1) % items.length);
   };
 
   const handleDragStart = (e) => {
@@ -92,9 +105,9 @@ export const Carousel = ({
     const clampedItemCount = Math.min(itemCount, totalCards);
 
     if (clampedItemCount === 1 || effectType !== "overlap") {
-      const isCurrent = index === currentIndex;
-      const isNext = index === (currentIndex + 1) % totalCards;
-      const isPrev = index === (currentIndex - 1 + totalCards) % totalCards;
+      const isCurrent = index === internalIndex;
+      const isNext = index === (internalIndex + 1) % totalCards;
+      const isPrev = index === (internalIndex - 1 + totalCards) % totalCards;
 
       switch (effectType) {
         case "fade":
@@ -142,7 +155,7 @@ export const Carousel = ({
     }
 
     const half = Math.floor(clampedItemCount / 2) || 1;
-    let relativeIndex = (index - currentIndex + totalCards) % totalCards;
+    let relativeIndex = (index - internalIndex + totalCards) % totalCards;
     if (relativeIndex > totalCards / 2) relativeIndex -= totalCards;
 
     const distance = Math.abs(relativeIndex);
@@ -205,17 +218,18 @@ export const Carousel = ({
     if (!autoPlay) return;
 
     const timer = setInterval(() => {
-      handleNext();
+      setCurrentIndex((internalIndex + 1) % items.length);
     }, autoPlayInterval);
 
     return () => clearInterval(timer);
-  }, [autoPlay, currentIndex]);
+  }, [autoPlay, internalIndex, autoPlayInterval, items.length]);
 
+  // onChange는 비제어 모드에서만 setCurrentIndex에서 호출됨
   useEffect(() => {
     if (typeof onChange === "function") {
-      onChange(currentIndex);
+      onChange(internalIndex);
     }
-  }, [currentIndex, onChange]);
+  }, [internalIndex, onChange]);
 
   return (
     <div
@@ -291,7 +305,7 @@ export const Carousel = ({
             }}
             role="listitem"
             aria-label={`슬라이드 ${index + 1}`}
-            aria-hidden={index !== currentIndex}
+            aria-hidden={index !== internalIndex}
           >
             {item}
           </div>

@@ -4,7 +4,7 @@
   </a>
 </p>
 
-# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-0.6.4-blue)](https://www.npmjs.com/package/sud-ui)
+# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-0.6.6-blue)](https://www.npmjs.com/package/sud-ui)
 
 **Soon UI Design (SUD)** is a React UI library that helps you quickly build responsive and polished interfaces using reusable components and customizable design tokens.
 
