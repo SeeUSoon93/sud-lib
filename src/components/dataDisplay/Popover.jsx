@@ -3,18 +3,17 @@
 import { PopupBase } from "../navigation/base/PopupBase";
 
 export const Popover = ({
-  children, // Popover 트리거 역할
-  title, // Popover 제목
-  trigger = "hover", // "click" | "hover" | "contextMenu"
-  placement = "bottom", // "top" | "bottom" | "left" | "right"
-  open: controlledOpen, // Popover 열림 상태 (제어용)
-  defaultOpen = false, // Popover 기본 열림 상태
-  onOpenChange, // Popover 열림 상태 변경 콜백
-  closeOnClick = true, // Tooltip 클릭 시 닫기 여부
-  disabled = false, // Tooltip 비활성화 여부
-  className = "", // Popover 클래스 이름
+  children,
+  title,
+  trigger = "hover",
+  placement = "bottom",
+  open: controlledOpen,
+  defaultOpen = false,
+  onOpenChange,
+  closeOnClick = true,
+  disabled = false,
+  className = "",
   content,
-  // 스타일 관련 props
   divider = false,
   background,
   color,
@@ -26,6 +25,15 @@ export const Popover = ({
   shadow,
   colorType,
   style = {},
+  // --- PopupBase의 모든 속성을 받도록 아래 추가 ---
+  arrow,
+  footer,
+  followTrigger,
+  contentRef,
+  parentRef,
+  onCancel,
+  onConfirm,
+  // -----------------------------------------
   ...rest
 }) => {
   return (
@@ -52,9 +60,15 @@ export const Popover = ({
       border={border}
       colorType={colorType}
       variant="popover"
-      role="dialog"
-      aria-labelledby={title ? `popover-title-${title}` : undefined}
-      aria-describedby={content ? `popover-content-${content}` : undefined}
+      // --- 전달받은 속성들 추가 ---
+      arrow={arrow}
+      footer={footer}
+      followTrigger={followTrigger}
+      contentRef={contentRef}
+      parentRef={parentRef}
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+      // --------------------------
       style={{
         ...style
       }}

@@ -1,7 +1,7 @@
 {
   "name": "sud-ui",
   "description": "A React UI component library with dark mode support, customizable styles, reusable components, and utility-style class names.",
-  "version": "0.6.6",
+  "version": "1.1.0",
   "private": false,
   "type": "module",
   "main": "./dist/index.js",

@@ -1,18 +1,12 @@
-import { tagColorType } from "../commonType";
+import type { ReactNode, CSSProperties, FC, HTMLAttributes } from "react";
+import type { tagColorType } from "../commonType";
 
-export interface DotSpinnerProps {
-  /** 스피너 크기 */
+export interface DotSpinnerProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
-  /** 스피너 색상 타입 */
   colorType?: tagColorType;
-  /** 로딩 텍스트 */
-  text?: boolean | string | React.ReactNode;
-  /** 추가 스타일 */
-  style?: React.CSSProperties;
-  /** 추가 HTML 속성 */
-  [key: string]: any;
+  text?: boolean | string | ReactNode;
+  style?: CSSProperties;
 }
 
-declare const DotSpinner: React.FC<DotSpinnerProps>;
-
+declare const DotSpinner: FC<DotSpinnerProps>;
 export default DotSpinner;

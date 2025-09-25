@@ -70,4 +70,4 @@ export type fontWeightType =
   | "semibold"
   | "bold";
 
-export type spacingType = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+export type spacingType = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";

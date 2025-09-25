@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, CSSProperties, FC } from "react";
 import {
   defaultColorType,
   shapeType,
@@ -37,7 +37,7 @@ export interface AccordionProps {
   borderWeight?: number;
   shape?: shapeType;
   shadow?: shadowType;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
-export declare const Accordion: React.FC<AccordionProps>;
+export declare const Accordion: FC<AccordionProps>;

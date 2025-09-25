@@ -1,19 +1,13 @@
 "use client";
 
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { Select } from "../dataEntry/Select";
+
 import { Input } from "../dataEntry/Input";
 import { Slider } from "../dataEntry/Slider";
 import { Card } from "../dataDisplay/Card";
 import { Button } from "../general/Button";
 import { PopConfirm } from "../feedback/PopConfirm";
 import { mergeClassNames } from "../../theme/themeUtils";
-
-const MODE_OPTIONS = [
-  { value: "HEX", label: "HEX" },
-  { value: "HSB", label: "HSB" },
-  { value: "RGB", label: "RGB" }
-];
 
 function rgbToHex(r, g, b) {
   return (

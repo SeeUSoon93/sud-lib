@@ -1,20 +1,18 @@
 "use client";
 
 import { PopupBase } from "../navigation/base/PopupBase";
-import { useTheme } from "../../theme/ThemeContext";
 
 export const Tooltip = ({
-  children, // Tooltip의 트리거 역할
-  content, // Tooltip의 내용
-  trigger = "hover", // "click" | "hover" | "contextMenu"
-  placement = "top", // "top" | "bottom" | "left" | "right"
-  open: controlledOpen, // Tooltip의 열림 상태 (제어용)
-  defaultOpen = false, // Tooltip의 기본 열림 상태
-  onOpenChange, // Tooltip의 열림 상태 변경 콜백
-  closeOnClick = true, // Tooltip 클릭 시 닫기 여부
-  disabled = false, // Tooltip 비활성화 여부
-  className, // Tooltip의 클래스 이름
-  // 스타일 관련 props
+  children,
+  content,
+  trigger = "hover",
+  placement = "top",
+  open: controlledOpen,
+  defaultOpen = false,
+  onOpenChange,
+  closeOnClick = true,
+  disabled = false,
+  className,
   background,
   color,
   border,
@@ -25,10 +23,14 @@ export const Tooltip = ({
   shadow,
   colorType = "sub",
   style = {},
+  // --- PopupBase의 호환 속성 추가 ---
+  arrow,
+  followTrigger,
+  contentRef,
+  parentRef,
+  // --------------------------------
   ...rest
 }) => {
-  const theme = useTheme();
-
   return (
     <PopupBase
       trigger={trigger}
@@ -38,7 +40,7 @@ export const Tooltip = ({
       onOpenChange={onOpenChange}
       closeOnClick={closeOnClick}
       disabled={disabled}
-      className={`tooltip ${className}`}
+      className={`sud-tooltip ${className}`}
       background={background}
       color={color}
       borderColor={borderColor}
@@ -51,8 +53,12 @@ export const Tooltip = ({
       border={border}
       colorType={colorType}
       variant="tooltip"
-      role="tooltip"
-      aria-describedby={content ? `tooltip-${content}` : undefined}
+      // --- 전달받은 속성들 추가 ---
+      arrow={arrow}
+      followTrigger={followTrigger}
+      contentRef={contentRef}
+      parentRef={parentRef}
+      // --------------------------
       style={{
         ...style
       }}

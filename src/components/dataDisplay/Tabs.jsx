@@ -82,6 +82,10 @@ export const Tabs = ({
   const handleChange = (key) => {
     if (!isControlled) setInternal(key);
     onChange?.(key);
+    const targetTab = tabsRef.current[key];
+    if (targetTab) {
+      targetTab.focus();
+    }
   };
 
   const handleKeyDown = (event, key) => {

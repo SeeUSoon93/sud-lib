@@ -23,7 +23,6 @@ export const Header = forwardRef(
       className = "",
       shape = "square",
       height = 80,
-      FullWidth = true,
       shadow = "",
       siderPosition = "below-header",
       siderWidth = 0,

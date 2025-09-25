@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
-import {
+import type { ReactNode, CSSProperties, FC, HTMLAttributes } from "react";
+import type {
   defaultColorType,
   shapeType,
   borderType,
   shadowType
 } from "../commonType";
+
 export type CardVariant =
   | "card"
   | "drawer"
@@ -12,14 +13,14 @@ export type CardVariant =
   | "notification"
   | "toast";
 
-export interface CardProps {
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   /** 카드 제목 */
   title?: ReactNode;
   /** 카드 내용 */
   children?: ReactNode;
   /** 카드 푸터 */
   footer?: ReactNode;
-  /** 카드 썸네일 */
+  /** 카드 썸네일 (이미지 URL 또는 ReactNode) */
   thumb?: ReactNode;
   /** 색상 타입 */
   colorType?: defaultColorType;
@@ -50,16 +51,15 @@ export interface CardProps {
   /** 추가 클래스명 */
   className?: string;
   /** 추가 스타일 */
-  style?: React.CSSProperties;
-  /** 카드 변형 */
+  style?: CSSProperties;
+  /** 카드 변형 (카드, 드로어, 모달 등) */
   variant?: CardVariant;
-  /** 닫기 버튼 표시 여부 */
+  /** 닫기 버튼 클릭 이벤트 핸들러 */
   onClose?: () => void;
   /** 구분선 표시 여부 */
   divider?: boolean;
-
-  /** 추가 HTML 속성 */
-  [key: string]: any;
+  /** Drawer와 유사한 스타일을 적용할지 여부 */
+  isDrawer?: boolean;
 }
 
-export declare const Card: React.FC<CardProps>;
+export declare const Card: FC<CardProps>;

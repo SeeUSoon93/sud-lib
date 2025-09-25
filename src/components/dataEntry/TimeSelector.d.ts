@@ -1,6 +1,5 @@
-import { ReactNode } from "react";
-
-export type TimeSelectorColorType = "sky" | "hovered";
+import type { FC, HTMLAttributes } from "react";
+import type { defaultColorType } from "../commonType";
 
 export interface TimeSelectorTime {
   hour: number | null;
@@ -14,26 +13,16 @@ export interface TimeSelectorValue {
   endTime?: Date;
 }
 
-export interface TimeSelectorProps {
-  /** 현재 값 */
+export interface TimeSelectorProps extends HTMLAttributes<HTMLDivElement> {
   value?: Date | TimeSelectorValue;
-  /** 값 변경 시 호출되는 콜백 */
   onChange?: (value: Date | TimeSelectorValue) => void;
-  /** 범위 선택 여부 */
   range?: boolean;
-  /** 12시간 형식 사용 여부 */
   use12Hours?: boolean;
-  /** 초 표시 여부 */
   showSecond?: boolean;
-  /** 시간 단계 */
   step?: number;
-  /** 색상 타입 */
-  colorType?: TimeSelectorColorType;
-  /** 호버 색상 타입 */
-  hoverColorType?: TimeSelectorColorType;
-  /** 추가 HTML 속성 */
-  [key: string]: any;
+  colorType?: defaultColorType;
+  hoverColorType?: defaultColorType;
 }
 
-declare const TimeSelector: React.FC<TimeSelectorProps>;
+declare const TimeSelector: FC<TimeSelectorProps>;
 export default TimeSelector;

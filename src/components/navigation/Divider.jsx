@@ -1,9 +1,13 @@
-import React from "react";
-import { computeColorStyles, resolveColor } from "../../theme/themeUtils";
+import {
+  computeColorStyles,
+  resolveColor,
+  mergeClassNames
+} from "../../theme/themeUtils";
 import { useTheme } from "../../theme/ThemeContext";
 import { Typography } from "../general/Typography";
 
 export const Divider = ({
+  className,
   content,
   align = "center",
   borderWeight = 1,
@@ -48,7 +52,7 @@ export const Divider = ({
 
   return (
     <div
-      className="sud-divider"
+      className={mergeClassNames("sud-divider", className)}
       role="separator"
       aria-orientation={vertical ? "vertical" : "horizontal"}
       style={{
