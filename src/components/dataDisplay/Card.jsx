@@ -151,7 +151,7 @@ export const Card = ({
 
       {children &&
         (variant === "toast" ? (
-          children // ✅ Toast는 감싸지 마
+          children 
         ) : (
           <div
             className={`sud-${variant}__body`}
