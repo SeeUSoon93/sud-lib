@@ -22,45 +22,57 @@ export const Carousel = ({
   rightBtnIcon = <AngleRight size={30} />,
   effectType = "fade", // "overlap" | "fade" | "slide" | "scale" | "stack"
   drag = true,
-  onChange, // 기존
-  currentIndex, // 외부에서 넘길 수 있음
+  onChange,
+  currentIndex, // 제어 모드면 넘기기
   ...rest
 }) => {
+  const isControlled = currentIndex !== undefined;
   const [internalIndex, setInternalIndex] = useState(currentIndex ?? 0);
 
-  // 외부 currentIndex가 바뀌면 내부 상태를 덮어씀
+  // 외부 인덱스 동기화 (제어 모드)
   useEffect(() => {
-    if (currentIndex !== undefined && currentIndex !== internalIndex) {
+    if (isControlled && currentIndex !== internalIndex) {
       setInternalIndex(currentIndex);
     }
-  }, [currentIndex]);
+  }, [isControlled, currentIndex, internalIndex]);
 
-  // 인덱스 변경 함수
+  // 인덱스 변경은 여기로만 (onChange 단일 호출 지점)
   const setCurrentIndex = (idx) => {
-    setInternalIndex(idx);
-    onChange?.(idx);
+    if (!isControlled) setInternalIndex(idx);
+    if (onChange) onChange(idx);
   };
 
   const containerRef = useRef(null);
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [containerSize, setContainerSize] = useState({
+    width: 0,
+    height: 0,
+    maxItemHeight: 300
+  });
 
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
 
   const itemRefs = useRef([]);
+
+  // 아이템 최대 높이 계산 (Infinity 방지)
   useLayoutEffect(() => {
-    if (!itemRefs.current) return;
-    const maxHeight = Math.max(
-      ...itemRefs.current.map((el) => el?.offsetHeight || 0)
+    const heights = (itemRefs.current || []).map((el) => el?.offsetHeight || 0);
+    const maxHeight = heights.length ? Math.max(...heights) : 300;
+    setContainerSize((prev) =>
+      prev.maxItemHeight === maxHeight
+        ? prev
+        : { ...prev, maxItemHeight: maxHeight }
     );
-    setContainerSize((prev) => ({ ...prev, maxItemHeight: maxHeight }));
   }, [items, internalIndex]);
 
-  // 컨테이너 크기 감지
+  // 컨테이너 리사이즈 감지
   useLayoutEffect(() => {
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      setContainerSize({ width, height });
+      setContainerSize((prev) => {
+        if (prev.width === width && prev.height === height) return prev;
+        return { ...prev, width, height };
+      });
     });
     if (containerRef.current) observer.observe(containerRef.current);
     return () => observer.disconnect();
@@ -69,24 +81,23 @@ export const Carousel = ({
   const itemWidth = containerSize.width * itemWidthRatio;
 
   const handlePrev = () => {
+    if (!items.length) return;
     setCurrentIndex((internalIndex - 1 + items.length) % items.length);
   };
-
   const handleNext = () => {
+    if (!items.length) return;
     setCurrentIndex((internalIndex + 1) % items.length);
   };
 
   const handleDragStart = (e) => {
     e.preventDefault();
     isDraggingRef.current = true;
-    startXRef.current = e.clientX || e.touches[0].clientX;
+    startXRef.current = e.clientX || (e.touches && e.touches[0].clientX) || 0;
   };
-
   const handleDragMove = (e) => {
     if (!isDraggingRef.current) return;
-    const currentX = e.clientX || e.touches[0].clientX;
-    const diff = startXRef.current - currentX;
-
+    const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    const diff = startXRef.current - x;
     if (diff > 50) {
       handleNext();
       isDraggingRef.current = false;
@@ -95,20 +106,32 @@ export const Carousel = ({
       isDraggingRef.current = false;
     }
   };
-
   const handleDragEnd = () => {
     isDraggingRef.current = false;
   };
 
+  // autoplay: 비제어 모드에서만, setCurrentIndex 경유(부모가 onChange 듣고 싶을 수 있음)
+  const indexRef = useRef(internalIndex);
+  useEffect(() => {
+    indexRef.current = internalIndex;
+  }, [internalIndex]);
+
+  useEffect(() => {
+    if (!autoPlay || isControlled || items.length < 2) return;
+    const timer = setInterval(() => {
+      const next = (indexRef.current + 1) % items.length;
+      setCurrentIndex(next);
+    }, autoPlayInterval);
+    return () => clearInterval(timer);
+  }, [autoPlay, autoPlayInterval, items.length, isControlled]);
+
   const getCardStyle = (index) => {
-    const totalCards = items.length;
-    const clampedItemCount = Math.min(itemCount, totalCards);
+    const total = items.length || 1;
+    const clamped = Math.min(itemCount, total);
 
-    if (clampedItemCount === 1 || effectType !== "overlap") {
+    if (clamped === 1 || effectType !== "overlap") {
       const isCurrent = index === internalIndex;
-      const isNext = index === (internalIndex + 1) % totalCards;
-      const isPrev = index === (internalIndex - 1 + totalCards) % totalCards;
-
+      const isNext = index === (internalIndex + 1) % total;
       switch (effectType) {
         case "fade":
           return {
@@ -154,24 +177,18 @@ export const Carousel = ({
       }
     }
 
-    const half = Math.floor(clampedItemCount / 2) || 1;
-    let relativeIndex = (index - internalIndex + totalCards) % totalCards;
-    if (relativeIndex > totalCards / 2) relativeIndex -= totalCards;
+    const half = Math.floor(clamped / 2) || 1;
+    let rel = (index - internalIndex + total) % total;
+    if (rel > total / 2) rel -= total;
 
-    const distance = Math.abs(relativeIndex);
-    if (distance > half) {
-      return {
-        opacity: 0,
-        transform: "scale(0)",
-        zIndex: 0
-      };
-    }
+    const dist = Math.abs(rel);
+    if (dist > half) return { opacity: 0, transform: "scale(0)", zIndex: 0 };
 
     const maxTranslate = itemWidth * 1.2;
-    const translateX = relativeIndex * (maxTranslate / half);
-    const scale = 1 - scaleRatio * (distance / half);
-    const opacity = 1 - opacityRatio * (distance / half);
-    const zIndex = clampedItemCount - distance;
+    const translateX = rel * (maxTranslate / half);
+    const scale = 1 - scaleRatio * (dist / half);
+    const opacity = 1 - opacityRatio * (dist / half);
+    const zIndex = clamped - dist;
 
     switch (effectType) {
       case "fade":
@@ -197,9 +214,7 @@ export const Carousel = ({
         };
       case "stack":
         return {
-          transform: `translate(-50%, -50%) translateY(${
-            relativeIndex * 30
-          }px)`,
+          transform: `translate(-50%, -50%) translateY(${rel * 30}px)`,
           opacity: 1,
           zIndex,
           transition: "transform 0.5s ease"
@@ -213,23 +228,6 @@ export const Carousel = ({
         };
     }
   };
-
-  useEffect(() => {
-    if (!autoPlay) return;
-
-    const timer = setInterval(() => {
-      setCurrentIndex((internalIndex + 1) % items.length);
-    }, autoPlayInterval);
-
-    return () => clearInterval(timer);
-  }, [autoPlay, internalIndex, autoPlayInterval, items.length]);
-
-  // onChange는 비제어 모드에서만 setCurrentIndex에서 호출됨
-  useEffect(() => {
-    if (typeof onChange === "function") {
-      onChange(internalIndex);
-    }
-  }, [internalIndex, onChange]);
 
   return (
     <div
@@ -246,8 +244,10 @@ export const Carousel = ({
         justifyContent: "center",
         alignItems: "center",
         width: width || "100%",
-        height: height || containerSize.maxItemHeight,
-        minHeight: "300px", // 기본 최소 높이
+        height:
+          height ??
+          (containerSize.maxItemHeight > 0 ? containerSize.maxItemHeight : 300),
+        minHeight: 300,
         ...style
       }}
       onMouseDown={drag ? handleDragStart : undefined}
@@ -271,7 +271,7 @@ export const Carousel = ({
           style={{
             position: "absolute",
             top: "50%",
-            left: "10px",
+            left: 10,
             transform: "translateY(-50%)",
             zIndex: 6
           }}
@@ -321,7 +321,7 @@ export const Carousel = ({
           style={{
             position: "absolute",
             top: "50%",
-            right: "10px",
+            right: 10,
             transform: "translateY(-50%)",
             zIndex: 6
           }}
