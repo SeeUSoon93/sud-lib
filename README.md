@@ -4,7 +4,7 @@
   </a>
 </p>
 
-# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-1.1.0-blue)](https://www.npmjs.com/package/sud-ui)
+# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-1.1.2-blue)](https://www.npmjs.com/package/sud-ui)
 
 **Soon UI Design (SUD)** is a React UI library that helps you quickly build responsive and polished interfaces using reusable components and customizable design tokens.
 
@@ -54,7 +54,7 @@ export default function App() {
       borderWeight={2}
       borderColor="red"
       style={{
-        width: "100%"
+        width: "100%",
       }}
     >
       <div className="flex gap-10">
@@ -120,18 +120,18 @@ const customTheme = {
       7: "#007abf",
       8: "#005f99",
       9: "#004473",
-      10: "#00294d"
-    }
+      10: "#00294d",
+    },
   },
   components: {
     button: {
       primary: {
         bg: "ocean-6",
         txt: "white-10",
-        border: "ocean-7"
-      }
-    }
-  }
+        border: "ocean-7",
+      },
+    },
+  },
 };
 
 export default function App() {

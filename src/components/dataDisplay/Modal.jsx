@@ -29,6 +29,7 @@ export const Modal = ({
   style = {},
   ariaLabel,
   ariaDescribedby,
+  thumb,
   ...rest
 }) => {
   const theme = useTheme();
@@ -66,7 +67,7 @@ export const Modal = ({
         justifyContent: "center",
         alignItems: "center",
         opacity: open ? 1 : 0,
-        transition: "opacity 0.3s ease"
+        transition: "opacity 0.3s ease",
       }}
     >
       <div onClick={(e) => e.stopPropagation()} {...rest}>
@@ -90,6 +91,7 @@ export const Modal = ({
           variant="modal"
           style={style}
           onClose={onClose}
+          thumb={thumb}
         >
           {children}
         </Card>
