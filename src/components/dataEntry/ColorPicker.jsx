@@ -329,18 +329,6 @@ const SUD_PALETTES = {
     9: "#515a70",
     10: "#373f52",
   },
-  neutral: {
-    1: "#ffffff",
-    2: "#f5f5f5",
-    3: "#e0e0e0",
-    4: "#c2c2c2",
-    5: "#a3a3a3",
-    6: "#858585",
-    7: "#666666",
-    8: "#4d4d4d",
-    9: "#2e2e2e",
-    10: "#000000",
-  },
   black: {
     1: "#ffffff",
     2: "#f5f5f5",
@@ -503,9 +491,9 @@ export const ColorPicker = ({
               title={`${colorName}-${level}`}
               style={{
                 width: "100%",
-                aspectRatio: "1/1",
+                aspectRatio: "5/3",
                 backgroundColor: hex,
-                borderRadius: "50%", // 둥글게 (이미지처럼)
+                borderRadius: "25%", // 둥글게 (이미지처럼)
                 cursor: "pointer",
                 border:
                   rgbToHex(rgb.r, rgb.g, rgb.b) === hex.toUpperCase()
@@ -564,7 +552,6 @@ export const ColorPicker = ({
           }}
         />
       </div>
-
       <div
         className="sud-color-picker__controls"
         style={{
@@ -591,7 +578,6 @@ export const ColorPicker = ({
           {...inputProps}
         />
       </div>
-
       <Slider
         min={0}
         max={360}
@@ -615,6 +601,15 @@ export const ColorPicker = ({
         trackColor={`linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)`}
         style={{ marginTop: 8 }}
         {...sliderProps}
+      />{" "}
+      <Card
+        className="sud-color-picker__preview"
+        style={{
+          width: "100%",
+          height: "50px",
+          backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha / 100})`,
+        }}
+        {...cardProps}
       />
     </>
   );
@@ -635,7 +630,7 @@ export const ColorPicker = ({
             display: "flex",
             flexDirection: "column",
             gap: 12,
-            width: 300,
+            width: mode === "preset" ? 250 : 300,
             padding: "8px 0",
           }}
           role="dialog"
@@ -643,18 +638,6 @@ export const ColorPicker = ({
           {...rest}
         >
           {mode === "preset" ? <PresetPanel /> : <GradientPanel />}
-
-          <Card
-            className="sud-color-picker__preview"
-            style={{
-              width: "100%",
-              height: "50px",
-              backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${
-                alpha / 100
-              })`,
-            }}
-            {...cardProps}
-          />
         </div>
       }
     >
