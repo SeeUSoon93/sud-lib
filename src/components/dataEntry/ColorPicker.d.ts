@@ -6,7 +6,7 @@ import type { ButtonProps } from "../general/Button";
 import type { PopConfirmProps } from "../feedback/PopConfirm";
 import type {
   PopupPlacement,
-  PopupTrigger
+  PopupTrigger,
 } from "../navigation/base/PopupBase";
 
 export type ColorPickerSize = "sm" | "md" | "lg";
@@ -35,6 +35,7 @@ export interface ColorPickerProps extends HTMLAttributes<HTMLDivElement> {
   sliderProps?: Partial<SliderProps>;
   cardProps?: Partial<CardProps>;
   buttonProps?: Partial<ButtonProps>;
+  mode?: "gradient" | "preset";
 }
 
 declare const ColorPicker: FC<ColorPickerProps>;
