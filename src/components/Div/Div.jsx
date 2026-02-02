@@ -6,7 +6,9 @@ import { useTheme } from "../../theme/ThemeContext";
 import {
   computeColorStyles,
   resolveColor,
-  mergeClassNames
+  mergeClassNames,
+  getShapeStyles,
+  getShadowStyle
 } from "../../theme/themeUtils";
 
 export const Div = ({
@@ -42,8 +44,7 @@ export const Div = ({
       ? `${borderWeight}px ${borderType} ${finalBorColor}`
       : "none";
 
-  const shapeStyle =
-    variant === "drawer" || isDrawer ? {} : getShapeStyles(shape, theme);
+  const shapeStyle = getShapeStyles(shape, theme);
   const boxShadow = getShadowStyle(shadow, theme);
 
   const handleClick = (e) => {
