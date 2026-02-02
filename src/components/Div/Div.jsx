@@ -14,6 +14,12 @@ export const Div = ({
   colorType = null,
   background = null,
   color = null,
+  border = false,
+  borderColor = null,
+  borderType = "solid",
+  borderWeight = 1,
+  shape = "rounded",
+  shadow = "sm",
   onClick,
   style,
   className,
@@ -21,12 +27,24 @@ export const Div = ({
 }) => {
   const theme = useTheme();
 
-  const { bgColor, txtColor } = computeColorStyles({
-    border: false,
+  const { bgColor, txtColor, borColor } = computeColorStyles({
+    border,
     fallback: colorType
   });
   const finalBgColor = background ? resolveColor(background, theme) : bgColor;
   const finalTxtColor = color ? resolveColor(color, theme) : txtColor;
+  const finalBorColor = borderColor
+    ? resolveColor(borderColor, theme)
+    : borColor;
+
+  const finalBorStyle =
+    border && finalBorColor
+      ? `${borderWeight}px ${borderType} ${finalBorColor}`
+      : "none";
+
+  const shapeStyle =
+    variant === "drawer" || isDrawer ? {} : getShapeStyles(shape, theme);
+  const boxShadow = getShadowStyle(shadow, theme);
 
   const handleClick = (e) => {
     if (onClick) onClick(e);
@@ -38,6 +56,9 @@ export const Div = ({
       style={{
         color: finalTxtColor,
         backgroundColor: finalBgColor,
+        border: finalBorStyle,
+        boxShadow,
+        ...shapeStyle,
         ...style
       }}
       onClick={handleClick}

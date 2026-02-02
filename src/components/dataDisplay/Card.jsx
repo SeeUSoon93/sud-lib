@@ -78,7 +78,6 @@ export const Card = ({
         boxShadow,
         ...shapeStyle,
         padding: 0,
-        overflow: "hidden",
         ...style
       }}
       {...rest}
@@ -151,7 +150,7 @@ export const Card = ({
 
       {children &&
         (variant === "toast" ? (
-          children 
+          children
         ) : (
           <div
             className={`sud-${variant}__body`}
