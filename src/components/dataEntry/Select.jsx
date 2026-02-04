@@ -429,7 +429,8 @@ export const Select = ({
                 overflowX: "auto",
                 flex: 1,
                 minWidth: 0,
-                minHeight: sizeStyles.height - (parseInt(sizeStyles.padding) || 0) * 2
+                minHeight:
+                  sizeStyles.height - (parseInt(sizeStyles.padding) || 0) * 2
               }}
             >
               {Array.isArray(selectedItems) &&
@@ -464,7 +465,9 @@ export const Select = ({
                   fontSize: sizeStyles.fontSize,
                   color: finalTxtColor,
                   flexGrow: 1,
-                  minWidth: 60,
+                  maxWidth: "100%",
+                  height: sizeStyles.height,
+                  minWidth: 0,
                   cursor: disabled ? "not-allowed" : "text"
                 }}
               />
@@ -480,6 +483,7 @@ export const Select = ({
               placeholder={!selectedItems ? placeholder : ""}
               style={{
                 margin: 0,
+                maxWidth: "100%",
                 flex: 1,
                 backgroundColor: "transparent",
                 border: "none",
@@ -490,8 +494,8 @@ export const Select = ({
                 cursor: disabled
                   ? "not-allowed"
                   : searchable
-                  ? "text"
-                  : "default"
+                    ? "text"
+                    : "default"
               }}
             />
           )}
