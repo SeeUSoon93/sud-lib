@@ -222,8 +222,6 @@ export const Select = ({
 
     const wrapperRect = wrapperRef.current.getBoundingClientRect();
     const dropdownRect = dropdownRef.current.getBoundingClientRect();
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
-    const scrollX = window.scrollX || document.documentElement.scrollLeft;
 
     // 화면 아래쪽 공간이 부족한 경우 위쪽에 표시
     const spaceBelow = window.innerHeight - wrapperRect.bottom;
@@ -231,11 +229,12 @@ export const Select = ({
     const showAbove =
       spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
 
+    // position: fixed는 viewport 기준이므로 scroll 값을 더하지 않음
     setDropdownPosition({
       top: showAbove
-        ? wrapperRect.top - dropdownRect.height - 4 + scrollY
-        : wrapperRect.bottom + 4 + scrollY,
-      left: wrapperRect.left + scrollX
+        ? wrapperRect.top - dropdownRect.height - 4
+        : wrapperRect.bottom + 4,
+      left: wrapperRect.left
     });
   }, []);
 
@@ -429,7 +428,8 @@ export const Select = ({
                 gap: 4,
                 overflowX: "auto",
                 flex: 1,
-                minWidth: 0
+                minWidth: 0,
+                minHeight: sizeStyles.height - (parseInt(sizeStyles.padding) || 0) * 2
               }}
             >
               {Array.isArray(selectedItems) &&
