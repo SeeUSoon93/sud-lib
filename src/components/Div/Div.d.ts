@@ -28,8 +28,6 @@ export interface DivProps extends HTMLAttributes<HTMLDivElement> {
   borderType?: borderType;
   /** 테두리 두께 */
   borderWeight?: number;
-  /** 카드 모양 */
-  shape?: shapeType;
   /** 그림자 효과 */
   shadow?: shadowType;
 }

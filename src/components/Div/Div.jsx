@@ -20,8 +20,7 @@ export const Div = ({
   borderColor = null,
   borderType = "solid",
   borderWeight = 1,
-  shape = "rounded",
-  shadow = "sm",
+  shadow = "none",
   onClick,
   style,
   className,
@@ -44,7 +43,6 @@ export const Div = ({
       ? `${borderWeight}px ${borderType} ${finalBorColor}`
       : "none";
 
-  const shapeStyle = getShapeStyles(shape, theme);
   const boxShadow = getShadowStyle(shadow, theme);
 
   const handleClick = (e) => {
@@ -59,7 +57,6 @@ export const Div = ({
         backgroundColor: finalBgColor,
         border: finalBorStyle,
         boxShadow,
-        ...shapeStyle,
         ...style
       }}
       onClick={handleClick}
