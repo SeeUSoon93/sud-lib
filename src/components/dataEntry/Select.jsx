@@ -464,7 +464,9 @@ export const Select = ({
                   fontSize: sizeStyles.fontSize,
                   color: finalTxtColor,
                   flexGrow: 1,
-                  minWidth: 60,
+                  maxWidth: "100%",
+                  height: sizeStyles.height,
+                  minWidth: 0,
                   cursor: disabled ? "not-allowed" : "text"
                 }}
               />
