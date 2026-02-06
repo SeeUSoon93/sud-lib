@@ -631,7 +631,7 @@ export const Select = ({
                       }
                     }}
                   >
-                    {item.label}
+                    {item.content ? item.content : item.label}
                   </div>
                 );
               })
