@@ -24,6 +24,7 @@ export const Progress = ({
   valuePosition = "inside-end",
   size = "md",
   fontSize: fontSizeProp,
+  shadow = false,
   className = "",
   style = {},
   ...rest
@@ -76,6 +77,38 @@ export const Progress = ({
   const resolvedFontSize =
     typeof fontSizeProp === "number" ? fontSizeProp : fontSize;
   const { unitFontSize } = sizeMap[size];
+
+  // shadow 파싱: false | true | { gauge?: boolean|string, track?: boolean|string }
+  const shadowConfig =
+    shadow === true
+      ? { gauge: true, track: true }
+      : shadow === false || !shadow
+      ? {}
+      : shadow;
+
+  const gaugeShadowBar = shadowConfig.gauge
+    ? typeof shadowConfig.gauge === "string"
+      ? shadowConfig.gauge
+      : `0 2px 10px ${finalGaugeColor}99`
+    : undefined;
+
+  const trackShadowBar = shadowConfig.track
+    ? typeof shadowConfig.track === "string"
+      ? shadowConfig.track
+      : "0 2px 8px rgba(0,0,0,0.18)"
+    : undefined;
+
+  const gaugeShadowCircle = shadowConfig.gauge
+    ? typeof shadowConfig.gauge === "string"
+      ? shadowConfig.gauge
+      : `drop-shadow(0 2px 4px ${finalGaugeColor}88)`
+    : undefined;
+
+  const trackShadowCircle = shadowConfig.track
+    ? typeof shadowConfig.track === "string"
+      ? shadowConfig.track
+      : "drop-shadow(0 2px 3px rgba(0,0,0,0.18))"
+    : undefined;
   if (type === "bar") {
     const isInside = valuePosition.startsWith("inside");
     const contentColor = isInside ? gaugeTxtColor : finalGaugeColor;
@@ -148,7 +181,8 @@ export const Progress = ({
             backgroundColor: finalBgColor,
             borderRadius: 9999,
             overflow: "hidden",
-            position: "relative"
+            position: "relative",
+            ...(trackShadowBar ? { boxShadow: trackShadowBar } : {})
           }}
         >
           <div
@@ -166,7 +200,8 @@ export const Progress = ({
               paddingInline: 4,
               boxSizing: "border-box",
               whiteSpace: "nowrap",
-              borderRadius: 9999
+              borderRadius: 9999,
+              ...(gaugeShadowBar ? { boxShadow: gaugeShadowBar } : {})
             }}
           >
             {isInside && showText && valueContent}
@@ -269,6 +304,7 @@ export const Progress = ({
           strokeDashoffset={0}
           strokeLinecap="round"
           style={{
+            ...(trackShadowCircle ? { filter: trackShadowCircle } : {}),
             ...(isDashboard && {
               transform: "rotate(135deg)",
               transformOrigin: "center center"
@@ -287,6 +323,7 @@ export const Progress = ({
           strokeLinecap="round"
           style={{
             transition: "stroke-dashoffset 0.3s",
+            ...(gaugeShadowCircle ? { filter: gaugeShadowCircle } : {}),
             ...(isDashboard
               ? { transform: "rotate(135deg)", transformOrigin: "center" }
               : { transform: "rotate(-90deg)", transformOrigin: "center" })
