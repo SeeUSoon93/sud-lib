@@ -9,6 +9,7 @@ export const Carousel = ({
   items = [],
   itemWidthRatio = 0.8,
   itemCount = 1,
+  itemGap = 0,
   autoPlay = false,
   autoPlayInterval = 3000,
   scaleRatio = 0.2,
@@ -78,7 +79,12 @@ export const Carousel = ({
     return () => observer.disconnect();
   }, []);
 
-  const itemWidth = containerSize.width * itemWidthRatio;
+  const total = items.length || 1;
+  const clamped = Math.min(itemCount, total);
+  const isMulti = clamped > 1;
+  const effectiveItemWidth = isMulti
+    ? (containerSize.width - itemGap * (clamped - 1)) / clamped
+    : containerSize.width * itemWidthRatio;
 
   const handlePrev = () => {
     if (!items.length) return;
@@ -126,10 +132,10 @@ export const Carousel = ({
   }, [autoPlay, autoPlayInterval, items.length, isControlled]);
 
   const getCardStyle = (index) => {
-    const total = items.length || 1;
-    const clamped = Math.min(itemCount, total);
+    let rel = (index - internalIndex + total) % total;
+    if (rel > total / 2) rel -= total;
 
-    if (clamped === 1 || effectType !== "overlap") {
+    if (!isMulti) {
       const isCurrent = index === internalIndex;
       const isNext = index === (internalIndex + 1) % total;
       switch (effectType) {
@@ -160,9 +166,7 @@ export const Carousel = ({
           };
         case "stack":
           return {
-            transform: `translate(-50%, -50%) translateY(${
-              isCurrent ? 0 : 30
-            }px)`,
+            transform: `translate(-50%, -50%) translateY(${isCurrent ? 0 : 30}px)`,
             opacity: isCurrent ? 1 : 0,
             zIndex: isCurrent ? 1 : 0,
             transition: "all 0.5s ease"
@@ -177,56 +181,36 @@ export const Carousel = ({
       }
     }
 
-    const half = Math.floor(clamped / 2) || 1;
-    let rel = (index - internalIndex + total) % total;
-    if (rel > total / 2) rel -= total;
+    // 다중 아이템 모드
+    const leftCount = Math.floor((clamped - 1) / 2);
+    const rightCount = Math.ceil((clamped - 1) / 2);
+
+    if (rel < -leftCount || rel > rightCount) {
+      return { opacity: 0, pointerEvents: "none", zIndex: 0, transition: "all 0.5s ease" };
+    }
 
     const dist = Math.abs(rel);
-    if (dist > half) return { opacity: 0, transform: "scale(0)", zIndex: 0 };
-
-    const maxTranslate = itemWidth * 1.2;
-    const translateX = rel * (maxTranslate / half);
-    const scale = 1 - scaleRatio * (dist / half);
-    const opacity = 1 - opacityRatio * (dist / half);
+    const maxDist = Math.max(leftCount, rightCount) || 1;
+    const translateX = rel * (effectiveItemWidth + itemGap);
+    const scale = 1 - scaleRatio * (dist / maxDist);
+    const opacity = 1 - opacityRatio * (dist / maxDist);
     const zIndex = clamped - dist;
 
-    switch (effectType) {
-      case "fade":
-        return {
-          transform: "translate(-50%, -50%)",
-          opacity,
-          zIndex,
-          transition: "opacity 0.5s ease"
-        };
-      case "slide":
-        return {
-          transform: `translateX(${translateX}px)`,
-          opacity: 1,
-          zIndex,
-          transition: "transform 0.5s ease"
-        };
-      case "scale":
-        return {
-          transform: `translate(-50%, -50%) scale(${scale})`,
-          opacity: 1,
-          zIndex,
-          transition: "transform 0.5s ease"
-        };
-      case "stack":
-        return {
-          transform: `translate(-50%, -50%) translateY(${rel * 30}px)`,
-          opacity: 1,
-          zIndex,
-          transition: "transform 0.5s ease"
-        };
-      case "overlap":
-        return {
-          transform: `translate(-50%, -50%) translateX(${translateX}px) scale(${scale})`,
-          opacity,
-          zIndex,
-          transition: "transform 0.5s ease, opacity 0.5s ease"
-        };
+    if (effectType === "overlap") {
+      return {
+        transform: `translate(calc(-50% + ${translateX}px), -50%) scale(${scale})`,
+        opacity,
+        zIndex,
+        transition: "transform 0.5s ease, opacity 0.5s ease"
+      };
     }
+
+    return {
+      transform: `translate(calc(-50% + ${translateX}px), -50%)`,
+      opacity: 1,
+      zIndex,
+      transition: "transform 0.5s ease"
+    };
   };
 
   return (
@@ -300,7 +284,7 @@ export const Carousel = ({
               position: "absolute",
               left: "50%",
               top: "50%",
-              width: itemWidth,
+              width: effectiveItemWidth,
               ...getCardStyle(index)
             }}
             role="listitem"
