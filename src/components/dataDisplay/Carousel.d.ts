@@ -4,6 +4,7 @@ export interface CarouselProps extends HTMLAttributes<HTMLDivElement> {
   items?: ReactNode[];
   itemWidthRatio?: number;
   itemCount?: number;
+  itemGap?: number;
   autoPlay?: boolean;
   autoPlayInterval?: number;
   scaleRatio?: number;

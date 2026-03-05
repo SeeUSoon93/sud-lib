@@ -43,7 +43,7 @@ export const Empty = ({
       aria-label="데이터가 없습니다"
       {...rest}
     >
-      <Div color={iconColor}>{customIcon ?? defaultIcon}</Div>
+      <Div color={iconColor}>{customIcon}</Div>
       <Typography
         role="alert"
         pretendard={pretendard}

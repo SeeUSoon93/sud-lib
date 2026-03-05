@@ -30,6 +30,7 @@ export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   style?: CSSProperties;
   ariaLabel?: string;
   ariaDescribedby?: string;
+  thumb?: ReactNode;
 }
 
 export declare const Modal: FC<ModalProps>;
