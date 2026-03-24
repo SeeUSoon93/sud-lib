@@ -80,7 +80,7 @@ const MenuItem = ({
   const hasChildren = Array.isArray(item.children) && item.children.length > 0;
   const isOpen = openKeys.includes(item.key);
   const isLeaf = !hasChildren;
-  const paddingLeft = `${12 + level * 16}px`;
+  const paddingLeft = 12 + level * 16;
 
   const { backgroundColor, color } = getItemStyle(item.key, isLeaf, hovered);
 
@@ -94,12 +94,12 @@ const MenuItem = ({
             size="sm"
             pretendard="B"
             color="cool-gray-6"
-            style={{ padding: "4px 12px", paddingLeft }}
+            style={{ padding: `4px 12px 4px ${paddingLeft}px` }}
           >
             {item.title}
           </Typography>
         ) : (
-          <div style={{ padding: "4px 12px", paddingLeft }}>{item.title}</div>
+          <div style={{ padding: `4px 12px 4px ${paddingLeft}px` }}>{item.title}</div>
         )}
         <ul
           className="sud-accordion__sub-wrapper"
@@ -148,16 +148,15 @@ const MenuItem = ({
           transition: "all 0.2s ease",
           borderRadius: 10,
           cursor: "pointer",
-          padding: 12,
+          padding: `6px 12px 6px ${paddingLeft}px`,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center"
         }}
         onClick={() => {
-          if (isLeaf) {
-            onSelect?.(item.key);
-            item.onClick?.();
-          } else {
+          onSelect?.(item.key);
+          item.onClick?.();
+          if (!isLeaf) {
             toggleOpen(item.key);
           }
         }}
@@ -283,12 +282,12 @@ export const Accordion = ({
   };
 
   const getItemStyle = (key, isLeaf, isHovered) => {
-    const isSelected = selectedKey === key && isLeaf;
+    const isSelected = selectedKey === key;
     const fallback = isSelected
       ? "selected"
       : isHovered
-      ? "hovered"
-      : "default";
+        ? "hovered"
+        : "default";
 
     const computed = computeColorStyles({
       border: false,
