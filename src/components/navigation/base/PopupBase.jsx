@@ -178,7 +178,8 @@ export const PopupBase = ({
       }
     };
     document.addEventListener("click", handleClickOutside, true);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("click", handleClickOutside, true);
   }, [trigger, actualOpen, hide]);
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
@@ -387,6 +388,30 @@ export const PopupBase = ({
       const size = ARROW_SIZE * 2 + (hasVisibleBorder ? borderWeight * 2 : 0);
       const pythagoras = Math.sqrt(borderWeight * borderWeight * 2);
       const offset = !isBorder && hasVisibleBorder ? pythagoras : 0;
+      const [mainPlacement] = placement.split("-");
+      const triggerRect = triggerRef.current?.getBoundingClientRect();
+      const popupRect = contentRef.current?.getBoundingClientRect();
+
+      const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+      const minAnchor = size / 2;
+
+      const horizontalCenter =
+        triggerRect && popupRect
+          ? clamp(
+              triggerRect.left + triggerRect.width / 2 - popupRect.left,
+              minAnchor,
+              Math.max(minAnchor, popupRect.width - minAnchor)
+            )
+          : null;
+
+      const verticalCenter =
+        triggerRect && popupRect
+          ? clamp(
+              triggerRect.top + triggerRect.height / 2 - popupRect.top,
+              minAnchor,
+              Math.max(minAnchor, popupRect.height - minAnchor)
+            )
+          : null;
 
       const gradientMap = {
         bottom: `linear-gradient(135deg, ${finalBgColor} 50%, transparent 50%)`,
@@ -398,40 +423,40 @@ export const PopupBase = ({
       const base = {
         width: `${size}px`,
         height: `${size}px`,
-        position: "fixed",
+        position: "absolute",
         transform: "rotate(45deg)",
         zIndex: isBorder ? 1 : 3,
         border: isBorder ? finalBorStyle : undefined,
         borderRadius: "2px 0 0 0",
-        background: !isBorder ? gradientMap[placement] : undefined,
-        backgroundColor: isBorder ? finalBorColor ?? finalBgColor : undefined,
+        background: !isBorder ? gradientMap[mainPlacement] : undefined,
+        backgroundColor: isBorder ? (finalBorColor ?? finalBgColor) : undefined,
         boxShadow: isBorder ? boxShadow : undefined
       };
 
       const pos = {
         bottom: {
           top: `-${ARROW_SIZE - offset}px`,
-          left: "50%",
+          left: horizontalCenter != null ? `${horizontalCenter}px` : "50%",
           transform: "translateX(-50%) rotate(45deg)"
         },
         top: {
           bottom: `-${ARROW_SIZE - offset}px`,
-          left: "50%",
+          left: horizontalCenter != null ? `${horizontalCenter}px` : "50%",
           transform: "translateX(-50%) rotate(45deg)"
         },
         right: {
           left: `-${ARROW_SIZE - offset}px`,
-          top: "50%",
+          top: verticalCenter != null ? `${verticalCenter}px` : "50%",
           transform: "translateY(-50%) rotate(45deg)"
         },
         left: {
           right: `-${ARROW_SIZE - offset}px`,
-          top: "50%",
+          top: verticalCenter != null ? `${verticalCenter}px` : "50%",
           transform: "translateY(-50%) rotate(45deg)"
         }
       };
 
-      return { ...base, ...pos[placement] };
+      return { ...base, ...(pos[mainPlacement] || pos.bottom) };
     },
     [
       placement,
