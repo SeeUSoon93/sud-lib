@@ -263,24 +263,19 @@ export const Select = ({
 
     const wrapperRect = wrapperRef.current.getBoundingClientRect();
     const dropdownRect = dropdownRef.current.getBoundingClientRect();
-    const nextWidth = wrapperRef.current.offsetWidth;
 
     // 화면 아래쪽 공간이 부족한 경우 위쪽에 표시
     const spaceBelow = window.innerHeight - wrapperRect.bottom;
     const spaceAbove = wrapperRect.top;
     const showAbove =
       spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
-    const nextTop = showAbove
-      ? wrapperRect.top - dropdownRect.height - 4
-      : wrapperRect.bottom + 4;
-    const maxLeft = Math.max(8, window.innerWidth - dropdownRect.width - 8);
-    const maxTop = Math.max(8, window.innerHeight - dropdownRect.height - 8);
 
     // position: fixed는 viewport 기준이므로 scroll 값을 더하지 않음
-    setDropdownWidth(nextWidth);
     setDropdownPosition({
-      top: Math.min(Math.max(nextTop, 8), maxTop),
-      left: Math.min(Math.max(wrapperRect.left, 8), maxLeft)
+      top: showAbove
+        ? wrapperRect.top - dropdownRect.height - 4
+        : wrapperRect.bottom + 4,
+      left: wrapperRect.left
     });
   }, []);
 
@@ -305,6 +300,12 @@ export const Select = ({
       window.removeEventListener("resize", updatePosition);
     };
   }, [open, calculateDropdownPosition]);
+
+  useLayoutEffect(() => {
+    if (wrapperRef.current) {
+      setDropdownWidth(wrapperRef.current.offsetWidth);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
