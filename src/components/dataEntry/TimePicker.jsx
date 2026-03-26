@@ -116,9 +116,6 @@ export const TimePicker = ({
 
     if (shouldClose) {
       setOpen(false);
-      requestAnimationFrame(() => {
-        setTimeout(() => setOpen(true), 0);
-      });
     }
   };
 
@@ -172,19 +169,19 @@ export const TimePicker = ({
         value={displayText}
         placeholder={placeholder}
         suffix={<ClockOutline size={sizeMap[size]} />}
-        onClick={() => {
-          if (disabled || readOnly) return;
-          setOpen(false);
-          setTimeout(() => setOpen(true), 0);
-        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
+            e.stopPropagation();
             if (!disabled && !readOnly) {
-              setOpen(false);
-              setTimeout(() => setOpen(true), 0);
+              setOpen((prev) => !prev);
             }
           }
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (disabled || readOnly) return;
+          setOpen((prev) => !prev);
         }}
         style={style}
         {...inputProps}

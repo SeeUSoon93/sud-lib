@@ -12,6 +12,7 @@ export type SelectSize = "sm" | "md" | "lg";
 export interface SelectOption {
   value: string | number;
   label: ReactNode;
+  content?: ReactNode;
 }
 
 export interface SelectProps extends HTMLAttributes<HTMLDivElement> {

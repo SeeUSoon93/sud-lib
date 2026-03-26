@@ -1,10 +1,12 @@
 "use client";
+import React from "react";
 import {
   useState,
   useRef,
   useEffect,
   useLayoutEffect,
-  useCallback
+  useCallback,
+  useMemo
 } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -18,6 +20,20 @@ import { useTheme } from "../../theme/ThemeContext";
 import { Tag } from "../dataDisplay/Tag";
 import { Typography } from "../general/Typography";
 import { Close, AngleDown } from "sud-icons";
+
+const getNodeText = (node) => {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+  if (Array.isArray(node)) {
+    return node.map(getNodeText).join("");
+  }
+  if (React.isValidElement(node)) {
+    return getNodeText(node.props?.children);
+  }
+  return "";
+};
 
 export const Select = ({
   background,
@@ -73,13 +89,38 @@ export const Select = ({
   const dropdownRef = useRef(null);
   const optionRefs = useRef([]);
 
-  const filteredOptions = options.filter((opt) =>
-    opt.label.toLowerCase().includes(search.toLowerCase())
+  const getOptionText = useCallback(
+    (option) => {
+      if (!option) return "";
+      return getNodeText(option.label ?? option.content ?? option.value);
+    },
+    []
   );
 
-  const selectedItems = multiMode
-    ? options.filter((opt) => Array.isArray(value) && value.includes(opt.value))
-    : options.find((opt) => opt.value === value);
+  const filteredOptions = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+
+    if (!keyword) {
+      return options;
+    }
+
+    return options.filter((opt) =>
+      getOptionText(opt).toLowerCase().includes(keyword)
+    );
+  }, [options, search, getOptionText]);
+
+  const selectedItems = useMemo(
+    () =>
+      multiMode
+        ? options.filter(
+            (opt) => Array.isArray(value) && value.includes(opt.value)
+          )
+        : options.find((opt) => opt.value === value),
+    [multiMode, options, value]
+  );
+
+  const selectedDisplayText =
+    !multiMode && selectedItems ? getOptionText(selectedItems) : "";
 
   const handleClickOutside = useCallback((e) => {
     if (
@@ -222,19 +263,24 @@ export const Select = ({
 
     const wrapperRect = wrapperRef.current.getBoundingClientRect();
     const dropdownRect = dropdownRef.current.getBoundingClientRect();
+    const nextWidth = wrapperRef.current.offsetWidth;
 
     // 화면 아래쪽 공간이 부족한 경우 위쪽에 표시
     const spaceBelow = window.innerHeight - wrapperRect.bottom;
     const spaceAbove = wrapperRect.top;
     const showAbove =
       spaceBelow < dropdownRect.height && spaceAbove > spaceBelow;
+    const nextTop = showAbove
+      ? wrapperRect.top - dropdownRect.height - 4
+      : wrapperRect.bottom + 4;
+    const maxLeft = Math.max(8, window.innerWidth - dropdownRect.width - 8);
+    const maxTop = Math.max(8, window.innerHeight - dropdownRect.height - 8);
 
     // position: fixed는 viewport 기준이므로 scroll 값을 더하지 않음
+    setDropdownWidth(nextWidth);
     setDropdownPosition({
-      top: showAbove
-        ? wrapperRect.top - dropdownRect.height - 4
-        : wrapperRect.bottom + 4,
-      left: wrapperRect.left
+      top: Math.min(Math.max(nextTop, 8), maxTop),
+      left: Math.min(Math.max(wrapperRect.left, 8), maxLeft)
     });
   }, []);
 
@@ -260,27 +306,26 @@ export const Select = ({
     };
   }, [open, calculateDropdownPosition]);
 
-  useLayoutEffect(() => {
-    if (wrapperRef.current) {
-      setDropdownWidth(wrapperRef.current.offsetWidth);
-    }
-  }, [open]);
-
   useEffect(() => {
+    if (!open) return;
+
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEscClose);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscClose);
     };
-  }, [handleClickOutside, handleEscClose]);
+  }, [open, handleClickOutside, handleEscClose]);
 
   // 드롭다운이 처음 열릴 때만 선택된 옵션으로 스크롤
   useEffect(() => {
-    if (open && selectedItems && !search) {
+    const firstSelectedValue =
+      multiMode && Array.isArray(value) ? value[0] : value;
+
+    if (open && firstSelectedValue !== undefined && !search) {
       // 검색 중이 아닐 때만
       const selectedIndex = filteredOptions.findIndex(
-        (opt) => opt.value === (multiMode ? value[0] : value)
+        (opt) => opt.value === firstSelectedValue
       );
       if (selectedIndex >= 0 && optionRefs.current[selectedIndex]) {
         optionRefs.current[selectedIndex].scrollIntoView({
@@ -476,7 +521,7 @@ export const Select = ({
             <input
               ref={inputRef}
               className="sud-select__input"
-              value={open ? search : selectedItems?.label || ""}
+                value={open ? search : selectedDisplayText}
               onChange={(e) => setSearch(e.target.value)}
               disabled={disabled}
               readOnly={!searchable}

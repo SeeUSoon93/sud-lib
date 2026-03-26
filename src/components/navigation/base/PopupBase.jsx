@@ -168,7 +168,8 @@ export const PopupBase = ({
   };
   // 기본 외부 클릭 (click 트리거 전용)
   useEffect(() => {
-    if (trigger !== "click" || !actualOpen) return;
+    if ((trigger !== "click" && trigger !== "contextMenu") || !actualOpen)
+      return;
     const handleClickOutside = (e) => {
       if (
         !triggerRef.current?.contains(e.target) &&
@@ -203,9 +204,6 @@ export const PopupBase = ({
     if (!triggerRef.current || !contentRef.current) return {};
     const triggerRect = triggerRef.current.getBoundingClientRect();
     const contentRect = contentRef.current.getBoundingClientRect();
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
-    const scrollX = window.scrollX || document.documentElement.scrollLeft;
-
     const base = {
       position: "fixed",
       zIndex: 10000,
@@ -219,50 +217,45 @@ export const PopupBase = ({
     const getPos = (main, sub) => {
       switch (main) {
         case "top": {
-          let left = triggerRect.left + triggerRect.width / 2 + scrollX;
+          let left = triggerRect.left + triggerRect.width / 2;
           let transform = "translateX(-50%)";
           if (sub === "left") {
-            left = triggerRect.left + scrollX;
+            left = triggerRect.left;
             transform = "none";
           } else if (sub === "right") {
-            left = triggerRect.right + scrollX - contentRect.width;
+            left = triggerRect.right - contentRect.width;
             transform = "none";
           }
           return {
-            top:
-              triggerRect.top -
-              contentRect.height -
-              ARROW_SIZE -
-              TRIGGER_GAP +
-              scrollY,
+            top: triggerRect.top - contentRect.height - ARROW_SIZE - TRIGGER_GAP,
             left,
             transform
           };
         }
         case "bottom": {
-          let left = triggerRect.left + triggerRect.width / 2 + scrollX;
+          let left = triggerRect.left + triggerRect.width / 2;
           let transform = "translateX(-50%)";
           if (sub === "left") {
-            left = triggerRect.left + scrollX;
+            left = triggerRect.left;
             transform = "none";
           } else if (sub === "right") {
-            left = triggerRect.right + scrollX - contentRect.width;
+            left = triggerRect.right - contentRect.width;
             transform = "none";
           }
           return {
-            top: triggerRect.bottom + ARROW_SIZE + TRIGGER_GAP + scrollY,
+            top: triggerRect.bottom + ARROW_SIZE + TRIGGER_GAP,
             left,
             transform
           };
         }
         case "left": {
-          let top = triggerRect.top + triggerRect.height / 2 + scrollY;
+          let top = triggerRect.top + triggerRect.height / 2;
           let transform = "translateY(-50%)";
           if (sub === "top") {
-            top = triggerRect.top + scrollY;
+            top = triggerRect.top;
             transform = "none";
           } else if (sub === "bottom") {
-            top = triggerRect.bottom + scrollY - contentRect.height;
+            top = triggerRect.bottom - contentRect.height;
             transform = "none";
           }
           return {
@@ -271,24 +264,23 @@ export const PopupBase = ({
               triggerRect.left -
               contentRect.width -
               ARROW_SIZE -
-              TRIGGER_GAP +
-              scrollX,
+              TRIGGER_GAP,
             transform
           };
         }
         case "right": {
-          let top = triggerRect.top + triggerRect.height / 2 + scrollY;
+          let top = triggerRect.top + triggerRect.height / 2;
           let transform = "translateY(-50%)";
           if (sub === "top") {
-            top = triggerRect.top + scrollY;
+            top = triggerRect.top;
             transform = "none";
           } else if (sub === "bottom") {
-            top = triggerRect.bottom + scrollY - contentRect.height;
+            top = triggerRect.bottom - contentRect.height;
             transform = "none";
           }
           return {
             top,
-            left: triggerRect.right + ARROW_SIZE + TRIGGER_GAP + scrollX,
+            left: triggerRect.right + ARROW_SIZE + TRIGGER_GAP,
             transform
           };
         }
@@ -308,6 +300,8 @@ export const PopupBase = ({
     let width = contentRect.width;
     let height = contentRect.height;
     let adjusted = false;
+    const maxLeft = Math.max(8, winW - width - 8);
+    const maxTop = Math.max(8, winH - height - 8);
 
     // 좌우 화면 벗어남 보정
     if (popupLeft < 0) {
@@ -331,7 +325,12 @@ export const PopupBase = ({
       pos.transform = undefined;
     }
 
-    return { ...base, ...pos, left: popupLeft, top: popupTop };
+    return {
+      ...base,
+      ...pos,
+      left: Math.min(Math.max(popupLeft, 8), maxLeft),
+      top: Math.min(Math.max(popupTop, 8), maxTop)
+    };
   }, [placement]);
 
   useLayoutEffect(() => {
@@ -381,6 +380,31 @@ export const PopupBase = ({
     };
   }, [actualOpen, calculatePosition]);
 
+  useEffect(() => {
+    if (!actualOpen || !followTrigger) return;
+
+    let rafId = null;
+
+    const syncPosition = () => {
+      const newStyle = calculatePosition();
+      setPositionStyle((prev) => ({
+        ...prev,
+        ...newStyle,
+        opacity: 1,
+        pointerEvents: "auto"
+      }));
+      rafId = requestAnimationFrame(syncPosition);
+    };
+
+    rafId = requestAnimationFrame(syncPosition);
+
+    return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+    };
+  }, [actualOpen, followTrigger, calculatePosition]);
+
   const getDiamondStyle = useCallback(
     ({ type = "background" }) => {
       const isBorder = type === "border";
@@ -389,29 +413,6 @@ export const PopupBase = ({
       const pythagoras = Math.sqrt(borderWeight * borderWeight * 2);
       const offset = !isBorder && hasVisibleBorder ? pythagoras : 0;
       const [mainPlacement] = placement.split("-");
-      const triggerRect = triggerRef.current?.getBoundingClientRect();
-      const popupRect = contentRef.current?.getBoundingClientRect();
-
-      const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-      const minAnchor = size / 2;
-
-      const horizontalCenter =
-        triggerRect && popupRect
-          ? clamp(
-              triggerRect.left + triggerRect.width / 2 - popupRect.left,
-              minAnchor,
-              Math.max(minAnchor, popupRect.width - minAnchor)
-            )
-          : null;
-
-      const verticalCenter =
-        triggerRect && popupRect
-          ? clamp(
-              triggerRect.top + triggerRect.height / 2 - popupRect.top,
-              minAnchor,
-              Math.max(minAnchor, popupRect.height - minAnchor)
-            )
-          : null;
 
       const gradientMap = {
         bottom: `linear-gradient(135deg, ${finalBgColor} 50%, transparent 50%)`,
@@ -436,22 +437,22 @@ export const PopupBase = ({
       const pos = {
         bottom: {
           top: `-${ARROW_SIZE - offset}px`,
-          left: horizontalCenter != null ? `${horizontalCenter}px` : "50%",
+          left: "50%",
           transform: "translateX(-50%) rotate(45deg)"
         },
         top: {
           bottom: `-${ARROW_SIZE - offset}px`,
-          left: horizontalCenter != null ? `${horizontalCenter}px` : "50%",
+          left: "50%",
           transform: "translateX(-50%) rotate(45deg)"
         },
         right: {
           left: `-${ARROW_SIZE - offset}px`,
-          top: verticalCenter != null ? `${verticalCenter}px` : "50%",
+          top: "50%",
           transform: "translateY(-50%) rotate(45deg)"
         },
         left: {
           right: `-${ARROW_SIZE - offset}px`,
-          top: verticalCenter != null ? `${verticalCenter}px` : "50%",
+          top: "50%",
           transform: "translateY(-50%) rotate(45deg)"
         }
       };
