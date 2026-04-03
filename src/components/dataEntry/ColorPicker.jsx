@@ -28,6 +28,40 @@ function hexToRgb(hex) {
   const b = bigint & 255;
   return { r, g, b };
 }
+
+function parseColorString(color) {
+  if (typeof color !== "string") return null;
+
+  const normalized = color.trim();
+  const rgbaMatch = normalized.match(
+    /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(\d*\.?\d+))?\s*\)$/i
+  );
+
+  if (rgbaMatch) {
+    const [, r, g, b, a] = rgbaMatch;
+    return {
+      r: Number(r),
+      g: Number(g),
+      b: Number(b),
+      alpha: a == null ? 100 : Math.round(Number(a) * 100)
+    };
+  }
+
+  if (/^#?[0-9a-f]{3}$/i.test(normalized)) {
+    const expanded = normalized
+      .replace("#", "")
+      .split("")
+      .map((char) => char + char)
+      .join("");
+    return { ...hexToRgb(`#${expanded}`), alpha: 100 };
+  }
+
+  if (/^#?[0-9a-f]{6}$/i.test(normalized)) {
+    return { ...hexToRgb(normalized), alpha: 100 };
+  }
+
+  return null;
+}
 const SUD_PALETTES = {
   red: {
     1: "#fff1f0",
@@ -345,8 +379,8 @@ const SUD_PALETTES = {
 export const ColorPicker = ({
   color: externalColor = "#1677FF",
   onChange,
-  open = false,
-  setOpen = () => {},
+  open: controlledOpen,
+  setOpen,
   children,
   trigger = "click",
   placement = "bottom",
@@ -363,6 +397,9 @@ export const ColorPicker = ({
   ...rest
 }) => {
   const paletteRef = useRef();
+  const dragCleanupRef = useRef(null);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const actualOpen = controlledOpen ?? internalOpen;
 
   const [color, setColor] = useState(externalColor);
   const [hue, setHue] = useState(210);
@@ -379,8 +416,18 @@ export const ColorPicker = ({
     lg: 48,
   };
 
+  const handleOpenChange = useCallback(
+    (nextOpen) => {
+      if (controlledOpen === undefined) {
+        setInternalOpen(nextOpen);
+      }
+      setOpen?.(nextOpen);
+    },
+    [controlledOpen, setOpen]
+  );
+
   const updateAllFromRGB = useCallback(
-    ({ r, g, b }) => {
+    ({ r, g, b }, nextAlpha = alpha) => {
       const max = Math.max(r, g, b),
         min = Math.min(r, g, b);
       const v = max / 255;
@@ -402,13 +449,14 @@ export const ColorPicker = ({
       }
 
       const newHue = Math.round(h);
-
-      setRgb({ r, g, b });
-      setHsb({
+      const nextHsb = {
         h: newHue,
         s: Math.round(s * 100),
         b: Math.round(v * 100),
-      });
+      };
+
+      setRgb({ r, g, b });
+      setHsb(nextHsb);
       setHue(newHue);
 
       // 수정 3: 색상이 변경되면 커서 위치도 동기화합니다.
@@ -419,13 +467,13 @@ export const ColorPicker = ({
       });
 
       const hex = rgbToHex(r, g, b);
-      const rgba = `rgba(${r}, ${g}, ${b}, ${alpha / 100})`;
+      const rgba = `rgba(${r}, ${g}, ${b}, ${nextAlpha / 100})`;
       setColor(rgba);
       onChange?.({
         hex,
         rgb: { r, g, b },
-        hsb,
-        alpha,
+        hsb: nextHsb,
+        alpha: nextAlpha,
         rgba,
       });
     },
@@ -433,7 +481,12 @@ export const ColorPicker = ({
   );
 
   useEffect(() => {
-    updateAllFromRGB(hexToRgb(externalColor));
+    const parsedColor = parseColorString(externalColor);
+    if (!parsedColor) return;
+
+    const nextAlpha = parsedColor.alpha ?? 100;
+    setAlpha(nextAlpha);
+    updateAllFromRGB(parsedColor, nextAlpha);
   }, [externalColor]); // updateAllFromRGB가 의존성 배열에 없어도 괜찮게 useCallback 처리
 
   const handleMouseMove = useCallback(
@@ -471,6 +524,15 @@ export const ColorPicker = ({
     },
     [hue, updateAllFromRGB]
   );
+
+  const removeDragListeners = useCallback(() => {
+    if (dragCleanupRef.current) {
+      dragCleanupRef.current();
+      dragCleanupRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => removeDragListeners, [removeDragListeners]);
 
   const PresetPanel = () => (
     <div
@@ -513,12 +575,15 @@ export const ColorPicker = ({
         ref={paletteRef}
         className="sud-color-picker__palette"
         onMouseDown={(e) => {
+          removeDragListeners();
           handleMouseMove(e);
           const move = (e) => handleMouseMove(e);
           const up = () => {
             window.removeEventListener("mousemove", move);
             window.removeEventListener("mouseup", up);
+            dragCleanupRef.current = null;
           };
+          dragCleanupRef.current = up;
           window.addEventListener("mousemove", move);
           window.addEventListener("mouseup", up);
         }}
@@ -565,9 +630,10 @@ export const ColorPicker = ({
           size="sm"
           value={rgbToHex(rgb.r, rgb.g, rgb.b)}
           onChange={(e) => {
-            try {
-              updateAllFromRGB(hexToRgb(e.target.value));
-            } catch {}
+            const parsedColor = parseColorString(e.target.value);
+            if (parsedColor) {
+              updateAllFromRGB(parsedColor, alpha);
+            }
           }}
           {...inputProps}
         />
@@ -617,8 +683,8 @@ export const ColorPicker = ({
   return (
     <PopConfirm
       trigger={trigger}
-      open={open}
-      onOpenChange={setOpen}
+      open={actualOpen}
+      onOpenChange={handleOpenChange}
       placement={placement}
       title={null}
       footer={null}

@@ -169,7 +169,8 @@ export const PopupBase = ({
   };
   // 기본 외부 클릭 (click 트리거 전용)
   useEffect(() => {
-    if (trigger !== "click" || !actualOpen) return;
+    if ((trigger !== "click" && trigger !== "contextMenu") || !actualOpen)
+      return;
     const handleClickOutside = (e) => {
       if (
         !triggerRef.current?.contains(e.target) &&
@@ -179,7 +180,8 @@ export const PopupBase = ({
       }
     };
     document.addEventListener("click", handleClickOutside, true);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("click", handleClickOutside, true);
   }, [trigger, actualOpen, hide]);
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
@@ -203,9 +205,6 @@ export const PopupBase = ({
     if (!triggerRef.current || !contentRef.current) return {};
     const triggerRect = triggerRef.current.getBoundingClientRect();
     const contentRect = contentRef.current.getBoundingClientRect();
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
-    const scrollX = window.scrollX || document.documentElement.scrollLeft;
-
     const base = {
       position: "fixed",
       zIndex: 10000,
@@ -219,76 +218,68 @@ export const PopupBase = ({
     const getPos = (main, sub) => {
       switch (main) {
         case "top": {
-          let left = triggerRect.left + triggerRect.width / 2 + scrollX;
+          let left = triggerRect.left + triggerRect.width / 2;
           let transform = "translateX(-50%)";
           if (sub === "left") {
-            left = triggerRect.left + scrollX;
+            left = triggerRect.left;
             transform = "none";
           } else if (sub === "right") {
-            left = triggerRect.right + scrollX - contentRect.width;
+            left = triggerRect.right - contentRect.width;
             transform = "none";
           }
           return {
             top:
-              triggerRect.top -
-              contentRect.height -
-              ARROW_SIZE -
-              TRIGGER_GAP +
-              scrollY,
+              triggerRect.top - contentRect.height - ARROW_SIZE - TRIGGER_GAP,
             left,
             transform
           };
         }
         case "bottom": {
-          let left = triggerRect.left + triggerRect.width / 2 + scrollX;
+          let left = triggerRect.left + triggerRect.width / 2;
           let transform = "translateX(-50%)";
           if (sub === "left") {
-            left = triggerRect.left + scrollX;
+            left = triggerRect.left;
             transform = "none";
           } else if (sub === "right") {
-            left = triggerRect.right + scrollX - contentRect.width;
+            left = triggerRect.right - contentRect.width;
             transform = "none";
           }
           return {
-            top: triggerRect.bottom + ARROW_SIZE + TRIGGER_GAP + scrollY,
+            top: triggerRect.bottom + ARROW_SIZE + TRIGGER_GAP,
             left,
             transform
           };
         }
         case "left": {
-          let top = triggerRect.top + triggerRect.height / 2 + scrollY;
+          let top = triggerRect.top + triggerRect.height / 2;
           let transform = "translateY(-50%)";
           if (sub === "top") {
-            top = triggerRect.top + scrollY;
+            top = triggerRect.top;
             transform = "none";
           } else if (sub === "bottom") {
-            top = triggerRect.bottom + scrollY - contentRect.height;
+            top = triggerRect.bottom - contentRect.height;
             transform = "none";
           }
           return {
             top,
             left:
-              triggerRect.left -
-              contentRect.width -
-              ARROW_SIZE -
-              TRIGGER_GAP +
-              scrollX,
+              triggerRect.left - contentRect.width - ARROW_SIZE - TRIGGER_GAP,
             transform
           };
         }
         case "right": {
-          let top = triggerRect.top + triggerRect.height / 2 + scrollY;
+          let top = triggerRect.top + triggerRect.height / 2;
           let transform = "translateY(-50%)";
           if (sub === "top") {
-            top = triggerRect.top + scrollY;
+            top = triggerRect.top;
             transform = "none";
           } else if (sub === "bottom") {
-            top = triggerRect.bottom + scrollY - contentRect.height;
+            top = triggerRect.bottom - contentRect.height;
             transform = "none";
           }
           return {
             top,
-            left: triggerRect.right + ARROW_SIZE + TRIGGER_GAP + scrollX,
+            left: triggerRect.right + ARROW_SIZE + TRIGGER_GAP,
             transform
           };
         }
@@ -308,6 +299,8 @@ export const PopupBase = ({
     let width = contentRect.width;
     let height = contentRect.height;
     let adjusted = false;
+    const maxLeft = Math.max(8, winW - width - 8);
+    const maxTop = Math.max(8, winH - height - 8);
 
     // 좌우 화면 벗어남 보정
     if (popupLeft < 0) {
@@ -331,7 +324,12 @@ export const PopupBase = ({
       pos.transform = undefined;
     }
 
-    return { ...base, ...pos, left: popupLeft, top: popupTop };
+    return {
+      ...base,
+      ...pos,
+      left: Math.min(Math.max(popupLeft, 8), maxLeft),
+      top: Math.min(Math.max(popupTop, 8), maxTop)
+    };
   }, [placement]);
 
   useLayoutEffect(() => {
@@ -381,6 +379,31 @@ export const PopupBase = ({
     };
   }, [actualOpen, calculatePosition]);
 
+  useEffect(() => {
+    if (!actualOpen || !followTrigger) return;
+
+    let rafId = null;
+
+    const syncPosition = () => {
+      const newStyle = calculatePosition();
+      setPositionStyle((prev) => ({
+        ...prev,
+        ...newStyle,
+        opacity: 1,
+        pointerEvents: "auto"
+      }));
+      rafId = requestAnimationFrame(syncPosition);
+    };
+
+    rafId = requestAnimationFrame(syncPosition);
+
+    return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+    };
+  }, [actualOpen, followTrigger, calculatePosition]);
+
   const getDiamondStyle = useCallback(
     ({ type = "background" }) => {
       const isBorder = type === "border";
@@ -401,13 +424,13 @@ export const PopupBase = ({
       const base = {
         width: `${size}px`,
         height: `${size}px`,
-        position: "fixed",
+        position: "absolute",
         transform: "rotate(45deg)",
         zIndex: isBorder ? 1 : 3,
         border: isBorder ? finalBorStyle : undefined,
         borderRadius: "2px 0 0 0",
-        background: !isBorder ? gradientMap[mainPlacement] : undefined,
-        backgroundColor: isBorder ? finalBorColor ?? finalBgColor : undefined,
+        background: !isBorder ? gradientMap[placement] : undefined,
+        backgroundColor: isBorder ? (finalBorColor ?? finalBgColor) : undefined,
         boxShadow: isBorder ? boxShadow : undefined
       };
 
@@ -434,7 +457,7 @@ export const PopupBase = ({
         }
       };
 
-      return { ...base, ...pos[mainPlacement] };
+      return { ...base, ...pos[placement] };
     },
     [
       placement,

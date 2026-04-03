@@ -85,9 +85,6 @@ export const DatePicker = ({
     const shouldClose = !range || (val?.startDate && val?.endDate);
     if (shouldClose) {
       setOpen(false);
-      requestAnimationFrame(() => {
-        setTimeout(() => setOpen(true), 0);
-      });
     }
   };
 
@@ -142,19 +139,19 @@ export const DatePicker = ({
         value={displayText}
         placeholder={placeholder}
         suffix={<CalendarOutline size={sizeMap[size]} />}
-        onClick={() => {
-          if (disabled || readOnly) return;
-          setOpen(false);
-          setTimeout(() => setOpen(true), 0);
-        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
+            e.stopPropagation();
             if (!disabled && !readOnly) {
-              setOpen(false);
-              setTimeout(() => setOpen(true), 0);
+              setOpen((prev) => !prev);
             }
           }
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (disabled || readOnly) return;
+          setOpen((prev) => !prev);
         }}
         style={style}
         {...inputProps}
