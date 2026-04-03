@@ -36,7 +36,8 @@ export type PopupVariant =
   | "Menu"
   | "popconfirm";
 
-export interface PopupBaseProps extends HTMLAttributes<HTMLDivElement> {
+export interface PopupBaseProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children: ReactNode;
   content: ReactNode | (() => ReactNode);
   title?: ReactNode;
@@ -58,6 +59,8 @@ export interface PopupBaseProps extends HTMLAttributes<HTMLDivElement> {
   shape?: shapeType;
   shadow?: shadowType;
   colorType?: defaultColorType;
+  style?: CSSProperties;
+  wrapperStyle?: CSSProperties;
   followTrigger?: boolean;
   contentRef?: RefObject<HTMLElement>;
   parentRef?: RefObject<HTMLElement>;

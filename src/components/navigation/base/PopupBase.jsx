@@ -55,6 +55,7 @@ export const PopupBase = ({
   shadow = "sm",
   colorType = "default",
   style = {},
+  wrapperStyle = {},
   followTrigger = false,
   contentRef: externalContentRef = null,
   parentRef = null,
@@ -388,6 +389,8 @@ export const PopupBase = ({
       const pythagoras = Math.sqrt(borderWeight * borderWeight * 2);
       const offset = !isBorder && hasVisibleBorder ? pythagoras : 0;
 
+      const mainPlacement = placement.split("-")[0];
+
       const gradientMap = {
         bottom: `linear-gradient(135deg, ${finalBgColor} 50%, transparent 50%)`,
         top: `linear-gradient(-45deg, ${finalBgColor} 50%, transparent 50%)`,
@@ -403,7 +406,7 @@ export const PopupBase = ({
         zIndex: isBorder ? 1 : 3,
         border: isBorder ? finalBorStyle : undefined,
         borderRadius: "2px 0 0 0",
-        background: !isBorder ? gradientMap[placement] : undefined,
+        background: !isBorder ? gradientMap[mainPlacement] : undefined,
         backgroundColor: isBorder ? finalBorColor ?? finalBgColor : undefined,
         boxShadow: isBorder ? boxShadow : undefined
       };
@@ -431,7 +434,7 @@ export const PopupBase = ({
         }
       };
 
-      return { ...base, ...pos[placement] };
+      return { ...base, ...pos[mainPlacement] };
     },
     [
       placement,
@@ -539,7 +542,11 @@ export const PopupBase = ({
   return (
     <div
       className={mergeClassNames(`sud-${variant}`, className)}
-      style={{ position: "relative", display: "inline-block", ...style }}
+      style={{
+        position: "relative",
+        display: "inline-block",
+        ...wrapperStyle
+      }}
       {...rest}
     >
       <div
@@ -603,7 +610,8 @@ export const PopupBase = ({
                 ...shapeStyle,
                 boxShadow,
                 zIndex: 2,
-                position: "relative"
+                position: "relative",
+                ...style
               }}
             >
               {title &&

@@ -24,6 +24,7 @@ export interface ImageProps extends HTMLAttributes<HTMLDivElement> {
   borderColor?: string;
   borderType?: borderType;
   borderWeight?: number | string;
+  objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
 }
 
 export declare const Image: FC<ImageProps>;

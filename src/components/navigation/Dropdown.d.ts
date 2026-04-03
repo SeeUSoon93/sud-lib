@@ -8,7 +8,8 @@ import type {
   shadowType
 } from "../commonType";
 
-export interface DropdownProps extends HTMLAttributes<HTMLDivElement> {
+export interface DropdownProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children: ReactNode;
   title?: ReactNode;
   trigger?: PopupTrigger;
@@ -32,6 +33,7 @@ export interface DropdownProps extends HTMLAttributes<HTMLDivElement> {
   placement?: [PopupPlacement, PopupPlacement];
   colorType?: defaultColorType;
   style?: CSSProperties;
+  wrapperStyle?: CSSProperties;
 }
 
 declare const Dropdown: FC<DropdownProps>;

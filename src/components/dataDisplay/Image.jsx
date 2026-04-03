@@ -59,6 +59,7 @@ export const Image = ({
   borderColor,
   borderType = "solid",
   borderWeight = "1",
+  objectFit = "cover",
   ...rest
 }) => {
   const theme = useTheme();
@@ -119,7 +120,7 @@ export const Image = ({
   };
 
   let imgStyle = {
-    objectFit: "cover",
+    objectFit: objectFit,
     display: "block"
   };
 

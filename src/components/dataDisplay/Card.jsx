@@ -159,7 +159,9 @@ export const Card = ({
               display: "flex",
               flexDirection: "column",
               gap: spacing.sm,
-              width: "100%"
+              width: "100%",
+              flex: 1,
+              overflowY: "auto"
             }}
           >
             {children}
