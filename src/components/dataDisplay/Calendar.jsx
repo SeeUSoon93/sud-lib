@@ -1,7 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useLayoutEffect } from "react";
 import { locale_en, locale_ko } from "../../utils/calendarLocales";
 import { Button } from "../general/Button";
 import { TriangleLeft, TriangleRight } from "sud-icons";
@@ -85,7 +85,7 @@ export const Calendar = ({
   background,
   hoverBackground,
   color,
-  border = true,
+  border = false,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
@@ -104,10 +104,9 @@ export const Calendar = ({
   const theme = useTheme();
   const resolvedLocale = getLocale(locale);
   const containerRef = React.useRef(null);
-  const [containerWidth, setContainerWidth] = useState(0);
   const [currentSize, setCurrentSize] = useState(size);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const updateSize = () => {
       if (containerRef.current) {
         const width = containerRef.current.offsetWidth;
@@ -116,8 +115,7 @@ export const Calendar = ({
         else if (width >= 500) newSize = "md";
         else if (width >= 300) newSize = "sm";
         else newSize = "miniView";
-        setCurrentSize(newSize);
-        setContainerWidth(width);
+        setCurrentSize((prev) => (prev === newSize ? prev : newSize));
       }
     };
 
@@ -132,7 +130,10 @@ export const Calendar = ({
     };
   }, [size]);
 
-  const [sizeStyles, setSizeStyles] = useState(sizeMap[currentSize]);
+  const sizeStyles = useMemo(
+    () => sizeMap[currentSize] || sizeMap[size] || sizeMap.md,
+    [currentSize, size]
+  );
   const [viewDate, setViewDate] = useState(dayjs(value || new Date()));
 
   const [startDate, setStartDate] = useState(
@@ -735,7 +736,7 @@ export const Calendar = ({
                 const isHovered = isSameDate(hoverDate, dayjsDate);
                 const isSelected = isSameDate(selectedDate, dayjsDate);
                 const dayIndex = dayjsDate.day();
-                const isLastRow = i >= 35;
+                const isLastRow = i >= Math.max(calendarGrid.length - 7, 0);
                 const dateStr = dayjsDate.format("YYYY-MM-DD");
                 const dayItems = items.filter((item) => item.date === dateStr);
 
