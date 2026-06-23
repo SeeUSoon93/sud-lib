@@ -364,7 +364,7 @@ export const PopupBase = ({
       const pythagoras = Math.sqrt(borderWeight * borderWeight * 2);
       const offset = !isBorder && hasVisibleBorder ? pythagoras : 0;
 
-      const mainPlacement = placement.split("-")[0];
+      const [mainPlacement, subPlacement] = placement.split("-");
 
       const gradientMap = {
         bottom: `linear-gradient(135deg, ${finalBgColor} 50%, transparent 50%)`,
@@ -388,27 +388,31 @@ export const PopupBase = ({
       const posMap = {
         bottom: {
           top: `-${ARROW_SIZE - offset}px`,
-          left: "var(--arrow-x, 50%)",
-          transform: "translateX(-50%) rotate(45deg)"
+          left: subPlacement === "left" ? `16px` : subPlacement === "right" ? undefined : "var(--arrow-x, 50%)",
+          right: subPlacement === "right" ? `16px` : undefined,
+          transform: subPlacement === "left" || subPlacement === "right" ? "rotate(45deg)" : "translateX(-50%) rotate(45deg)"
         },
         top: {
           bottom: `-${ARROW_SIZE - offset}px`,
-          left: "var(--arrow-x, 50%)",
-          transform: "translateX(-50%) rotate(45deg)"
+          left: subPlacement === "left" ? `16px` : subPlacement === "right" ? undefined : "var(--arrow-x, 50%)",
+          right: subPlacement === "right" ? `16px` : undefined,
+          transform: subPlacement === "left" || subPlacement === "right" ? "rotate(45deg)" : "translateX(-50%) rotate(45deg)"
         },
         right: {
           left: `-${ARROW_SIZE - offset}px`,
-          top: "var(--arrow-y, 50%)",
-          transform: "translateY(-50%) rotate(45deg)"
+          top: subPlacement === "top" ? `16px` : subPlacement === "bottom" ? undefined : "var(--arrow-y, 50%)",
+          bottom: subPlacement === "bottom" ? `16px` : undefined,
+          transform: subPlacement === "top" || subPlacement === "bottom" ? "rotate(45deg)" : "translateY(-50%) rotate(45deg)"
         },
         left: {
           right: `-${ARROW_SIZE - offset}px`,
-          top: "50%",
-          transform: "translateY(-50%) rotate(45deg)"
+          top: subPlacement === "top" ? `16px` : subPlacement === "bottom" ? undefined : "var(--arrow-y, 50%)",
+          bottom: subPlacement === "bottom" ? `16px` : undefined,
+          transform: subPlacement === "top" || subPlacement === "bottom" ? "rotate(45deg)" : "translateY(-50%) rotate(45deg)"
         }
       };
 
-      return { ...base, ...pos[placement] };
+      return { ...base, ...posMap[mainPlacement] };
     },
     [
       placement,

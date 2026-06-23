@@ -54,7 +54,7 @@ export default function App() {
       borderWeight={2}
       borderColor="red"
       style={{
-        width: "100%",
+        width: "100%"
       }}
     >
       <div className="flex gap-10">
@@ -120,18 +120,18 @@ const customTheme = {
       7: "#007abf",
       8: "#005f99",
       9: "#004473",
-      10: "#00294d",
-    },
+      10: "#00294d"
+    }
   },
   components: {
     button: {
       primary: {
         bg: "ocean-6",
         txt: "white-10",
-        border: "ocean-7",
-      },
-    },
-  },
+        border: "ocean-7"
+      }
+    }
+  }
 };
 
 export default function App() {
