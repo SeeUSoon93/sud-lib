@@ -216,119 +216,71 @@ export const PopupBase = ({
 
     // 위치 계산 함수
     const getPos = (main, sub) => {
+      let left = 0, top = 0;
       switch (main) {
-        case "top": {
-          let left = triggerRect.left + triggerRect.width / 2;
-          let transform = "translateX(-50%)";
-          if (sub === "left") {
-            left = triggerRect.left;
-            transform = "none";
-          } else if (sub === "right") {
-            left = triggerRect.right - contentRect.width;
-            transform = "none";
-          }
-          return {
-            top:
-              triggerRect.top - contentRect.height - ARROW_SIZE - TRIGGER_GAP,
-            left,
-            transform
-          };
-        }
-        case "bottom": {
-          let left = triggerRect.left + triggerRect.width / 2;
-          let transform = "translateX(-50%)";
-          if (sub === "left") {
-            left = triggerRect.left;
-            transform = "none";
-          } else if (sub === "right") {
-            left = triggerRect.right - contentRect.width;
-            transform = "none";
-          }
-          return {
-            top: triggerRect.bottom + ARROW_SIZE + TRIGGER_GAP,
-            left,
-            transform
-          };
-        }
-        case "left": {
-          let top = triggerRect.top + triggerRect.height / 2;
-          let transform = "translateY(-50%)";
-          if (sub === "top") {
-            top = triggerRect.top;
-            transform = "none";
-          } else if (sub === "bottom") {
-            top = triggerRect.bottom - contentRect.height;
-            transform = "none";
-          }
-          return {
-            top,
-            left:
-              triggerRect.left - contentRect.width - ARROW_SIZE - TRIGGER_GAP,
-            transform
-          };
-        }
-        case "right": {
-          let top = triggerRect.top + triggerRect.height / 2;
-          let transform = "translateY(-50%)";
-          if (sub === "top") {
-            top = triggerRect.top;
-            transform = "none";
-          } else if (sub === "bottom") {
-            top = triggerRect.bottom - contentRect.height;
-            transform = "none";
-          }
-          return {
-            top,
-            left: triggerRect.right + ARROW_SIZE + TRIGGER_GAP,
-            transform
-          };
-        }
+        case "top":
+          left = triggerRect.left + triggerRect.width / 2 - contentRect.width / 2;
+          if (sub === "left") left = triggerRect.left;
+          else if (sub === "right") left = triggerRect.right - contentRect.width;
+          return { top: triggerRect.top - contentRect.height - ARROW_SIZE - TRIGGER_GAP, left };
+        case "bottom":
+          left = triggerRect.left + triggerRect.width / 2 - contentRect.width / 2;
+          if (sub === "left") left = triggerRect.left;
+          else if (sub === "right") left = triggerRect.right - contentRect.width;
+          return { top: triggerRect.bottom + ARROW_SIZE + TRIGGER_GAP, left };
+        case "left":
+          top = triggerRect.top + triggerRect.height / 2 - contentRect.height / 2;
+          if (sub === "top") top = triggerRect.top;
+          else if (sub === "bottom") top = triggerRect.bottom - contentRect.height;
+          return { top, left: triggerRect.left - contentRect.width - ARROW_SIZE - TRIGGER_GAP };
+        case "right":
+          top = triggerRect.top + triggerRect.height / 2 - contentRect.height / 2;
+          if (sub === "top") top = triggerRect.top;
+          else if (sub === "bottom") top = triggerRect.bottom - contentRect.height;
+          return { top, left: triggerRect.right + ARROW_SIZE + TRIGGER_GAP };
         default:
           return {};
       }
     };
 
     // 실제 위치 계산
-    let pos = getPos(mainPlacement, subPlacement);
+    const pos = getPos(mainPlacement, subPlacement);
 
-    // 화면 벗어남 보정
     const winW = window.innerWidth;
     const winH = window.innerHeight;
+    const width = contentRect.width;
+    const height = contentRect.height;
+    
     let popupLeft = pos.left ?? 0;
     let popupTop = pos.top ?? 0;
-    let width = contentRect.width;
-    let height = contentRect.height;
-    let adjusted = false;
-    const maxLeft = Math.max(8, winW - width - 8);
-    const maxTop = Math.max(8, winH - height - 8);
 
-    // 좌우 화면 벗어남 보정
-    if (popupLeft < 0) {
-      popupLeft = 8; // 좌측 최소 여백
-      adjusted = true;
-    } else if (popupLeft + width > winW) {
-      popupLeft = winW - width - 8; // 우측 최소 여백
-      adjusted = true;
-    }
-    // 상하 화면 벗어남 보정
-    if (popupTop < 0) {
-      popupTop = 8;
-      adjusted = true;
-    } else if (popupTop + height > winH) {
-      popupTop = winH - height - 8;
-      adjusted = true;
-    }
+    // 화면 벗어남 보정
+    const clampedLeft = Math.min(Math.max(popupLeft, 8), Math.max(8, winW - width - 8));
+    const clampedTop = Math.min(Math.max(popupTop, 8), Math.max(8, winH - height - 8));
 
-    // transform은 중앙정렬이 필요할 때만 적용
-    if (adjusted) {
-      pos.transform = undefined;
+    // 화살표 상대 위치 계산
+    let arrowX = "50%";
+    let arrowY = "50%";
+
+    if (mainPlacement === "top" || mainPlacement === "bottom") {
+      const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+      let relativeX = triggerCenterX - clampedLeft;
+      // 둥근 모서리를 벗어나지 않도록 제한
+      relativeX = Math.max(16, Math.min(relativeX, width - 16));
+      arrowX = `${relativeX}px`;
+    } else {
+      const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+      let relativeY = triggerCenterY - clampedTop;
+      relativeY = Math.max(16, Math.min(relativeY, height - 16));
+      arrowY = `${relativeY}px`;
     }
 
     return {
       ...base,
-      ...pos,
-      left: Math.min(Math.max(popupLeft, 8), maxLeft),
-      top: Math.min(Math.max(popupTop, 8), maxTop)
+      top: clampedTop,
+      left: clampedLeft,
+      '--arrow-x': arrowX,
+      '--arrow-y': arrowY
     };
   }, [placement]);
 
@@ -425,29 +377,28 @@ export const PopupBase = ({
         width: `${size}px`,
         height: `${size}px`,
         position: "absolute",
-        transform: "rotate(45deg)",
         zIndex: isBorder ? 1 : 3,
         border: isBorder ? finalBorStyle : undefined,
         borderRadius: "2px 0 0 0",
-        background: !isBorder ? gradientMap[placement] : undefined,
+        background: !isBorder ? gradientMap[mainPlacement] : undefined,
         backgroundColor: isBorder ? (finalBorColor ?? finalBgColor) : undefined,
         boxShadow: isBorder ? boxShadow : undefined
       };
 
-      const pos = {
+      const posMap = {
         bottom: {
           top: `-${ARROW_SIZE - offset}px`,
-          left: "50%",
+          left: "var(--arrow-x, 50%)",
           transform: "translateX(-50%) rotate(45deg)"
         },
         top: {
           bottom: `-${ARROW_SIZE - offset}px`,
-          left: "50%",
+          left: "var(--arrow-x, 50%)",
           transform: "translateX(-50%) rotate(45deg)"
         },
         right: {
           left: `-${ARROW_SIZE - offset}px`,
-          top: "50%",
+          top: "var(--arrow-y, 50%)",
           transform: "translateY(-50%) rotate(45deg)"
         },
         left: {

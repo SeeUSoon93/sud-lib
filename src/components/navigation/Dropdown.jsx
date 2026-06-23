@@ -72,6 +72,14 @@ export const Dropdown = ({
           colorType={colorType}
           parentContentRef={contentRef}
           className="sud-dropdown__menu"
+          background={background}
+          color={color}
+          border={border}
+          borderColor={borderColor}
+          borderType={borderType}
+          borderWeight={borderWeight}
+          shape={shape}
+          shadow={shadow}
         />
       }
       children={children}
