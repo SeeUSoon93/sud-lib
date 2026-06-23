@@ -4,6 +4,7 @@ import "./index.css";
 
 export { Div } from "./components/Div/Div";
 // Data display
+export { Accordion } from "./components/dataDisplay/Accordion";
 export { Avatar } from "./components/dataDisplay/Avatar";
 export { Badge } from "./components/dataDisplay/Badge";
 export { Calendar } from "./components/dataDisplay/Calendar";

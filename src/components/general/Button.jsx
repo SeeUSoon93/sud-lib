@@ -95,7 +95,7 @@ export const Button = ({
   ariaExpanded,
   ariaControls,
   role = "button",
-  size
+  size = "md"
 }) => {
   const theme = useTheme();
   const ref = useRef();

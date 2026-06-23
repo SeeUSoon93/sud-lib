@@ -83,9 +83,9 @@ export const Input = ({
 
   const sizeStyles =
     {
-      sm: { height: 32, fontSize: 14, padding: "4px" },
-      md: { height: 38, fontSize: 16, padding: "6px" },
-      lg: { height: 42, fontSize: 18, padding: "8px" }
+      sm: { height: 32, fontSize: 14, padding: "4px 8px" },
+      md: { height: 38, fontSize: 16, padding: "6px 12px" },
+      lg: { height: 42, fontSize: 18, padding: "8px 16px" }
     }[size] || {};
 
   const inputType = password ? "password" : type;
@@ -189,8 +189,7 @@ export const Input = ({
         className={mergeClassNames(
           "sud-input",
           disabled ? "" : "sud-hover",
-          className,
-          `cursor-${disabled ? "not-allowed" : ""}`
+          className
         )}
         onClick={onClick}
         data-name={name}
@@ -198,6 +197,7 @@ export const Input = ({
         style={{
           display: "inline-flex",
           alignItems: "center",
+          cursor: disabled ? "not-allowed" : "text",
           backgroundColor: disabled
             ? resolveColor("cool-gray-1", theme)
             : finalBgColor,
@@ -239,7 +239,7 @@ export const Input = ({
 
         <input
           ref={inputRef}
-          className={`sud-input__field cursor-${disabled ? "not-allowed" : ""}`}
+          className="sud-input__field"
           type={thousandSeparator ? "text" : inputType}
           value={displayValue}
           onChange={handleChange}
@@ -270,6 +270,7 @@ export const Input = ({
             color: finalTxtColor,
             fontSize: sizeStyles.fontSize,
             height: sizeStyles.height,
+            cursor: disabled ? "not-allowed" : "text",
             width: "100%",
             minWidth: 0,
             overflow: "hidden",
@@ -420,9 +421,9 @@ export const Textarea = ({
 
   const sizeStyles =
     {
-      sm: { height: 32, fontSize: 14, padding: "4px" },
-      md: { height: 38, fontSize: 16, padding: "6px" },
-      lg: { height: 42, fontSize: 18, padding: "8px" }
+      sm: { height: 32, fontSize: 14, padding: "4px 8px" },
+      md: { height: 38, fontSize: 16, padding: "6px 12px" },
+      lg: { height: 42, fontSize: 18, padding: "8px 16px" }
     }[size] || {};
 
   // ✨ autoSize 작동 로직 수정
@@ -498,14 +499,14 @@ export const Textarea = ({
         className={mergeClassNames(
           "sud-textarea",
           disabled ? "" : "sud-hover",
-          className,
-          `cursor-${disabled ? "not-allowed" : ""}`
+          className
         )}
         onClick={onClick}
         data-name={name}
         style={{
           display: "flex",
           flexDirection: "column",
+          cursor: disabled ? "not-allowed" : "text",
           backgroundColor: disabled
             ? resolveColor("cool-gray-1", theme)
             : finalBgColor,
@@ -535,9 +536,7 @@ export const Textarea = ({
         >
           <textarea
             ref={textareaRef}
-            className={`sud-textarea__field cursor-${
-              disabled ? "not-allowed" : ""
-            }`}
+            className="sud-textarea__field"
             value={value}
             onChange={onChange}
             onKeyDown={handleKeyDown}
@@ -568,6 +567,7 @@ export const Textarea = ({
               color: finalTxtColor,
               fontSize: sizeStyles.fontSize,
               resize: resizable ? "vertical" : "none",
+              cursor: disabled ? "not-allowed" : "text",
               minHeight: sizeStyles.height * rows,
               ...(autoSize
                 ? {
@@ -689,9 +689,9 @@ export const OTP = ({
 
   const sizeStyles =
     {
-      sm: { height: 32, fontSize: 14, padding: "4px" },
-      md: { height: 38, fontSize: 16, padding: "6px" },
-      lg: { height: 42, fontSize: 18, padding: "8px" }
+      sm: { height: 32, fontSize: 14, padding: "4px 8px" },
+      md: { height: 38, fontSize: 16, padding: "6px 12px" },
+      lg: { height: 42, fontSize: 18, padding: "8px 16px" }
     }[size] || {};
 
   const inputType = password ? "password" : type;
@@ -779,14 +779,14 @@ export const OTP = ({
         className={mergeClassNames(
           "sud-input-otp",
           disabled ? "" : "sud-hover",
-          className,
-          `cursor-${disabled ? "not-allowed" : ""}`
+          className
         )}
         onClick={onClick}
         data-name={name}
         style={{
           display: "flex",
           alignItems: "center",
+          cursor: disabled ? "not-allowed" : "text",
           gap: 8
         }}
         onPaste={handlePaste}

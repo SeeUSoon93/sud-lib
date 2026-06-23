@@ -86,7 +86,11 @@ export const Card = ({
       {title && (
         <div
           className={`sud-${variant}__title`}
-          style={{ padding: spacing.md, width: "100%" }}
+          style={{ 
+            padding: spacing.md, 
+            paddingBottom: children && !divider ? spacing.sm : spacing.md,
+            width: "100%" 
+          }}
         >
           {typeof title === "string" ? (
             variant === "modal" ? (
@@ -156,6 +160,7 @@ export const Card = ({
             className={`sud-${variant}__body`}
             style={{
               padding: spacing.md,
+              paddingTop: title && !divider ? spacing.sm : spacing.md,
               display: "flex",
               flexDirection: "column",
               gap: spacing.sm,

@@ -72,9 +72,7 @@ export const Sider = forwardRef(
         ref={realRef}
         className={mergeClassNames(
           "sud-sider",
-          "relative flex flex-col gap-10 jus-start Pretendard-R",
-          `z-${siderPosition === "below-header" ? 999 : 1000}`,
-          siderPosition === "below-header" ? `pd-t-${headerHeight}` : "",
+          "relative flex flex-col justify-start gap-[10px]",
           className
         )}
         style={{
@@ -84,6 +82,9 @@ export const Sider = forwardRef(
           height: "100%",
           width: typeof width === "number" ? `${width}px` : width,
           minWidth: 0, // ✅ 내부 요소가 밀리지 않도록
+          zIndex: siderPosition === "below-header" ? 999 : 1000,
+          paddingTop:
+            siderPosition === "below-header" ? `${headerHeight}px` : undefined,
           backgroundColor: finalBgColor,
           color: finalTxtColor,
           overflowX: "hidden", // ✅ 가로 스크롤 방지

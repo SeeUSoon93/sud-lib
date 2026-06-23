@@ -129,7 +129,7 @@ export const Collapse = ({
           >
             <div
               id={`collapse-header-${item.key}`}
-              className="sud-collapse__header flex jus-bet item-cen cursor-pointer"
+              className="sud-collapse__header flex cursor-pointer items-center justify-between"
               onClick={() => {
                 if (!isDisabled) toggle(item.key);
               }}

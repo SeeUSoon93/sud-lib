@@ -370,10 +370,10 @@ export const defaultTheme = {
   },
   shadows: {
     none: "none",
-    sm: "0px 0px 4px rgba(0, 0, 0, 0.2)",
-    md: "0px 0px 8px rgba(0, 0, 0, 0.25)",
-    lg: "0px 0px 12px rgba(0, 0, 0, 0.3)",
-    xl: "0px 0px 16px rgba(0, 0, 0, 0.35)"
+    sm: "0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08)",
+    md: "0 4px 6px -1px rgba(0, 0, 0, 0.16), 0 2px 4px -1px rgba(0, 0, 0, 0.12)",
+    lg: "0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.12)",
+    xl: "0 20px 25px -5px rgba(0, 0, 0, 0.24), 0 10px 10px -5px rgba(0, 0, 0, 0.12)"
   },
   borders: {
     radius: {
@@ -403,21 +403,17 @@ export const defaultTheme = {
   },
   shapes: {
     square: {
-      borderRadius: "0",
-      padding: "10px"
+      borderRadius: "0"
     },
     circle: {
       borderRadius: "50%",
-      aspectRatio: "1/1",
-      padding: "10px"
+      aspectRatio: "1/1"
     },
     rounded: {
-      borderRadius: "10px",
-      padding: "10px"
+      borderRadius: "10px"
     },
     capsule: {
-      borderRadius: "9999px",
-      padding: "10px"
+      borderRadius: "9999px"
     }
   },
   components: {

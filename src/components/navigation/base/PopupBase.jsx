@@ -671,7 +671,7 @@ export const PopupBase = ({
               )}
               {variant === "popconfirm" &&
               (footer === true || footer === undefined) ? (
-                <div className="sud-popconfirm__footer flex flex-row gap-8 item-cen jus-cen">
+                <div className="sud-popconfirm__footer flex flex-row items-center justify-center gap-[8px]">
                   <Button colorType="primary" onClick={handleConfirm}>
                     okay
                   </Button>

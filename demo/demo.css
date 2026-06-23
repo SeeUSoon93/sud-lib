@@ -1,0 +1,49 @@
+@config "../tailwind.demo.config.js";
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f5f7fb;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.demo-shell {
+  background:
+    linear-gradient(135deg, rgba(32, 107, 196, 0.12), transparent 28%),
+    linear-gradient(315deg, rgba(245, 138, 46, 0.12), transparent 24%),
+    #f5f7fb;
+}
+
+.demo-panel {
+  border: 1px solid rgba(32, 41, 57, 0.1);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.demo-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}

@@ -364,9 +364,9 @@ export const Select = ({
 
   const sizeStyles =
     {
-      sm: { height: 32, fontSize: 14, padding: "4px" },
-      md: { height: 38, fontSize: 16, padding: "6px" },
-      lg: { height: 42, fontSize: 18, padding: "8px" }
+      sm: { height: 32, fontSize: 14, padding: "4px 8px" },
+      md: { height: 38, fontSize: 16, padding: "6px 12px" },
+      lg: { height: 42, fontSize: 18, padding: "8px 16px" }
     }[size] || {};
 
   // 선택된 항목 수 표시

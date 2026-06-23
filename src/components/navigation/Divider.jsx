@@ -62,7 +62,7 @@ export const Divider = ({
         width: vertical ? "auto" : width,
         height: vertical ? height : "auto",
         flexDirection: vertical ? "column" : "row",
-        margin: vertical ? "0 1em" : "1em 0",
+        margin: vertical ? "0 12px" : "12px 0",
         gap: content ? "10px" : "0",
         ...style
       }}

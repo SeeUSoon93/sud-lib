@@ -124,9 +124,7 @@ export const getShadowStyle = (shadow = "", theme) => {
  */
 export const getShapeStyles = (shape = "rounded", theme) =>
   theme?.shapes?.[shape] || {
-    borderRadius: "10px",
-    paddingLeft: "14px",
-    paddingRight: "14px"
+    borderRadius: "10px"
   };
 export const getFontStyles = ({ size, weight, theme }) => {
   return {

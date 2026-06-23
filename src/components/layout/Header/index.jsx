@@ -60,9 +60,7 @@ export const Header = forwardRef(
         ref={ref}
         className={mergeClassNames(
           "sud-header",
-          "flex flex-row gap-10 item-cen Pretendard-R",
-          `z-${siderPosition === "above-header" ? 999 : 1000}`,
-          siderPosition === "above-header" ? `pd-l-${siderWidth}` : "",
+          "flex flex-row items-center gap-[10px]",
           className
         )}
         style={{
@@ -75,6 +73,9 @@ export const Header = forwardRef(
           borderBottom: finalBorStyle,
           position: "absolute",
           top: 0,
+          zIndex: siderPosition === "above-header" ? 999 : 1000,
+          paddingLeft:
+            siderPosition === "above-header" ? `${siderWidth}px` : undefined,
           boxShadow,
           ...shapeStyle,
           ...style

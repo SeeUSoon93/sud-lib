@@ -69,8 +69,7 @@ export const Footer = forwardRef(
         ref={realRef}
         className={mergeClassNames(
           "sud-footer",
-          "flex flex-row Pretendard-R pd-10",
-          `z-${siderPosition === "above-header" ? 999 : 1000}`,
+          "flex flex-row",
           className
         )}
         style={{
@@ -86,6 +85,8 @@ export const Footer = forwardRef(
           position: "absolute",
           left: siderPosition === "above-header" ? `${siderWidth}px` : 0,
           bottom: 0,
+          zIndex: siderPosition === "above-header" ? 999 : 1000,
+          padding: 10,
           boxShadow,
           ...shapeStyle,
           ...style
