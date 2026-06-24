@@ -54,6 +54,13 @@ export type borderType =
 
 export type shadowType = "none" | "sm" | "md" | "lg" | "xl";
 
+export type surfaceType =
+  | "bare"
+  | "outlined"
+  | "elevated"
+  | "floating"
+  | "overlay";
+
 export type fontSizeType =
   | "xs"
   | "sm"

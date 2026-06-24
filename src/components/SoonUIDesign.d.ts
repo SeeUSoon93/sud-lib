@@ -1,11 +1,10 @@
 import type { FC, ReactNode } from "react";
-
-export type SoonUITheme = Record<string, unknown>;
+import type { SUDTheme } from "../theme";
 
 export interface SoonUIDesignProps {
   children?: ReactNode;
-  theme?: SoonUITheme;
-  darkTheme?: SoonUITheme;
+  theme?: SUDTheme;
+  darkTheme?: SUDTheme;
   isDarkMode?: boolean;
 }
 

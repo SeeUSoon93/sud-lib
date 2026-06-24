@@ -126,9 +126,12 @@ export interface OTPProps
   length?: number;
 }
 
-declare const Input: FC<InputProps> & {
-  Textarea: FC<TextareaProps>;
-  OTP: FC<OTPProps>;
+export declare const Textarea: FC<TextareaProps>;
+export declare const OTP: FC<OTPProps>;
+
+export declare const Input: FC<InputProps> & {
+  Textarea: typeof Textarea;
+  OTP: typeof OTP;
 };
 
 export default Input;

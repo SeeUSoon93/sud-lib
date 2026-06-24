@@ -1,0 +1,10 @@
+export { default as Layout } from "./Layout/index.d";
+export * from "./Layout/index.d";
+export { default as Header } from "./Header/index.d";
+export * from "./Header/index.d";
+export { default as Sider } from "./Sider/index.d";
+export * from "./Sider/index.d";
+export { default as Content } from "./Content/index.d";
+export * from "./Content/index.d";
+export { default as Footer } from "./Footer/index.d";
+export * from "./Footer/index.d";

@@ -9,11 +9,112 @@ const read = (file) => fs.readFileSync(file, "utf8");
 
 const toPosix = (value) => value.replaceAll(path.sep, "/");
 
-const normalizeTypeSpecifier = (specifier) =>
-  specifier.replace(/\.d$/, "").replace(/^\.\//, "");
+const sourceCandidates = (basePath) => [
+  `${basePath}.js`,
+  `${basePath}.jsx`,
+  path.join(basePath, "index.js"),
+  path.join(basePath, "index.jsx")
+];
+
+const typeCandidates = (basePath) => [
+  basePath,
+  `${basePath}.ts`,
+  `${basePath}.d.ts`,
+  path.join(basePath, "index.d.ts")
+];
+
+const resolveFromSpecifier = (fromDir, specifier, candidates) => {
+  const basePath = path.resolve(fromDir, specifier);
+  return candidates(basePath).find(
+    (file) => fs.existsSync(file) && fs.statSync(file).isFile()
+  );
+};
+
+const parseExportNames = (exportList) =>
+  exportList
+    .split(",")
+    .map((name) => name.trim().split(/\s+as\s+/i).pop())
+    .filter(Boolean);
+
+const collectJsExports = (file, seen = new Set()) => {
+  if (!file || seen.has(file)) return new Set();
+  seen.add(file);
+
+  const code = read(file);
+  const dir = path.dirname(file);
+  const names = new Set();
+
+  for (const match of code.matchAll(
+    /export\s+\{([^}]+)\}\s+from\s+["'](.+?)["'];?/g
+  )) {
+    for (const name of parseExportNames(match[1])) {
+      names.add(name);
+    }
+  }
+
+  for (const match of code.matchAll(
+    /export\s+(?:const|function|class)\s+([A-Za-z_$][\w$]*)/g
+  )) {
+    names.add(match[1]);
+  }
+
+  for (const match of code.matchAll(/export\s+\*\s+from\s+["'](.+?)["'];?/g)) {
+    const child = resolveFromSpecifier(dir, match[1], sourceCandidates);
+    if (!child) continue;
+
+    for (const name of collectJsExports(child, seen)) {
+      names.add(name);
+    }
+  }
+
+  return names;
+};
+
+const missingTypeTargets = [];
+
+const collectTypeExports = (file, seen = new Set()) => {
+  if (!file || seen.has(file)) return new Set();
+  seen.add(file);
+
+  const code = read(file);
+  const dir = path.dirname(file);
+  const names = new Set();
+
+  for (const match of code.matchAll(
+    /export\s+\{([^}]+)\}\s+from\s+["'](.+?)["'];?/g
+  )) {
+    for (const name of parseExportNames(match[1])) {
+      names.add(name);
+    }
+
+    const child = resolveFromSpecifier(dir, match[2], typeCandidates);
+    if (!child) {
+      missingTypeTargets.push(path.resolve(dir, match[2]));
+    }
+  }
+
+  for (const match of code.matchAll(
+    /export\s+(?:declare\s+)?(?:const|function|class|interface|type)\s+([A-Za-z_$][\w$]*)/g
+  )) {
+    names.add(match[1]);
+  }
+
+  for (const match of code.matchAll(/export\s+\*\s+from\s+["'](.+?)["'];?/g)) {
+    const child = resolveFromSpecifier(dir, match[1], typeCandidates);
+    if (!child) {
+      missingTypeTargets.push(path.resolve(dir, match[1]));
+      continue;
+    }
+
+    for (const name of collectTypeExports(child, seen)) {
+      names.add(name);
+    }
+  }
+
+  return names;
+};
 
 const js = read(srcIndex);
-const dts = read(typeIndex);
 
 const directJsExports = [
   ...js.matchAll(/export\s+\{([^}]+)\}\s+from\s+["'](.+?)["'];?/g)
@@ -26,19 +127,9 @@ const directJsExports = [
     .map((name) => ({ name, specifier }));
 });
 
-const typeSpecifiers = [
-  ...dts.matchAll(/export\s+\*\s+from\s+["'](.+?)["'];?/g)
-].map((match) => normalizeTypeSpecifier(match[1]));
-
-const missingTypeFiles = typeSpecifiers.filter((specifier) => {
-  const file = path.join(root, "src", `${specifier}.d.ts`);
-  return !fs.existsSync(file);
-});
-
-const missingTypeEntries = directJsExports.filter(({ specifier }) => {
-  if (specifier === "index.css") return false;
-  return !typeSpecifiers.includes(specifier);
-});
+const jsExports = collectJsExports(srcIndex);
+const typeExports = collectTypeExports(typeIndex);
+const missingTypeEntries = [...jsExports].filter((name) => !typeExports.has(name));
 
 const distFiles = ["dist/index.js", "dist/index.d.ts", "dist/index.css"];
 const missingDistFiles = distFiles.filter(
@@ -46,21 +137,21 @@ const missingDistFiles = distFiles.filter(
 );
 
 if (
-  missingTypeFiles.length ||
   missingTypeEntries.length ||
+  missingTypeTargets.length ||
   missingDistFiles.length
 ) {
-  if (missingTypeFiles.length) {
+  if (missingTypeTargets.length) {
     console.error("Missing .d.ts files referenced by src/index.d.ts:");
-    for (const specifier of missingTypeFiles) {
-      console.error(`- src/${toPosix(specifier)}.d.ts`);
+    for (const target of [...new Set(missingTypeTargets)]) {
+      console.error(`- ${toPosix(path.relative(root, target))}`);
     }
   }
 
   if (missingTypeEntries.length) {
-    console.error("JS exports without matching type barrel entries:");
-    for (const { name, specifier } of missingTypeEntries) {
-      console.error(`- ${name} from src/${toPosix(specifier)}`);
+    console.error("Public JS exports missing from src/index.d.ts:");
+    for (const name of missingTypeEntries) {
+      console.error(`- ${name}`);
     }
   }
 
@@ -75,5 +166,5 @@ if (
 }
 
 console.log(
-  `Export check passed: ${directJsExports.length} JS exports, ${typeSpecifiers.length} type barrels.`
+  `Export check passed: ${jsExports.size} public JS exports, ${typeExports.size} root type exports, ${directJsExports.length} direct JS re-exports.`
 );
