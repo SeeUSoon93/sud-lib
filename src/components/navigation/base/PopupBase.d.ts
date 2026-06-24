@@ -9,7 +9,8 @@ import type {
   defaultColorType,
   borderType,
   shadowType,
-  shapeType
+  shapeType,
+  surfaceType
 } from "../../commonType";
 
 export type PopupTrigger = "click" | "hover" | "contextMenu";
@@ -58,6 +59,7 @@ export interface PopupBaseProps
   borderWeight?: number;
   shape?: shapeType;
   shadow?: shadowType;
+  surface?: surfaceType;
   colorType?: defaultColorType;
   style?: CSSProperties;
   wrapperStyle?: CSSProperties;

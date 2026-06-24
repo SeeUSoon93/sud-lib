@@ -16,7 +16,7 @@ const sizeMap = {
 export const TimePicker = ({
   colorType = "default",
   shape = "rounded",
-  shadow = "sm",
+  shadow,
   size = "md",
   disabled = false,
   readOnly = false,

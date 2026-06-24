@@ -232,6 +232,7 @@ export const Calendar = ({
   }, [viewDate]);
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
+    theme,
     border,
     fallback: colorType,
     componentType: "tag"

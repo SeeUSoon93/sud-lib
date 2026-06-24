@@ -8,7 +8,8 @@ import {
   resolveColor,
   mergeClassNames,
   getShapeStyles,
-  getShadowStyle
+  getShadowStyle,
+  resolveSurfaceStyle
 } from "../../theme/themeUtils";
 import { Typography } from "../general/Typography";
 
@@ -17,7 +18,7 @@ export const Collapse = ({
   openKeys: controlledOpenKeys,
   defaultOpenKeys = [],
   onChange,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
@@ -27,7 +28,8 @@ export const Collapse = ({
   contentColorType = "default",
   contentBackground,
   contentColor,
-  shadow = "sm",
+  shadow,
+  surface = "outlined",
   disabledKeys = [],
   className = "",
   size = "md",
@@ -38,6 +40,12 @@ export const Collapse = ({
   const theme = useTheme();
   const [internalOpenKeys, setInternalOpenKeys] = useState(defaultOpenKeys);
   const openKeys = controlledOpenKeys ?? internalOpenKeys;
+  const { border: resolvedBorder, shadow: resolvedShadow } =
+    resolveSurfaceStyle({
+      surface,
+      border,
+      shadow
+    });
 
   const toggle = (key) => {
     const next = openKeys.includes(key)
@@ -54,12 +62,14 @@ export const Collapse = ({
     borColor: headerBorderColor,
     txtColor: headerTxtColor
   } = computeColorStyles({
+    theme,
     border: true,
     fallback: headerColorType
   });
 
   const { bgColor: contentBgColor, txtColor: contentTxtColor } =
     computeColorStyles({
+    theme,
       border: false,
       fallback: contentColorType
     });
@@ -81,17 +91,18 @@ export const Collapse = ({
     : contentTxtColor;
 
   const finalBorderStyle =
-    border && finalBorderColor
+    resolvedBorder && finalBorderColor
       ? `${borderWeight}px ${borderType} ${finalBorderColor}`
       : "none";
 
   const { bgColor: disabledBgColor, txtColor: disabledTxtColor } =
     computeColorStyles({
+    theme,
       border: false,
       fallback: "disabled"
     });
 
-  const boxShadow = getShadowStyle(shadow, theme);
+  const boxShadow = getShadowStyle(resolvedShadow, theme);
   const shapeStyle = getShapeStyles(shape, theme);
   const spacing = theme.spacing[size] || theme.spacing.md;
 

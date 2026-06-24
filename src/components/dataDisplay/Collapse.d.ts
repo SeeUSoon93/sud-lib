@@ -3,7 +3,8 @@ import type {
   defaultColorType,
   shapeType,
   borderType,
-  shadowType
+  shadowType,
+  surfaceType
 } from "../commonType";
 
 export type CollapseSize = "sm" | "md" | "lg";
@@ -30,6 +31,7 @@ export interface CollapseProps extends HTMLAttributes<HTMLDivElement> {
   contentBackground?: string;
   contentColor?: string;
   shadow?: shadowType;
+  surface?: surfaceType;
   disabledKeys?: string[];
   className?: string;
   size?: CollapseSize;

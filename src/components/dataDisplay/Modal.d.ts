@@ -3,7 +3,8 @@ import type {
   defaultColorType,
   shapeType,
   borderType,
-  shadowType
+  shadowType,
+  surfaceType
 } from "../commonType";
 
 export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
@@ -22,6 +23,7 @@ export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   borderWeight?: number;
   shape?: shapeType;
   shadow?: shadowType;
+  surface?: surfaceType;
   width?: number | string;
   height?: number | string;
   className?: string;

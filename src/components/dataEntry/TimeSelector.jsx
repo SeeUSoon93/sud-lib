@@ -19,8 +19,6 @@ export const TimeSelector = ({
   const theme = useTheme();
   const [hoverTime, setHoverTime] = useState(null);
   const [rangePhase, setRangePhase] = useState(0); // 0: start, 1: end
-  const [selectedUnit, setSelectedUnit] = useState("hour");
-
   const [touchedUnits, setTouchedUnits] = useState({
     startTime: { hour: false, minute: false, second: false },
     endTime: { hour: false, minute: false, second: false }
@@ -73,11 +71,11 @@ export const TimeSelector = ({
   const hours = useMemo(() => {
     const base = is12 ? 12 : 24;
     return Array.from({ length: base }, (_, i) => i + (is12 ? 1 : 0));
-  }, [use12Hours]);
+  }, [is12]);
 
   const minutes = useMemo(
     () => Array.from({ length: 60 / minuteStep }, (_, i) => i * minuteStep),
-    [step]
+    [minuteStep]
   );
 
   const seconds = useMemo(() => Array.from({ length: 60 }, (_, i) => i), []);
@@ -123,7 +121,6 @@ export const TimeSelector = ({
 
     if (isRange && rangePhase === 0 && isComplete(nextTouched.startTime)) {
       setRangePhase(1);
-      setSelectedUnit("hour");
     }
 
     if (isRange && rangePhase === 1 && isComplete(nextTouched.endTime)) {
@@ -156,12 +153,14 @@ export const TimeSelector = ({
   };
 
   const { bgColor, txtColor } = computeColorStyles({
+    theme,
     border: false,
     fallback: colorType,
     componentType: "tag"
   });
 
   const { bgColor: hoverBgColor } = computeColorStyles({
+    theme,
     border: false,
     fallback: hoverColorType,
     componentType: "etc"

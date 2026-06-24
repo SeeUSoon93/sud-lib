@@ -13,7 +13,8 @@ import {
   resolveColor,
   getShadowStyle,
   getShapeStyles,
-  mergeClassNames
+  mergeClassNames,
+  resolveSurfaceStyle
 } from "../../../theme/themeUtils";
 import { useTheme } from "../../../theme/ThemeContext";
 import {
@@ -47,12 +48,13 @@ export const PopupBase = ({
   divider = false,
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
   shape = "rounded",
-  shadow = "sm",
+  shadow,
+  surface = "floating",
   colorType = "default",
   style = {},
   wrapperStyle = {},
@@ -88,6 +90,12 @@ export const PopupBase = ({
 
   const isControlled = controlledOpen !== undefined;
   const actualOpen = isControlled ? controlledOpen : open;
+  const { border: resolvedBorder, shadow: resolvedShadow } =
+    resolveSurfaceStyle({
+      surface,
+      border,
+      shadow
+    });
 
   // 컴포넌트가 마운트된 후에만 document 객체에 접근
   useEffect(() => {
@@ -121,7 +129,7 @@ export const PopupBase = ({
     [isControlled, onOpenChange, contentRef]
   );
 
-  const show = () => {
+  const show = useCallback(() => {
     if (!disabled && !actualOpen && contentRef?.current) {
       // 타이머가 있다면 제거
       if (leaveTimer.current) {
@@ -133,9 +141,9 @@ export const PopupBase = ({
     } else if (!disabled && !actualOpen) {
       setOpenState(true);
     }
-  };
+  }, [actualOpen, contentRef, disabled, setOpenState]);
 
-  const hide = () => {
+  const hide = useCallback(() => {
     if (disabled) return;
 
     // click 트리거일 때는 즉시 닫기
@@ -152,11 +160,11 @@ export const PopupBase = ({
     leaveTimer.current = setTimeout(() => {
       setOpenState(false);
     }, 100);
-  };
+  }, [disabled, setOpenState, trigger]);
 
-  const toggle = () => {
-    !disabled && setOpenState(!actualOpen);
-  };
+  const toggle = useCallback(() => {
+    if (!disabled) setOpenState(!actualOpen);
+  }, [actualOpen, disabled, setOpenState]);
 
   const handleConfirm = () => {
     onConfirm?.();
@@ -182,10 +190,11 @@ export const PopupBase = ({
     document.addEventListener("click", handleClickOutside, true);
     return () =>
       document.removeEventListener("click", handleClickOutside, true);
-  }, [trigger, actualOpen, hide]);
+  }, [trigger, actualOpen, hide, contentRef]);
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
-    border,
+    theme,
+    border: resolvedBorder,
     fallback: colorType
   });
   const finalBgColor = background ? resolveColor(background, theme) : bgColor;
@@ -194,12 +203,12 @@ export const PopupBase = ({
     ? resolveColor(borderColor, theme)
     : borColor;
   const finalBorStyle =
-    border && finalBorColor
+    resolvedBorder && finalBorColor
       ? `${borderWeight}px ${borderType} ${finalBorColor}`
       : "none";
 
-  const boxShadow = getShadowStyle(shadow, theme);
-  const shapeStyle = getShapeStyles(shape);
+  const boxShadow = getShadowStyle(resolvedShadow, theme);
+  const shapeStyle = getShapeStyles(shape, theme);
 
   const calculatePosition = useCallback(() => {
     if (!triggerRef.current || !contentRef.current) return {};
@@ -282,7 +291,7 @@ export const PopupBase = ({
       '--arrow-x': arrowX,
       '--arrow-y': arrowY
     };
-  }, [placement]);
+  }, [placement, contentRef]);
 
   useLayoutEffect(() => {
     if (
@@ -307,7 +316,7 @@ export const PopupBase = ({
         pointerEvents: "none"
       }));
     }
-  }, [actualOpen, isPositioned, calculatePosition]);
+  }, [actualOpen, isPositioned, calculatePosition, contentRef]);
   useEffect(() => {
     if (!actualOpen) return;
 
@@ -359,7 +368,7 @@ export const PopupBase = ({
   const getDiamondStyle = useCallback(
     ({ type = "background" }) => {
       const isBorder = type === "border";
-      const hasVisibleBorder = finalBorColor && borderWeight > 0;
+      const hasVisibleBorder = resolvedBorder && finalBorColor && borderWeight > 0;
       const size = ARROW_SIZE * 2 + (hasVisibleBorder ? borderWeight * 2 : 0);
       const pythagoras = Math.sqrt(borderWeight * borderWeight * 2);
       const offset = !isBorder && hasVisibleBorder ? pythagoras : 0;
@@ -419,6 +428,7 @@ export const PopupBase = ({
       finalBgColor,
       finalBorColor,
       finalBorStyle,
+      resolvedBorder,
       borderWeight,
       boxShadow
     ]
@@ -463,10 +473,12 @@ export const PopupBase = ({
       document.removeEventListener("pointermove", handlePointer);
       clearTimeout(leaveTimer.current);
     };
-  }, [trigger, actualOpen, show, hide]);
+  }, [trigger, actualOpen, show, hide, contentRef]);
 
   // 등록: 전역 popup 그룹에 자신을 추가 (형제 관리를 위한 새로운 방식)
   useEffect(() => {
+    const currentPopupId = popupId.current;
+
     if (trigger === "hover") {
       // WeakSet/WeakMap에 등록
       globalActivePopupRefs.add(contentRef);
@@ -477,7 +489,7 @@ export const PopupBase = ({
 
         // 그룹에 등록
         const siblings = popupGroup.get(parentRef) || new Set();
-        siblings.add(popupId.current);
+        siblings.add(currentPopupId);
         popupGroup.set(parentRef, siblings);
       }
     }
@@ -488,7 +500,7 @@ export const PopupBase = ({
         show,
         hide,
         toggle,
-        id: popupId.current,
+        id: currentPopupId,
         parentRef: parentRef
       };
     }
@@ -501,7 +513,7 @@ export const PopupBase = ({
         if (parentRef) {
           const siblings = popupGroup.get(parentRef);
           if (siblings) {
-            siblings.delete(popupId.current);
+            siblings.delete(currentPopupId);
             if (siblings.size === 0) {
               popupGroup.delete(parentRef);
             }
@@ -515,7 +527,7 @@ export const PopupBase = ({
         }
       }
     };
-  }, [trigger, parentRef, show, hide, toggle]);
+  }, [trigger, parentRef, show, hide, toggle, contentRef]);
 
   return (
     <div

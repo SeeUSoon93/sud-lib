@@ -14,7 +14,8 @@ import {
   resolveColor,
   getShapeStyles,
   getShadowStyle,
-  mergeClassNames
+  mergeClassNames,
+  resolveSurfaceStyle
 } from "../../theme/themeUtils";
 import { useTheme } from "../../theme/ThemeContext";
 import { Tag } from "../dataDisplay/Tag";
@@ -38,7 +39,7 @@ const getNodeText = (node) => {
 export const Select = ({
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
@@ -50,11 +51,12 @@ export const Select = ({
   value,
   onChange = () => {},
   shape = "rounded",
-  shadow = "sm",
+  shadow,
+  surface = "outlined",
   size = "md",
   id,
   tagColorType = "default",
-  colorType = "default",
+  colorType: _colorType = "default",
   label,
   errorText,
   error = false,
@@ -88,6 +90,12 @@ export const Select = ({
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
   const optionRefs = useRef([]);
+  const { border: resolvedBorder, shadow: resolvedShadow } =
+    resolveSurfaceStyle({
+      surface,
+      border,
+      shadow
+    });
 
   const getOptionText = useCallback(
     (option) => {
@@ -335,7 +343,7 @@ export const Select = ({
         setFocusedIndex(selectedIndex);
       }
     }
-  }, [open]); // open 상태가 변경될 때만 실행
+  }, [open, filteredOptions, multiMode, search, value]);
 
   const handleClear = () => {
     onChange(multiMode ? [] : null);
@@ -344,7 +352,8 @@ export const Select = ({
   };
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
-    border,
+    theme,
+    border: resolvedBorder,
     fallback: error ? "error" : isFocused ? "focus" : "default",
     componentType: "input"
   });
@@ -355,12 +364,12 @@ export const Select = ({
     ? resolveColor(borderColor, theme)
     : borColor;
   const finalBorStyle =
-    border && finalBorColor
+    resolvedBorder && finalBorColor
       ? `${borderWeight}px ${borderType} ${finalBorColor}`
       : "none";
 
   const shapeStyle = getShapeStyles(shape, theme);
-  const boxShadow = getShadowStyle(shadow, theme);
+  const boxShadow = getShadowStyle(resolvedShadow, theme);
 
   const sizeStyles =
     {
@@ -381,6 +390,7 @@ export const Select = ({
     <div
       ref={wrapperRef}
       className={mergeClassNames("sud-select", className)}
+      data-color-type={_colorType}
       style={{
         position: "relative",
         maxWidth: "100%",

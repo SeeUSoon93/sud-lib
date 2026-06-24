@@ -290,6 +290,7 @@ export const Accordion = ({
         : "default";
 
     const computed = computeColorStyles({
+    theme,
       border: false,
       componentType: "etc",
       fallback
@@ -310,11 +311,13 @@ export const Accordion = ({
   };
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
+    theme,
     border,
     fallback: colorType
   });
 
   const { borColor: dividerBorColor } = computeColorStyles({
+    theme,
     border: divider,
     fallback: colorType
   });

@@ -220,7 +220,6 @@ const TimelineItem = React.memo(
     rightContent,
     dotPosition = "center",
     isLast = false,
-    textAlignMode = "left",
     className,
     role,
     "aria-label": ariaLabel,
@@ -232,6 +231,7 @@ const TimelineItem = React.memo(
     const theme = useTheme();
     const finalColor = resolveColor(color, theme);
     const { txtColor, borColor } = computeColorStyles({
+    theme,
       border: true,
       fallback: "default"
     });

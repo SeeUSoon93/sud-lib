@@ -20,6 +20,4 @@ export interface RateProps extends HTMLAttributes<HTMLDivElement> {
   icon?: RateIcon;
 }
 
-declare const Rate: FC<RateProps>;
-
-export default Rate;
+export declare const Rate: FC<RateProps>;

@@ -388,7 +388,6 @@ export const ColorPicker = ({
   className = "",
   size = "sm",
   popConfirmProps = {},
-  selectProps = {},
   inputProps = {},
   sliderProps = {},
   cardProps = {},
@@ -407,7 +406,6 @@ export const ColorPicker = ({
 
   // 수정 1: 커서 위치를 항상 퍼센트(%)로 관리합니다. (초기값 중앙)
   const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
-  const [hsb, setHsb] = useState({ h: 210, s: 100, b: 100 });
   const [rgb, setRgb] = useState({ r: 22, g: 119, b: 255 });
 
   const sizeMap = {
@@ -456,7 +454,6 @@ export const ColorPicker = ({
       };
 
       setRgb({ r, g, b });
-      setHsb(nextHsb);
       setHue(newHue);
 
       // 수정 3: 색상이 변경되면 커서 위치도 동기화합니다.
@@ -487,7 +484,7 @@ export const ColorPicker = ({
     const nextAlpha = parsedColor.alpha ?? 100;
     setAlpha(nextAlpha);
     updateAllFromRGB(parsedColor, nextAlpha);
-  }, [externalColor]); // updateAllFromRGB가 의존성 배열에 없어도 괜찮게 useCallback 처리
+  }, [externalColor, updateAllFromRGB]);
 
   const handleMouseMove = useCallback(
     (e) => {

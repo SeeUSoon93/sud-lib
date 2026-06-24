@@ -42,7 +42,7 @@ export const toast = {
     addToastHandler?.({ type: "warning", message, ...options })
 };
 
-export const ToastRoot = ({}) => {
+export const ToastRoot = () => {
   const [toasts, setToasts] = useState([]);
   const [mounted, setMounted] = useState(false);
 
@@ -111,6 +111,7 @@ const ToastItem = ({ id, type, message, duration, onClose, icon }) => {
   }, [id, duration, onClose]);
 
   const { bgColor } = computeColorStyles({
+    theme,
     border: false,
     fallback: type,
     componentType: "toast"

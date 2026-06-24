@@ -20,12 +20,13 @@ export const Drawer = ({
   dividerColor,
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
   shape = "rounded",
-  shadow = "sm",
+  shadow,
+  surface = "floating",
   width = 300,
   height = 300,
   className = "",
@@ -221,6 +222,7 @@ export const Drawer = ({
             borderType={borderType}
             borderWeight={borderWeight}
             shadow={shadow}
+            surface={surface}
             width={width}
             height={height}
             className={className}

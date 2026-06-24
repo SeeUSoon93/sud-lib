@@ -1,13 +1,11 @@
 "use client";
 import "../../index.css";
 import React from "react";
-import { applyPulseEffect } from "../../utils/styleUtils";
 import { useTheme } from "../../theme/ThemeContext";
 import {
   computeColorStyles,
   resolveColor,
   mergeClassNames,
-  getShapeStyles,
   getShadowStyle
 } from "../../theme/themeUtils";
 
@@ -29,6 +27,7 @@ export const Div = ({
   const theme = useTheme();
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
+    theme,
     border,
     fallback: colorType
   });

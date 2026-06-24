@@ -37,6 +37,7 @@ export const Segmented = ({
   const isDisabled = (opt) => typeof opt === "object" && opt.disabled;
 
   const { bgColor: wrapperBg } = computeColorStyles({
+    theme,
     fallback: "hovered",
     componentType: "etc"
   });

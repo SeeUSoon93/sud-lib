@@ -103,6 +103,7 @@ export const Badge = ({
   const theme = useTheme();
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
+    theme,
     border,
     fallback: colorType,
     componentType: "tag"

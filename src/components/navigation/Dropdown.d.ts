@@ -5,7 +5,8 @@ import type {
   defaultColorType,
   shapeType,
   borderType,
-  shadowType
+  shadowType,
+  surfaceType
 } from "../commonType";
 
 export interface DropdownProps
@@ -28,6 +29,7 @@ export interface DropdownProps
   borderWeight?: number;
   shape?: shapeType;
   shadow?: shadowType;
+  surface?: surfaceType;
   expandType?: "accordion" | "popover";
   popupPlacement?: PopupPlacement;
   placement?: [PopupPlacement, PopupPlacement];

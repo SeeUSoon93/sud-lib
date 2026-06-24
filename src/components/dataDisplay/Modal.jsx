@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Card } from "./Card";
-import { useTheme } from "../../theme/ThemeContext";
 
 export const Modal = ({
   open = false,
@@ -15,12 +14,13 @@ export const Modal = ({
   colorType = "default",
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
   shape = "rounded",
-  shadow = "lg",
+  shadow,
+  surface = "overlay",
   width = 480,
   height,
   className = "",
@@ -32,8 +32,6 @@ export const Modal = ({
   thumb,
   ...rest
 }) => {
-  const theme = useTheme();
-
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape" && onEsc && open) {
@@ -82,6 +80,7 @@ export const Modal = ({
           borderType={borderType}
           borderWeight={borderWeight}
           shadow={shadow}
+          surface={surface}
           shape={shape}
           width={width}
           height={height}

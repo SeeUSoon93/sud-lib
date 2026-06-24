@@ -3,7 +3,8 @@ import type {
   defaultColorType,
   shapeType,
   borderType,
-  shadowType
+  shadowType,
+  surfaceType
 } from "../commonType";
 
 export type DrawerPlacement = "left" | "right" | "top" | "bottom";
@@ -25,6 +26,7 @@ export interface DrawerProps extends HTMLAttributes<HTMLDivElement> {
   borderWeight?: number;
   shape?: shapeType;
   shadow?: shadowType;
+  surface?: surfaceType;
   width?: number | string;
   height?: number | string;
   className?: string;

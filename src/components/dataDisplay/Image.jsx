@@ -55,7 +55,7 @@ export const Image = ({
   onClick,
   ratio,
   shape = "square",
-  shadow = "",
+  shadow = "none",
   borderColor,
   borderType = "solid",
   borderWeight = "1",
@@ -84,11 +84,11 @@ export const Image = ({
   };
 
   // 🧮 비율 계산
-  let aspectRatio = 1;
+  let cssAspectRatio;
   if (ratio && ratio.includes("/")) {
     const [w, h] = ratio.split("/").map(Number);
     if (!isNaN(w) && !isNaN(h) && h !== 0) {
-      aspectRatio = h / w;
+      cssAspectRatio = `${w} / ${h}`;
     }
   }
 
@@ -109,6 +109,7 @@ export const Image = ({
         ? `${height}px`
         : height
       : "auto",
+    aspectRatio: cssAspectRatio,
     borderStyle: borderColor ? borderType : undefined,
     borderWidth: borderColor ? `${borderWeight}px` : undefined,
     borderColor: borderColor ? resolveColor(borderColor, theme) : undefined,
@@ -124,7 +125,10 @@ export const Image = ({
     display: "block"
   };
 
-  if (width && !height) {
+  if (cssAspectRatio && width && !height) {
+    imgStyle.width = "100%";
+    imgStyle.height = "100%";
+  } else if (width && !height) {
     imgStyle.width = "100%";
     imgStyle.height = "auto";
   } else if (!width && height) {

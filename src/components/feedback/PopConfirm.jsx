@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { CheckCircleFill, ErrorCircleFill, XMarkCircleFill } from "sud-icons";
 import { Button } from "../general/Button";
 import { PopupBase } from "../navigation/base/PopupBase";
-import { useTheme } from "../../theme/ThemeContext";
 import { Typography } from "../general/Typography";
 import { Div } from "../Div/Div";
 
@@ -23,12 +22,13 @@ export const PopConfirm = ({
   background,
   divider = false,
   color,
-  border = true,
+  border,
   borderColor,
   borderType,
   borderWeight,
   shape = "rounded",
   shadow,
+  surface,
   colorType,
   type = "primary",
   onCancel,
@@ -37,7 +37,6 @@ export const PopConfirm = ({
   style = {},
   ...rest
 }) => {
-  const theme = useTheme();
   // 내부 open 상태 (uncontrolled용)
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const isControlled = open !== undefined;
@@ -125,6 +124,7 @@ export const PopConfirm = ({
       borderWeight={borderWeight}
       shape={shape}
       shadow={shadow}
+      surface={surface}
       divider={divider}
       title={titleWithIcon()}
       content={content}

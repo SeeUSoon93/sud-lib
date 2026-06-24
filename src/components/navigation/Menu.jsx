@@ -7,7 +7,6 @@ import { AngleDown, AngleRight } from "sud-icons";
 import { Divider } from "./Divider";
 import {
   resolveColor,
-  getShapeStyles,
   computeColorStyles,
   mergeClassNames
 } from "../../theme/themeUtils";
@@ -24,6 +23,7 @@ const PopoverItem = ({
   placement,
   colorType
 }) => {
+  const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 
   const triggerRef = useRef();
@@ -35,6 +35,7 @@ const PopoverItem = ({
 
   const fallback = isSelected ? "selected" : "hovered";
   const computed = computeColorStyles({
+    theme,
     border: false,
     componentType: "etc",
     fallback
@@ -51,8 +52,6 @@ const PopoverItem = ({
     const handleMove = (e) => {
       const el = e.target;
       const insideTrigger = triggerRef.current?.contains(el);
-      const insideContent = itemContentRef.current?.contains(el); // 부모 팝업 참조(근데 최상위만 참조안함..)
-
       if (insideTrigger) {
         if (!isHovered) setIsHovered(true);
       } else {
@@ -213,15 +212,8 @@ export const Menu = ({
     return <Accordion {...commonProps} />;
   }
 
-  const { borColor } = computeColorStyles({
-    border,
-    fallback: colorType
-  });
-  const finalBorColor = borderColor
-    ? resolveColor(borderColor, theme)
-    : borColor;
-
   const { borColor: dividerBorColor } = computeColorStyles({
+    theme,
     border: divider,
     fallback: colorType
   });

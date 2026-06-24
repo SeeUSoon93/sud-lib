@@ -43,10 +43,6 @@ export const Table = ({
   emptyText = "데이터가 없습니다",
   ...rest
 }) => {
-  if (columns.length === 0 || dataSource.length === 0) {
-    return <Empty description={emptyText} />;
-  }
-
   const theme = useTheme();
   const [sortConfig, setSortConfig] = useState(null);
   const [currentPage, setCurrentPage] = useState(
@@ -67,6 +63,7 @@ export const Table = ({
     txtColor,
     borColor: defaultBorColor
   } = computeColorStyles({
+    theme,
     fallback: colorType,
     componentType: "button",
     border
@@ -158,18 +155,6 @@ export const Table = ({
     },
     [pagination]
   );
-
-  const getPaginationAlignStyle = useCallback((position) => {
-    const alignMap = {
-      left: "flex-start",
-      center: "center",
-      right: "flex-end"
-    };
-    if (position.includes("left")) return alignMap.left;
-    if (position.includes("center")) return alignMap.center;
-    if (position.includes("right")) return alignMap.right;
-    return alignMap.center;
-  }, []);
 
   const headerWrapperRef = useRef(null);
   const bodyWrapperRef = useRef(null);

@@ -3,7 +3,8 @@ import {
   resolveColor,
   getShapeStyles,
   getShadowStyle,
-  mergeClassNames
+  mergeClassNames,
+  resolveSurfaceStyle
 } from "../../theme/themeUtils";
 import { useTheme } from "../../theme/ThemeContext";
 import { useRef, useEffect, useState } from "react";
@@ -12,7 +13,7 @@ import { Typography } from "../general/Typography";
 export const Input = ({
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
@@ -36,7 +37,8 @@ export const Input = ({
   onEnter = () => {},
   onKeyDown = () => {},
   shape = "rounded",
-  shadow = "sm",
+  shadow,
+  surface = "outlined",
   size = "md",
   id,
   name,
@@ -55,9 +57,16 @@ export const Input = ({
   const theme = useTheme();
   const inputRef = useRef(null);
   const [isFocused, setIsFocused] = useState(autoFocus);
+  const { border: resolvedBorder, shadow: resolvedShadow } =
+    resolveSurfaceStyle({
+      surface,
+      border,
+      shadow
+    });
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
-    border,
+    theme,
+    border: resolvedBorder,
     fallback: error ? "error" : isFocused ? "focus" : "default",
     componentType: "input"
   });
@@ -74,12 +83,12 @@ export const Input = ({
     ? resolveColor(borderColor, theme)
     : borColor;
   const finalBorStyle =
-    border && finalBorColor
+    resolvedBorder && finalBorColor
       ? `${borderWeight}px ${borderType} ${finalBorColor}`
       : "none";
 
   const shapeStyle = getShapeStyles(shape, theme);
-  const boxShadow = getShadowStyle(shadow, theme);
+  const boxShadow = getShadowStyle(resolvedShadow, theme);
 
   const sizeStyles =
     {
@@ -352,7 +361,7 @@ export const Input = ({
 export const Textarea = ({
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
@@ -368,7 +377,8 @@ export const Textarea = ({
   onEnter = () => {},
   onKeyDown = () => {},
   shape = "rounded",
-  shadow = "sm",
+  shadow,
+  surface = "outlined",
   size = "md",
   rows = 4,
   maxLength,
@@ -392,10 +402,16 @@ export const Textarea = ({
   const theme = useTheme();
   const textareaRef = useRef(null);
   const [isFocused, setIsFocused] = useState(autoFocus);
-  const [isHovered, setIsHovered] = useState(false);
+  const { border: resolvedBorder, shadow: resolvedShadow } =
+    resolveSurfaceStyle({
+      surface,
+      border,
+      shadow
+    });
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
-    border,
+    theme,
+    border: resolvedBorder,
     fallback: error ? "error" : isFocused ? "focus" : "default",
     componentType: "input"
   });
@@ -412,12 +428,12 @@ export const Textarea = ({
     ? resolveColor(borderColor, theme)
     : borColor;
   const finalBorStyle =
-    border && finalBorColor
+    resolvedBorder && finalBorColor
       ? `${borderWeight}px ${borderType} ${finalBorColor}`
       : "none";
 
   const shapeStyle = getShapeStyles(shape, theme);
-  const boxShadow = getShadowStyle(shadow, theme);
+  const boxShadow = getShadowStyle(resolvedShadow, theme);
 
   const sizeStyles =
     {
@@ -636,7 +652,7 @@ export const Textarea = ({
 export const OTP = ({
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
@@ -652,7 +668,8 @@ export const OTP = ({
   value = "",
   onChange = () => {},
   shape = "rounded",
-  shadow = "sm",
+  shadow,
+  surface = "outlined",
   size = "md",
   id,
   name,
@@ -669,9 +686,16 @@ export const OTP = ({
   const theme = useTheme();
   const inputRefs = useRef([]);
   const [focusedIndex, setFocusedIndex] = useState(autoFocus ? 0 : -1);
+  const { border: resolvedBorder, shadow: resolvedShadow } =
+    resolveSurfaceStyle({
+      surface,
+      border,
+      shadow
+    });
 
   const { txtColor } = computeColorStyles({
-    border,
+    theme,
+    border: resolvedBorder,
     fallback: error ? "error" : "default",
     componentType: "input"
   });
@@ -685,7 +709,7 @@ export const OTP = ({
   const finalTxtColor = color ? resolveColor(color, theme) : txtColor;
 
   const shapeStyle = getShapeStyles(shape, theme);
-  const boxShadow = getShadowStyle(shadow, theme);
+  const boxShadow = getShadowStyle(resolvedShadow, theme);
 
   const sizeStyles =
     {
@@ -797,7 +821,8 @@ export const OTP = ({
             txtColor: cellTxt,
             borColor: cellBor
           } = computeColorStyles({
-            border,
+    theme,
+            border: resolvedBorder,
             fallback: error
               ? "error"
               : focusedIndex === i
@@ -812,7 +837,7 @@ export const OTP = ({
             ? resolveColor(borderColor, theme)
             : cellBor;
           const cellBorStyle =
-            border && cellBorColor
+            resolvedBorder && cellBorColor
               ? `${borderWeight}px ${borderType} ${cellBorColor}`
               : "none";
           return (

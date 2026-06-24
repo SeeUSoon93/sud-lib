@@ -7,7 +7,8 @@ import {
   resolveColor,
   getShapeStyles,
   getShadowStyle,
-  mergeClassNames
+  mergeClassNames,
+  resolveSurfaceStyle
 } from "../../theme/themeUtils";
 import { Typography } from "../general/Typography";
 import { Divider } from "../navigation/Divider";
@@ -22,18 +23,19 @@ export const Card = ({
   colorType = "default",
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
   shape = "rounded",
-  shadow = "sm",
+  shadow,
   width,
   height,
   thumbHeight,
   className = "",
   style = {},
   variant = "card", // "card" | "drawer" | "modal" | "notification" | "toast"
+  surface,
   divider = false,
   dividerColor,
   isDrawer,
@@ -41,9 +43,23 @@ export const Card = ({
   ...rest
 }) => {
   const theme = useTheme();
+  const defaultSurface =
+    surface ||
+    (variant === "modal"
+      ? "overlay"
+      : variant === "drawer" || variant === "notification" || variant === "toast"
+      ? "floating"
+      : "outlined");
+  const { border: resolvedBorder, shadow: resolvedShadow } =
+    resolveSurfaceStyle({
+      surface: defaultSurface,
+      border,
+      shadow
+    });
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
-    border,
+    theme,
+    border: resolvedBorder,
     fallback: colorType
   });
 
@@ -54,13 +70,13 @@ export const Card = ({
     : borColor;
 
   const finalBorStyle =
-    border && finalBorColor
+    resolvedBorder && finalBorColor
       ? `${borderWeight}px ${borderType} ${finalBorColor}`
       : "none";
 
   const shapeStyle =
     variant === "drawer" || isDrawer ? {} : getShapeStyles(shape, theme);
-  const boxShadow = getShadowStyle(shadow, theme);
+  const boxShadow = getShadowStyle(resolvedShadow, theme);
 
   const spacing = theme.spacing;
 
@@ -94,7 +110,7 @@ export const Card = ({
         >
           {typeof title === "string" ? (
             variant === "modal" ? (
-              <div className="flex jus-bet item-cen">
+              <div className="flex items-center justify-between">
                 <Typography
                   as="h2"
                   size="lg"

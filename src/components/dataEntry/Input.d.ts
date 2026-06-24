@@ -7,7 +7,12 @@ import type {
   KeyboardEvent,
   ChangeEvent
 } from "react";
-import type { shapeType, borderType, shadowType } from "../commonType";
+import type {
+  shapeType,
+  borderType,
+  shadowType,
+  surfaceType
+} from "../commonType";
 
 export type InputSize = "sm" | "md" | "lg";
 
@@ -68,6 +73,7 @@ export interface InputProps
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   shape?: shapeType;
   shadow?: shadowType;
+  surface?: surfaceType;
   size?: InputSize;
   id?: string;
   name?: string;

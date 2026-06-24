@@ -17,12 +17,13 @@ export const Popover = ({
   divider = false,
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType,
   borderWeight,
   shape = "rounded",
   shadow,
+  surface,
   colorType,
   style = {},
   // --- PopupBase의 모든 속성을 받도록 아래 추가 ---
@@ -53,6 +54,7 @@ export const Popover = ({
       borderWeight={borderWeight}
       shape={shape}
       shadow={shadow}
+      surface={surface}
       divider={divider}
       title={title}
       content={content}

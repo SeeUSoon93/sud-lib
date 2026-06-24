@@ -24,7 +24,7 @@ export const Footer = forwardRef(
       shape = "square",
       height = "80",
       FullWidth = true,
-      shadow = "",
+      shadow = "none",
       onHeightChange,
       siderPosition = "below-header",
       siderWidth = 0,
@@ -42,9 +42,10 @@ export const Footer = forwardRef(
       if (realRef.current) {
         onHeightChange?.(realRef.current.offsetHeight);
       }
-    }, []);
+    }, [onHeightChange, realRef]);
 
     const { bgColor, txtColor, borColor } = computeColorStyles({
+    theme,
       border,
       fallback: colorType
     });

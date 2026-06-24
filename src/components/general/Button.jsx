@@ -69,12 +69,14 @@ const styles = `
 }
 `;
 
+const borderedButtonTypes = new Set(["default", "sub", "ghost"]);
+
 export const Button = ({
   children,
   colorType = "default",
   background,
   color,
-  border = true,
+  border,
   borderColor,
   borderType = "solid",
   borderWeight = 1,
@@ -88,7 +90,7 @@ export const Button = ({
   loadingType = "default",
   loadingPosition = "right",
   shape = "rounded",
-  shadow = "sm",
+  shadow = "none",
   style = {},
   ariaLabel,
   ariaPressed,
@@ -99,9 +101,11 @@ export const Button = ({
 }) => {
   const theme = useTheme();
   const ref = useRef();
+  const resolvedBorder = border ?? (disabled || borderedButtonTypes.has(colorType));
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
-    border,
+    theme,
+    border: resolvedBorder,
     fallback: disabled ? "disabled" : colorType
   });
   const finalBgColor = background ? resolveColor(background, theme) : bgColor;
@@ -112,7 +116,7 @@ export const Button = ({
     ? resolveColor(borderColor, theme)
     : borColor;
   const finalBorStyle =
-    border && finalBorColor
+    resolvedBorder && finalBorColor
       ? `${borderWeight}px ${borderType} ${finalBorColor}`
       : "none";
 
@@ -152,8 +156,7 @@ export const Button = ({
       className={mergeClassNames(
         "sud-button",
         disabled || loading ? "" : "sud-hover",
-        className,
-        `cursor-${disabled ? "not-allowed" : "pointer"}`
+        className
       )}
       ref={ref}
       style={{
@@ -166,6 +169,7 @@ export const Button = ({
         color: finalTxtColor,
         border: finalBorStyle,
         boxShadow: colorType === "text" ? "none" : boxShadow,
+        cursor: disabled || loading ? "not-allowed" : "pointer",
         ...shapeStyle,
         ...sizeStyle,
         ...style

@@ -4,7 +4,7 @@
   </a>
 </p>
 
-# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-1.1.6-blue)](https://www.npmjs.com/package/sud-ui)
+# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-1.9.0-blue)](https://www.npmjs.com/package/sud-ui)
 
 **Soon UI Design (SUD)** is a React UI library that helps you quickly build responsive and polished interfaces using reusable components and customizable design tokens.
 
@@ -16,11 +16,11 @@
 
 ## ✨ Features
 
-- 🎨 Consistent design system with Tailwind-like syntax
+- 🎨 Tailwind CSS utilities with SUD-specific animations and design tokens
 - 🧩 50+ reusable components (Button, Modal, Table, etc.)
 - 🌗 Light/Dark theme support
 - ⚙️ Fully customizable theme and styles
-- 🌀 Utility-first class support (e.g., `pd-10`, `mg-4`)
+- 🧪 Local demo page for visual QA before publishing
 
 ## 📦 Installation
 
@@ -101,6 +101,12 @@ Sud UI provides a comprehensive suite of ready-to-use components:
 📘 [See full list and API →](https://www.sud.co.kr/component/component-overview)
 
 ## 🎨 Theme & Customization
+
+Surface defaults are intentionally conservative: content/form components use a
+border by default, floating overlays use a shadow by default, and action
+components stay flat unless `shadow` is explicitly enabled. See
+[`docs/surface-guidelines.md`](./docs/surface-guidelines.md) for the release
+checklist and surface rules.
 
 SUD provides full theming support via `SoonUIDesign`.
 

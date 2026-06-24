@@ -34,6 +34,7 @@ function Radio({
   const theme = useTheme();
 
   const { bgColor } = computeColorStyles({
+    theme,
     border: false,
     fallback: colorType
   });

@@ -5,9 +5,16 @@ html {
   scroll-behavior: smooth;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   min-width: 320px;
+  overflow-x: hidden;
   background-color: #f8fafc;
   color: #0f172a;
 }
@@ -32,46 +39,34 @@ body {
   min-height: 100vh;
 }
 
-/* Animated Mesh Gradient Background */
 .demo-shell {
-  background: 
-    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
-  background-color: #f8fafc;
-  background-size: 200% 200%;
-  animation: mesh-movement 15s ease infinite alternate;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef7fb 100%);
+  min-width: 0;
 }
 
-@keyframes mesh-movement {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
-  100% { background-position: 0% 100%; }
-}
-
-/* Glassmorphism panel */
 .demo-panel {
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(203, 213, 225, 0.65);
+  background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  min-width: 0;
+}
+
+.demo-panel *,
+.demo-grid > *,
+.demo-mini-grid > *,
+.sud-card,
+.sud-card * {
+  min-width: 0;
 }
 
 /* Dark mode overrides */
 .sud-dark .demo-shell {
-  background: 
-    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
-  background-color: #0f172a;
+  background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
 }
 .sud-dark .demo-panel {
   border: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(30, 41, 59, 0.9);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
 }
 .sud-dark body {
@@ -83,10 +78,19 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
+  min-width: 0;
 }
 
 .demo-mini-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 16px;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .demo-grid,
+  .demo-mini-grid {
+    grid-template-columns: 1fr;
+  }
 }

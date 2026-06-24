@@ -1,0 +1,773 @@
+@config "../tailwind.library.config.js";
+@tailwind utilities;
+
+/* Font setup: web fonts only, no packaged font assets. */
+@font-face {
+  font-family: "Pretendard-T";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Thin.woff2") format("woff2");
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard-EL";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraLight.woff2") format("woff2");
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard-L";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard-R";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard-M";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard-SB";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard-B";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard-EB";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard-Black";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GmarketSansLight";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff") format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GmarketSansMedium";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GmarketSansBold";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUITE-T";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Thin.woff2") format("woff2");
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUITE-EL";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraLight.woff2") format("woff2");
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUITE-L";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUITE-R";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUITE-M";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUITE-SM";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUITE-B";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUITE-EB";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SUITE-H";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Heavy.woff2") format("woff2");
+  font-weight: 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IntelOneMono-Medium";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/intelone-mono-font-family-medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Pretendard-R", sans-serif;
+}
+
+.codding-font {
+  font-family: "IntelOneMono-Medium", monospace;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background: transparent;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+*::-webkit-scrollbar-thumb:hover,
+*:hover::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+/* 기본 호버 적용 */
+.sud-hover {
+  animation: none ;
+}
+.sud-hover:hover {
+  animation: sud-hover-flash-3 1s ease-in-out ;
+}
+
+.sud-hover-1:hover {
+  animation: sud-hover-flash-1 1s ease-in-out;
+}
+@keyframes sud-hover-flash-1 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.02); }
+  100% { filter: brightness(1); }
+}
+
+.sud-hover-2:hover {
+  animation: sud-hover-flash-2 1s ease-in-out;
+}
+@keyframes sud-hover-flash-2 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.04); }
+  100% { filter: brightness(1); }
+}
+
+.sud-hover-3:hover {
+  animation: sud-hover-flash-3 1s ease-in-out;
+}
+@keyframes sud-hover-flash-3 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.06); }
+  100% { filter: brightness(1); }
+}
+
+.sud-hover-4:hover {
+  animation: sud-hover-flash-4 1s ease-in-out;
+}
+@keyframes sud-hover-flash-4 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.08); }
+  100% { filter: brightness(1); }
+}
+
+.sud-hover-5:hover {
+  animation: sud-hover-flash-5 1s ease-in-out;
+}
+@keyframes sud-hover-flash-5 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.10); }
+  100% { filter: brightness(1); }
+}
+
+.sud-hover-6:hover {
+  animation: sud-hover-flash-6 1s ease-in-out;
+}
+@keyframes sud-hover-flash-6 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.12); }
+  100% { filter: brightness(1); }
+}
+
+.sud-hover-7:hover {
+  animation: sud-hover-flash-7 1s ease-in-out;
+}
+@keyframes sud-hover-flash-7 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.14); }
+  100% { filter: brightness(1); }
+}
+
+.sud-hover-8:hover {
+  animation: sud-hover-flash-8 1s ease-in-out;
+}
+@keyframes sud-hover-flash-8 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.16); }
+  100% { filter: brightness(1); }
+}
+
+.sud-hover-9:hover {
+  animation: sud-hover-flash-9 1s ease-in-out;
+}
+@keyframes sud-hover-flash-9 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.18); }
+  100% { filter: brightness(1); }
+}
+
+.sud-hover-10:hover {
+  animation: sud-hover-flash-10 1s ease-in-out;
+}
+@keyframes sud-hover-flash-10 {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(1.20); }
+  100% { filter: brightness(1); }
+}
+
+
+/* Scale 애니메이션 */
+.hover-scale-1,
+.hover-scale-2,
+.hover-scale-3,
+.hover-scale-4,
+.hover-scale-5,
+.hover-scale-6,
+.hover-scale-7,
+.hover-scale-8,
+.hover-scale-9,
+.hover-scale-10 {
+  transition: transform 0.3s ease-in-out;
+}
+
+.hover-scale-1:hover { transform: scale(0.90); }
+.hover-scale-2:hover { transform: scale(0.93); }
+.hover-scale-3:hover { transform: scale(0.96); }
+.hover-scale-4:hover { transform: scale(1.00); }  /* 기준 */
+.hover-scale-5:hover { transform: scale(1.05); }
+.hover-scale-6:hover { transform: scale(1.08); }
+.hover-scale-7:hover { transform: scale(1.12); }
+.hover-scale-8:hover { transform: scale(1.16); }
+.hover-scale-9:hover { transform: scale(1.20); }
+.hover-scale-10:hover { transform: scale(1.25); }
+
+
+/* Bounce 애니메이션 */
+@keyframes bounce-1 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-2px); }
+  40%  { transform: translateY(1px); }
+  60%  { transform: translateY(-0px); }
+  80%  { transform: translateY(0px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-1:hover {
+  animation: bounce-1 0.4s ease-out;
+}
+
+@keyframes bounce-2 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-4px); }
+  40%  { transform: translateY(2px); }
+  60%  { transform: translateY(-1px); }
+  80%  { transform: translateY(0px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-2:hover {
+  animation: bounce-2 0.4s ease-out;
+}
+
+@keyframes bounce-3 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-6px); }
+  40%  { transform: translateY(3px); }
+  60%  { transform: translateY(-1px); }
+  80%  { transform: translateY(1px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-3:hover {
+  animation: bounce-3 0.4s ease-out;
+}
+
+@keyframes bounce-4 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-8px); }
+  40%  { transform: translateY(4px); }
+  60%  { transform: translateY(-2px); }
+  80%  { transform: translateY(1px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-4:hover {
+  animation: bounce-4 0.4s ease-out;
+}
+
+@keyframes bounce-5 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-10px); }
+  40%  { transform: translateY(5px); }
+  60%  { transform: translateY(-2px); }
+  80%  { transform: translateY(1px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-5:hover {
+  animation: bounce-5 0.4s ease-out;
+}
+
+@keyframes bounce-6 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-12px); }
+  40%  { transform: translateY(6px); }
+  60%  { transform: translateY(-3px); }
+  80%  { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-6:hover {
+  animation: bounce-6 0.4s ease-out;
+}
+
+@keyframes bounce-7 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-14px); }
+  40%  { transform: translateY(7px); }
+  60%  { transform: translateY(-3px); }
+  80%  { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-7:hover {
+  animation: bounce-7 0.4s ease-out;
+}
+
+@keyframes bounce-8 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-16px); }
+  40%  { transform: translateY(8px); }
+  60%  { transform: translateY(-4px); }
+  80%  { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-8:hover {
+  animation: bounce-8 0.4s ease-out;
+}
+
+@keyframes bounce-9 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-18px); }
+  40%  { transform: translateY(9px); }
+  60%  { transform: translateY(-4px); }
+  80%  { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-9:hover {
+  animation: bounce-9 0.4s ease-out;
+}
+
+@keyframes bounce-10 {
+  0%   { transform: translateY(0); }
+  20%  { transform: translateY(-20px); }
+  40%  { transform: translateY(10px); }
+  60%  { transform: translateY(-5px); }
+  80%  { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+.hover-bounce-10:hover {
+  animation: bounce-10 0.4s ease-out;
+}
+
+@keyframes hover-pulse-1 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.020); }
+  50%  { transform: scale(0.985); }
+  75%  { transform: scale(1.010); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-1:hover {
+  animation: hover-pulse-1 0.4s ease-in-out;
+}
+
+@keyframes hover-pulse-2 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.040); }
+  50%  { transform: scale(0.970); }
+  75%  { transform: scale(1.020); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-2:hover {
+  animation: hover-pulse-2 0.4s ease-in-out;
+}
+
+@keyframes hover-pulse-3 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.060); }
+  50%  { transform: scale(0.955); }
+  75%  { transform: scale(1.030); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-3:hover {
+  animation: hover-pulse-3 0.4s ease-in-out;
+}
+
+@keyframes hover-pulse-4 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.080); }
+  50%  { transform: scale(0.940); }
+  75%  { transform: scale(1.040); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-4:hover {
+  animation: hover-pulse-4 0.4s ease-in-out;
+}
+
+@keyframes hover-pulse-5 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.100); }
+  50%  { transform: scale(0.925); }
+  75%  { transform: scale(1.050); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-5:hover {
+  animation: hover-pulse-5 0.4s ease-in-out;
+}
+
+@keyframes hover-pulse-6 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.120); }
+  50%  { transform: scale(0.910); }
+  75%  { transform: scale(1.060); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-6:hover {
+  animation: hover-pulse-6 0.4s ease-in-out;
+}
+
+@keyframes hover-pulse-7 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.140); }
+  50%  { transform: scale(0.895); }
+  75%  { transform: scale(1.070); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-7:hover {
+  animation: hover-pulse-7 0.4s ease-in-out;
+}
+
+@keyframes hover-pulse-8 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.160); }
+  50%  { transform: scale(0.880); }
+  75%  { transform: scale(1.080); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-8:hover {
+  animation: hover-pulse-8 0.4s ease-in-out;
+}
+
+@keyframes hover-pulse-9 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.180); }
+  50%  { transform: scale(0.865); }
+  75%  { transform: scale(1.090); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-9:hover {
+  animation: hover-pulse-9 0.4s ease-in-out;
+}
+
+@keyframes hover-pulse-10 {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.200); }
+  50%  { transform: scale(0.850); }
+  75%  { transform: scale(1.100); }
+  100% { transform: scale(1); }
+}
+.hover-pulse-10:hover {
+  animation: hover-pulse-10 0.4s ease-in-out;
+}
+
+
+/* Shake 애니메이션 */
+@keyframes shake-1 {
+  0%, 100%   { transform: translateX(0); }
+  50%        { transform: translateX(-1px); }
+}
+
+.hover-shake-1:hover {
+  animation: shake-1 0.2s ease-in-out;
+}
+
+@keyframes shake-2 {
+  0%, 100%   { transform: translateX(0); }
+  25%        { transform: translateX(-2px); }
+  75%        { transform: translateX(2px); }
+}
+
+.hover-shake-2:hover {
+  animation: shake-2 0.25s ease-in-out;
+}
+
+@keyframes shake-3 {
+  0%, 100%   { transform: translateX(0); }
+  20%        { transform: translateX(-3px); }
+  50%        { transform: translateX(3px); }
+  80%        { transform: translateX(-2px); }
+}
+
+.hover-shake-3:hover {
+  animation: shake-3 0.3s ease-in-out;
+}
+
+@keyframes shake-4 {
+  0%, 100%   { transform: translateX(0); }
+  15%        { transform: translateX(-4px); }
+  30%        { transform: translateX(4px); }
+  45%        { transform: translateX(-3px); }
+  60%        { transform: translateX(3px); }
+  75%        { transform: translateX(-2px); }
+}
+
+.hover-shake-4:hover {
+  animation: shake-4 0.3s ease-in-out;
+}
+
+@keyframes shake-5 {
+  0%, 100%   { transform: translateX(0); }
+  10%        { transform: translateX(-5px); }
+  20%        { transform: translateX(5px); }
+  30%        { transform: translateX(-4px); }
+  40%        { transform: translateX(4px); }
+  50%        { transform: translateX(-3px); }
+  60%        { transform: translateX(3px); }
+}
+
+.hover-shake-5:hover {
+  animation: shake-5 0.35s ease-in-out;
+}
+
+@keyframes shake-6 {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-6px); }
+  20% { transform: translateX(6px); }
+  30% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  50% { transform: translateX(-4px); }
+  60% { transform: translateX(4px); }
+  70% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.hover-shake-6:hover {
+  animation: shake-6 0.4s ease-in-out;
+}
+
+@keyframes shake-7 {
+  0%, 100% { transform: translateX(0); }
+  8% { transform: translateX(-7px); }
+  16% { transform: translateX(7px); }
+  24% { transform: translateX(-6px); }
+  32% { transform: translateX(6px); }
+  40% { transform: translateX(-5px); }
+  48% { transform: translateX(5px); }
+  56% { transform: translateX(-4px); }
+  64% { transform: translateX(4px); }
+  72% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.hover-shake-7:hover {
+  animation: shake-7 0.45s ease-in-out;
+}
+
+@keyframes shake-8 {
+  0%, 100% { transform: translateX(0); }
+  7%  { transform: translateX(-8px); }
+  14% { transform: translateX(8px); }
+  21% { transform: translateX(-7px); }
+  28% { transform: translateX(7px); }
+  35% { transform: translateX(-6px); }
+  42% { transform: translateX(6px); }
+  49% { transform: translateX(-5px); }
+  56% { transform: translateX(5px); }
+  63% { transform: translateX(-4px); }
+  70% { transform: translateX(4px); }
+  77% { transform: translateX(-3px); }
+  84% { transform: translateX(3px); }
+}
+
+.hover-shake-8:hover {
+  animation: shake-8 0.5s ease-in-out;
+}
+
+@keyframes shake-9 {
+  0%, 100% { transform: translateX(0); }
+  6%  { transform: translateX(-9px); }
+  12% { transform: translateX(9px); }
+  18% { transform: translateX(-8px); }
+  24% { transform: translateX(8px); }
+  30% { transform: translateX(-7px); }
+  36% { transform: translateX(7px); }
+  42% { transform: translateX(-6px); }
+  48% { transform: translateX(6px); }
+  54% { transform: translateX(-5px); }
+  60% { transform: translateX(5px); }
+  66% { transform: translateX(-4px); }
+  72% { transform: translateX(4px); }
+  78% { transform: translateX(-3px); }
+  84% { transform: translateX(3px); }
+}
+
+.hover-shake-9:hover {
+  animation: shake-9 0.55s ease-in-out;
+}
+
+@keyframes shake-10 {
+  0%, 100% { transform: translateX(0); }
+  5%  { transform: translateX(-10px); }
+  10% { transform: translateX(10px); }
+  15% { transform: translateX(-9px); }
+  20% { transform: translateX(9px); }
+  25% { transform: translateX(-8px); }
+  30% { transform: translateX(8px); }
+  35% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  45% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  55% { transform: translateX(-5px); }
+  60% { transform: translateX(5px); }
+  65% { transform: translateX(-4px); }
+  70% { transform: translateX(4px); }
+  75% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+  85% { transform: translateX(-2px); }
+  90% { transform: translateX(2px); }
+}
+
+.hover-shake-10:hover {
+  animation: shake-10 0.6s ease-in-out;
+}
+
+/* Shadow 기본 스타일 */
+.shadow-sm {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08) ;
+}
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.16), 0 2px 4px -1px rgba(0, 0, 0, 0.12) ;
+}
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.12) ;
+}
+
+/* Shadow Hover 효과 */
+.hover-shadow-1:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12) !important;
+}
+.hover-shadow-2:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.14), 0 2px 4px -1px rgba(0, 0, 0, 0.1) !important;
+}
+.hover-shadow-3:hover {
+  box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.16), 0 3px 6px -1px rgba(0, 0, 0, 0.12) !important;
+}
+.hover-shadow-4:hover {
+  box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.18), 0 4px 8px -2px rgba(0, 0, 0, 0.12) !important;
+}
+.hover-shadow-5:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.12) !important;
+}
+.hover-shadow-6:hover {
+  box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.22), 0 6px 8px -3px rgba(0, 0, 0, 0.12) !important;
+}
+.hover-shadow-7:hover {
+  box-shadow: 0 16px 24px -4px rgba(0, 0, 0, 0.24), 0 8px 12px -4px rgba(0, 0, 0, 0.12) !important;
+}
+.hover-shadow-8:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.26), 0 10px 10px -5px rgba(0, 0, 0, 0.12) !important;
+}
+.hover-shadow-9:hover {
+  box-shadow: 0 24px 30px -6px rgba(0, 0, 0, 0.28), 0 12px 14px -6px rgba(0, 0, 0, 0.12) !important;
+}
+.hover-shadow-10:hover {
+  box-shadow: 0 30px 40px -8px rgba(0, 0, 0, 0.3), 0 16px 20px -8px rgba(0, 0, 0, 0.12) !important;
+}
+.hover-shadow-1,
+.hover-shadow-2,
+.hover-shadow-3,
+.hover-shadow-4,
+.hover-shadow-5,
+.hover-shadow-6,
+.hover-shadow-7,
+.hover-shadow-8,
+.hover-shadow-9,
+.hover-shadow-10 {
+  transition: box-shadow 0.3s ease-in-out;
+}

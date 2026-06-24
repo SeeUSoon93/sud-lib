@@ -23,7 +23,7 @@ export const Header = forwardRef(
       className = "",
       shape = "square",
       height = 80,
-      shadow = "",
+      shadow = "none",
       siderPosition = "below-header",
       siderWidth = 0,
       border = true,
@@ -34,6 +34,7 @@ export const Header = forwardRef(
   ) => {
     const theme = useTheme();
     const { bgColor, txtColor, borColor } = computeColorStyles({
+    theme,
       border,
       fallback: colorType
     });

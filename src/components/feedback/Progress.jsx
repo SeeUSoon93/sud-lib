@@ -24,7 +24,7 @@ export const Progress = ({
   valuePosition = "inside-end",
   size = "md",
   fontSize: fontSizeProp,
-  shadow = false,
+  shadow = "none",
   className = "",
   style = {},
   ...rest
@@ -34,6 +34,7 @@ export const Progress = ({
 
   const { borColor: defaultTxtColor, bgColor: gaugeTxtColor } =
     computeColorStyles({
+    theme,
       fallback: colorType,
       componentType: "tag"
     });
@@ -41,6 +42,7 @@ export const Progress = ({
   const finalGaugeColor = color ? resolveColor(color, theme) : defaultTxtColor;
 
   const { bgColor } = computeColorStyles({
+    theme,
     fallback: "hovered",
     componentType: "etc"
   });
@@ -229,8 +231,6 @@ export const Progress = ({
   const strokeDashoffset = isDashboard
     ? arcLengthPx * (1 - percent / 100)
     : circumference * (1 - percent / 100);
-
-  const rotation = isDashboard ? "rotate(135deg)" : "rotate(-90deg)";
 
   const centerContent =
     value === max

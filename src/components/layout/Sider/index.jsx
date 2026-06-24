@@ -24,12 +24,10 @@ export const Sider = forwardRef(
       className = "",
       shape = "square",
       width = 200,
-      FullHeight = true,
-      shadow = "",
+      shadow = "none",
       onWidthChange,
       siderPosition = "below-header",
       headerHeight = 0,
-      footerHeight = 0,
       border = true,
       style = {},
       ...rest
@@ -44,9 +42,10 @@ export const Sider = forwardRef(
       if (realRef.current) {
         onWidthChange?.(realRef.current.offsetWidth);
       }
-    }, []);
+    }, [onWidthChange, realRef]);
 
     const { bgColor, txtColor, borColor } = computeColorStyles({
+    theme,
       border,
       fallback: colorType
     });

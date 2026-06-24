@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { Button } from "../general/Button";
 import { AngleLeft, AngleRight } from "sud-icons";
 import { mergeClassNames } from "../../theme/themeUtils";
@@ -38,10 +38,13 @@ export const Carousel = ({
   }, [isControlled, currentIndex, internalIndex]);
 
   // 인덱스 변경은 여기로만 (onChange 단일 호출 지점)
-  const setCurrentIndex = (idx) => {
-    if (!isControlled) setInternalIndex(idx);
-    if (onChange) onChange(idx);
-  };
+  const setCurrentIndex = useCallback(
+    (idx) => {
+      if (!isControlled) setInternalIndex(idx);
+      onChange?.(idx);
+    },
+    [isControlled, onChange]
+  );
 
   const containerRef = useRef(null);
   const [containerSize, setContainerSize] = useState({
@@ -129,7 +132,7 @@ export const Carousel = ({
       setCurrentIndex(next);
     }, autoPlayInterval);
     return () => clearInterval(timer);
-  }, [autoPlay, autoPlayInterval, items.length, isControlled]);
+  }, [autoPlay, autoPlayInterval, items.length, isControlled, setCurrentIndex]);
 
   const getCardStyle = (index) => {
     let rel = (index - internalIndex + total) % total;

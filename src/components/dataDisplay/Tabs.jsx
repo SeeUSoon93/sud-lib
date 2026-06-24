@@ -92,16 +92,18 @@ export const Tabs = ({
     const currentIndex = tabs.findIndex((tab) => tab.key === key);
 
     switch (event.key) {
-      case "ArrowRight":
+      case "ArrowRight": {
         event.preventDefault();
         const nextIndex = (currentIndex + 1) % tabs.length;
         handleChange(tabs[nextIndex].key);
         break;
-      case "ArrowLeft":
+      }
+      case "ArrowLeft": {
         event.preventDefault();
         const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
         handleChange(tabs[prevIndex].key);
         break;
+      }
       case "Home":
         event.preventDefault();
         handleChange(tabs[0].key);
@@ -115,12 +117,13 @@ export const Tabs = ({
     }
   };
 
-  const getColorStyles = (type) => {
+  const getColorStyles = () => {
     const {
       bgColor: activeBg,
       txtColor: activeTxtColor,
       borColor: activeBorColor
     } = computeColorStyles({
+    theme,
       border,
       fallback: colorType.active
     });
@@ -130,6 +133,7 @@ export const Tabs = ({
       txtColor: inactiveTxtColor,
       borColor: inactiveBorColor
     } = computeColorStyles({
+    theme,
       border,
       fallback: colorType.inactive
     });
@@ -171,11 +175,13 @@ export const Tabs = ({
     txtColor: disabledTxtColor,
     borColor: disabledBorColor
   } = computeColorStyles({
+    theme,
     border,
     fallback: "disabled"
   });
 
   const { borColor: defaultBorColor } = computeColorStyles({
+    theme,
     border,
     fallback: "default"
   });
@@ -281,7 +287,7 @@ export const Tabs = ({
   );
 };
 
-export const TabPane = ({ children, label }) => children;
+export const TabPane = ({ children }) => children;
 Tabs.TabPane = TabPane;
 Tabs.displayName = "Tabs";
 TabPane.displayName = "Tabs.TabPane";

@@ -3,7 +3,8 @@ import type {
   defaultColorType,
   shapeType,
   borderType,
-  shadowType
+  shadowType,
+  surfaceType
 } from "../commonType";
 
 export type CardVariant =
@@ -42,6 +43,8 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   shape?: shapeType;
   /** 그림자 효과 */
   shadow?: shadowType;
+  /** 기본 surface 프리셋 */
+  surface?: surfaceType;
   /** 카드 너비 */
   width?: number | string;
   /** 카드 높이 */

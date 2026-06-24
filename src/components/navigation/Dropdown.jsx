@@ -2,8 +2,7 @@
 
 import { PopupBase } from "./base/PopupBase";
 import { Menu } from "./Menu";
-import { mergeClassNames, resolveColor } from "../../theme/themeUtils";
-import { useTheme } from "../../theme/ThemeContext";
+import { mergeClassNames } from "../../theme/themeUtils";
 import { useRef } from "react";
 
 export const Dropdown = ({
@@ -33,7 +32,6 @@ export const Dropdown = ({
   style = {},
   ...rest
 }) => {
-  const theme = useTheme();
   const contentRef = useRef(null);
 
   return (

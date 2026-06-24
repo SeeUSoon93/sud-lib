@@ -56,7 +56,7 @@ export const List = ({
   );
 
   // 가상 스크롤링 관련 계산
-  const { visibleItems, startIndex, endIndex, totalHeight } = useMemo(() => {
+  const { visibleItems, startIndex, totalHeight } = useMemo(() => {
     if (!virtualScroll || !containerHeight) {
       return {
         visibleItems: dataSource,
@@ -73,8 +73,8 @@ export const List = ({
 
     // 아이템 높이를 기반으로 시작/끝 인덱스 계산
     for (let i = 0; i < dataSource.length; i++) {
-      const itemHeight = itemRefs.current.get(i) || itemHeight || 40;
-      if (!foundStart && currentHeight + itemHeight > scrollTop) {
+      const measuredHeight = itemRefs.current.get(i) || itemHeight || 40;
+      if (!foundStart && currentHeight + measuredHeight > scrollTop) {
         startIndex = Math.max(0, i - overscanCount);
         foundStart = true;
       }
@@ -82,7 +82,7 @@ export const List = ({
         endIndex = Math.min(dataSource.length, i + overscanCount);
         break;
       }
-      currentHeight += itemHeight;
+      currentHeight += measuredHeight;
     }
 
     if (!foundStart) {
@@ -125,19 +125,6 @@ export const List = ({
     },
     [virtualScroll]
   );
-
-  // 정렬 스타일 계산 메모이제이션
-  const getPaginationAlignStyle = useCallback((position) => {
-    const alignMap = {
-      left: "flex-start",
-      center: "center",
-      right: "flex-end"
-    };
-    if (position.includes("left")) return alignMap.left;
-    if (position.includes("center")) return alignMap.center;
-    if (position.includes("right")) return alignMap.right;
-    return alignMap.center;
-  }, []);
 
   // 페이지 변경 핸들러 메모이제이션
   const handlePageChange = useCallback(

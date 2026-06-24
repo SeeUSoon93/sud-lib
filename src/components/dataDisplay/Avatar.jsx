@@ -55,6 +55,7 @@ export const Avatar = ({
     typeof size === "number" ? size : SIZE_MAP[size] || SIZE_MAP.md;
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
+    theme,
     border,
     componentType: "tag",
     fallback: colorType
@@ -171,7 +172,7 @@ export const Avatar = ({
   );
 };
 
-Avatar.Group = ({
+const AvatarGroup = ({
   avatars = [],
   max = 3,
   size = "md",
@@ -302,4 +303,5 @@ Avatar.Group = ({
   );
 };
 
+Avatar.Group = AvatarGroup;
 Avatar.Group.displayName = "Avatar.Group";

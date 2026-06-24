@@ -283,15 +283,15 @@ export const Upload = ({
   const inputRef = useRef();
   const [internalFiles, setInternalFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
   const isControlled = fileList !== undefined;
   const files = isControlled ? fileList : internalFiles;
   const objectUrls = useRef(new Set());
 
   useEffect(() => {
+    const urls = objectUrls.current;
     return () => {
-      objectUrls.current.forEach((url) => URL.revokeObjectURL(url));
-      objectUrls.current.clear();
+      urls.forEach((url) => URL.revokeObjectURL(url));
+      urls.clear();
     };
   }, []);
 
@@ -303,7 +303,6 @@ export const Upload = ({
     e.preventDefault();
     e.stopPropagation();
     if (!disabled) {
-      setIsDragging(true);
       onDrag?.(true);
     }
   };
@@ -311,14 +310,12 @@ export const Upload = ({
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(false);
     onDrag?.(false);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(false);
     onDrag?.(false);
 
     if (disabled) return;

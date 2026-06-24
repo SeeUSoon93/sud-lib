@@ -28,6 +28,7 @@ export const Content = forwardRef(
     const { header = 0, footer = 0, sider = 0 } = layoutOffset;
 
     const { bgColor, txtColor } = computeColorStyles({
+    theme,
       border: false
     });
     const finalBgColor = background ? resolveColor(background, theme) : bgColor;

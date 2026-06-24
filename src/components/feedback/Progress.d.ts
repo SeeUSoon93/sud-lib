@@ -11,6 +11,14 @@ export type ProgressValuePosition =
   | "outside-left"
   | "outside-right";
 
+export type ProgressShadow =
+  | boolean
+  | "none"
+  | {
+      gauge?: boolean | string;
+      track?: boolean | string;
+    };
+
 export interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
   type?: ProgressType;
   value?: number;
@@ -25,6 +33,7 @@ export interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
   valuePosition?: ProgressValuePosition;
   size?: ProgressSize;
   fontSize?: number;
+  shadow?: ProgressShadow;
   className?: string;
   style?: CSSProperties;
 }

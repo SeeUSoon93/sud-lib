@@ -21,7 +21,7 @@ export const Slider = ({
   vertical = false,
   disabled = false,
   background,
-  border = true,
+  border = false,
   borderType = "solid",
   borderWeight = 1,
   borderColor,
@@ -54,7 +54,8 @@ export const Slider = ({
   const autoId = useId();
   const sliderId = id || autoId;
 
-  const { bgColor, borColor } = computeColorStyles({
+  const { bgColor } = computeColorStyles({
+    theme,
     border,
     fallback: colorType,
     componentType: "button"
@@ -127,15 +128,15 @@ export const Slider = ({
     updateValue(e.clientX, e.clientY);
   };
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (!dragging || disabled) return;
     updateValue(e.clientX, e.clientY);
-  };
+  }, [dragging, disabled, updateValue]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (disabled) return;
     setDragging(false);
-  };
+  }, [disabled]);
 
   useEffect(() => {
     if (dragging) {
@@ -146,7 +147,7 @@ export const Slider = ({
         window.removeEventListener("mouseup", handleMouseUp);
       };
     }
-  }, [dragging, handleMouseMove]);
+  }, [dragging, handleMouseMove, handleMouseUp]);
 
   const handleKeyDown = (e) => {
     if (disabled) return;
@@ -268,7 +269,8 @@ export const Slider = ({
           maxWidth: "100%",
           maxHeight: "100%",
           width: `${trackWidth}px`,
-          height: `${trackHeight}px`
+          height: `${trackHeight}px`,
+          border: border ? borderStyle : "none"
         }}
       >
         {fill && (
@@ -293,6 +295,7 @@ export const Slider = ({
           }
           aria-orientation={vertical ? "vertical" : "horizontal"}
           aria-disabled={disabled}
+          aria-label={ariaLabel}
           id={sliderId}
           onKeyDown={handleKeyDown}
           style={thumbStyle}

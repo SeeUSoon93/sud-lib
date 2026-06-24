@@ -43,6 +43,7 @@ export const Rate = ({
   }, [icon]);
 
   const { bgColor: inactiveBg } = computeColorStyles({
+    theme,
     fallback: "hovered",
     componentType: "etc"
   });

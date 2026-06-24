@@ -1,13 +1,12 @@
-import { useTheme } from "./ThemeContext";
+import { defaultTheme } from "./defaultTheme";
 
 // 색상 스타일 계산
 export const computeColorStyles = ({
+  theme = defaultTheme,
   border = true,
   fallback = "default",
   componentType = "button"
 } = {}) => {
-  const theme = useTheme();
-
   const typeStyles = theme.components?.[componentType]?.[fallback] || {};
 
   const bgColor = resolveColor(typeStyles.bg, theme);
@@ -105,14 +104,42 @@ export const getColorWithIntensity = (color, intensity = 1, theme) => {
  */
 export const mergeClassNames = (...args) => args.filter(Boolean).join(" ");
 
+export const normalizeShadow = (shadow = "none") => {
+  if (shadow === true) return "sm";
+  if (shadow === false || shadow === "" || shadow == null) return "none";
+  return shadow;
+};
+
+export const surfacePresets = {
+  bare: { border: false, shadow: "none" },
+  outlined: { border: true, shadow: "none" },
+  elevated: { border: false, shadow: "sm" },
+  floating: { border: false, shadow: "md" },
+  overlay: { border: false, shadow: "lg" }
+};
+
+export const resolveSurfaceStyle = ({
+  surface = "outlined",
+  border,
+  shadow
+} = {}) => {
+  const preset = surfacePresets[surface] || surfacePresets.outlined;
+
+  return {
+    border: border ?? preset.border,
+    shadow: normalizeShadow(shadow ?? preset.shadow)
+  };
+};
+
 /**
  * 그림자 스타일 반환
  * @param {string} shadow - 그림자 타입
  * @param {Object} theme - 테마 객체
  * @returns {string} 그림자 스타일
  */
-export const getShadowStyle = (shadow = "", theme) => {
-  if (theme?.shadows?.[shadow]) return theme.shadows[shadow];
+export const getShadowStyle = (shadow = "none", theme) => {
+  const normalizedShadow = normalizeShadow(shadow);
+  if (theme?.shadows?.[normalizedShadow]) return theme.shadows[normalizedShadow];
   return "none";
 };
 

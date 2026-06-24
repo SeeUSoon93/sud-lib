@@ -61,7 +61,7 @@ export const notification = {
   }
 };
 
-export const NotificationRoot = ({}) => {
+export const NotificationRoot = () => {
   const [mounted, setMounted] = useState(false);
   const [notifications, setNotifications] = useState([]);
 

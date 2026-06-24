@@ -4,7 +4,8 @@ import type {
   shapeType,
   borderType,
   shadowType,
-  tagColorType
+  tagColorType,
+  surfaceType
 } from "../commonType";
 
 export type SelectSize = "sm" | "md" | "lg";
@@ -31,6 +32,7 @@ export interface SelectProps extends HTMLAttributes<HTMLDivElement> {
   onChange?: (value: string | number | (string | number)[]) => void;
   shape?: shapeType;
   shadow?: shadowType;
+  surface?: surfaceType;
   size?: SelectSize;
   id?: string;
   tagColorType?: tagColorType;

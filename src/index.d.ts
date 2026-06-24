@@ -1,3 +1,5 @@
+export * from "./components/Div/Div.d";
+export * from "./components/SoonUIDesign.d";
 export * from "./components/general/Button.d";
 export * from "./components/general/Typography.d";
 export * from "./components/general/FloatButton.d";
@@ -24,6 +26,7 @@ export * from "./components/dataEntry/ColorPicker.d";
 export * from "./components/dataEntry/DatePicker.d";
 export * from "./components/dataEntry/Input.d";
 export * from "./components/dataEntry/Radio.d";
+export * from "./components/dataEntry/Rate.d";
 export * from "./components/dataEntry/Select.d";
 export * from "./components/dataEntry/Slider.d";
 export * from "./components/dataEntry/Switch.d";

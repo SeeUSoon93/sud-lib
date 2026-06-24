@@ -32,7 +32,7 @@ export const Switch = ({
   offText,
   onIcon,
   offIcon,
-  shadow = "",
+  shadow = "none",
   thumbColor,
   size = "md",
   colorType = "primary",
@@ -77,6 +77,7 @@ export const Switch = ({
 
   const boxShadow = getShadowStyle(shadow, theme);
   const { bgColor: onBgColor } = computeColorStyles({
+    theme,
     border: false,
     fallback: colorType,
     componentType: "button"
@@ -87,6 +88,9 @@ export const Switch = ({
   const resolvedOffColor = offColor
     ? resolveColor(offColor, theme)
     : resolveColor("cool-gray-3", theme);
+  const resolvedOffTextColor = offColor
+    ? resolveColor("white-10", theme)
+    : resolveColor("cool-gray-8", theme);
 
   const sizeMap = {
     sm: { height: 22, thumb: 18, fontSize: 12 },
@@ -206,7 +210,7 @@ export const Switch = ({
         className="sud-switch__label sud-switch__label-off"
         style={{
           padding: "0 4px",
-          color: resolveColor("white-10", theme),
+          color: resolvedOffTextColor,
           transition: "all 0.25s ease",
           display: isChecked ? "none" : "block",
           minWidth: textWidth,

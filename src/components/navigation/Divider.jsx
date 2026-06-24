@@ -25,6 +25,7 @@ export const Divider = ({
   const theme = useTheme();
 
   const { txtColor, borColor } = computeColorStyles({
+    theme,
     border,
     fallback: colorType
   });
