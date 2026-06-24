@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import dayjs from "dayjs";
 import { computeColorStyles, useTheme } from "../../theme";
 import { Typography } from "../general/Typography";
@@ -19,21 +19,31 @@ export const TimeSelector = ({
   const theme = useTheme();
   const [hoverTime, setHoverTime] = useState(null);
   const [rangePhase, setRangePhase] = useState(0); // 0: start, 1: end
-  const [touchedUnits, setTouchedUnits] = useState({
-    startTime: { hour: false, minute: false, second: false },
-    endTime: { hour: false, minute: false, second: false }
-  });
 
   const isRange = range;
   const is12 = use12Hours;
-  const minuteStep = step;
+  const minuteStep = useMemo(() => {
+    const numericStep = Number(step);
+
+    if (!Number.isFinite(numericStep) || numericStep <= 0) return 1;
+
+    return Math.min(60, Math.max(1, Math.floor(numericStep)));
+  }, [step]);
+
+  const getDisplayHour = (hour) => {
+    if (hour == null) return null;
+    if (!is12) return hour;
+
+    const displayHour = hour % 12;
+    return displayHour === 0 ? 12 : displayHour;
+  };
 
   const getTimeParts = (time) => {
     if (!time || !dayjs(time).isValid())
       return { hour: null, minute: null, second: null };
     const d = dayjs(time);
     return {
-      hour: d.hour(),
+      hour: getDisplayHour(d.hour()),
       minute: d.minute(),
       second: d.second(),
       ampm: d.hour() < 12 ? "AM" : "PM"
@@ -53,30 +63,86 @@ export const TimeSelector = ({
     ampm: a2
   } = getTimeParts(value?.endTime);
 
-  const [selected, setSelected] = useState({
-    startTime: {
-      hour: h1 ?? null,
-      minute: m1 ?? null,
-      second: s1 ?? null,
-      ampm: a1 ?? "AM"
-    },
-    endTime: {
-      hour: h2 ?? null,
-      minute: m2 ?? null,
-      second: s2 ?? null,
-      ampm: a2 ?? "AM"
+  const selectedFromValue = useMemo(
+    () => ({
+      startTime: {
+        hour: h1 ?? null,
+        minute: m1 ?? null,
+        second: s1 ?? null,
+        ampm: a1 ?? "AM"
+      },
+      endTime: {
+        hour: h2 ?? null,
+        minute: m2 ?? null,
+        second: s2 ?? null,
+        ampm: a2 ?? "AM"
+      }
+    }),
+    [a1, a2, h1, h2, m1, m2, s1, s2]
+  );
+
+  const [selected, setSelected] = useState(selectedFromValue);
+
+  useEffect(() => {
+    setSelected(selectedFromValue);
+    setRangePhase(0);
+  }, [selectedFromValue]);
+
+  const hasCompleteTime = (time) =>
+    time.hour != null &&
+    time.minute != null &&
+    (!showSecond || time.second != null);
+
+  const buildDate = (time) =>
+    dayjs()
+      .hour(fixHour(time.hour, time.ampm))
+      .minute(time.minute)
+      .second(showSecond ? time.second ?? 0 : 0)
+      .millisecond(0);
+
+  const emitChange = (next, phase) => {
+    if (!isRange) {
+      if (hasCompleteTime(next.startTime)) {
+        onChange?.(buildDate(next.startTime).toDate());
+      }
+
+      return;
     }
-  });
+
+    if (phase === 0 && hasCompleteTime(next.startTime)) {
+      setRangePhase(1);
+      return;
+    }
+
+    if (phase === 1 && hasCompleteTime(next.endTime)) {
+      const start = buildDate(next.startTime);
+      let end = buildDate(next.endTime);
+
+      if (end.isBefore(start)) {
+        end = end.add(1, "day");
+      }
+
+      onChange?.({
+        startTime: start.toDate(),
+        endTime: end.toDate()
+      });
+    }
+  };
 
   const hours = useMemo(() => {
     const base = is12 ? 12 : 24;
     return Array.from({ length: base }, (_, i) => i + (is12 ? 1 : 0));
   }, [is12]);
 
-  const minutes = useMemo(
-    () => Array.from({ length: 60 / minuteStep }, (_, i) => i * minuteStep),
-    [minuteStep]
-  );
+  const minutes = useMemo(() => {
+    const values = [];
+
+    for (let minute = 0; minute < 60; minute += minuteStep) {
+      values.push(minute);
+    }
+
+    return values;
+  }, [minuteStep]);
 
   const seconds = useMemo(() => Array.from({ length: 60 }, (_, i) => i), []);
 
@@ -94,62 +160,21 @@ export const TimeSelector = ({
       [unit]: value
     };
 
-    const nextTouched = {
-      ...touchedUnits,
-      [target]: {
-        ...touchedUnits[target],
-        [unit]: true
-      }
-    };
-
     setSelected(next);
-    setTouchedUnits(nextTouched);
-
-    const isComplete = (obj) => {
-      return obj.hour && obj.minute && (!showSecond || obj.second);
-    };
-
-    if (!isRange && isComplete(nextTouched.startTime)) {
-      const hour = fixHour(next.startTime.hour, next.startTime.ampm);
-      const minute = next.startTime.minute;
-      const second = showSecond ? next.startTime.second : 0;
-
-      const result = dayjs().hour(hour).minute(minute).second(second).toDate();
-
-      onChange?.(result);
-    }
-
-    if (isRange && rangePhase === 0 && isComplete(nextTouched.startTime)) {
-      setRangePhase(1);
-    }
-
-    if (isRange && rangePhase === 1 && isComplete(nextTouched.endTime)) {
-      let start = dayjs()
-        .hour(fixHour(next.startTime.hour, next.startTime.ampm))
-        .minute(next.startTime.minute)
-        .second(showSecond ? next.startTime.second : 0);
-
-      let end = dayjs()
-        .hour(fixHour(next.endTime.hour, next.endTime.ampm))
-        .minute(next.endTime.minute)
-        .second(showSecond ? next.endTime.second : 0);
-
-      if (end.isBefore(start)) {
-        end = end.add(1, "day");
-      }
-
-      onChange?.({
-        startTime: start.toDate(),
-        endTime: end.toDate()
-      });
-    }
+    emitChange(next, rangePhase);
   };
 
   const handleAmPmSelect = (type) => {
     const next = { ...selected };
     const target = isRange && rangePhase === 1 ? "endTime" : "startTime";
-    next[target].ampm = type;
+
+    next[target] = {
+      ...next[target],
+      ampm: type
+    };
+
     setSelected(next);
+    emitChange(next, rangePhase);
   };
 
   const { bgColor, txtColor } = computeColorStyles({
