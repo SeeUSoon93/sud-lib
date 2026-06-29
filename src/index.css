@@ -153,51 +153,63 @@
   font-display: swap;
 }
 
-* {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]) {
   box-sizing: border-box;
   font-family: "Pretendard-R", sans-serif;
 }
 
-.codding-font {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]) *,
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]) *::before,
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]) *::after {
+  box-sizing: border-box;
+}
+
+:where(.sud-root .codding-font, [class^="sud-"].codding-font, [class*=" sud-"].codding-font) {
   font-family: "IntelOneMono-Medium", monospace;
 }
 
-a {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]) a,
+a:where([class^="sud-"], [class*=" sud-"]) {
   color: inherit;
   text-decoration: none;
 }
 
-* {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]) {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 }
 
-*:hover {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]):hover {
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }
 
-*::-webkit-scrollbar {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"])::-webkit-scrollbar,
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]) *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
   background: transparent;
 }
 
-*::-webkit-scrollbar-track {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"])::-webkit-scrollbar-track,
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]) *::-webkit-scrollbar-track {
   background: transparent;
 }
 
-*::-webkit-scrollbar-thumb {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"])::-webkit-scrollbar-thumb,
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]) *::-webkit-scrollbar-thumb {
   background-color: transparent;
   border-radius: 6px;
   transition: background-color 0.2s;
 }
 
-*:hover::-webkit-scrollbar-thumb {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]):hover::-webkit-scrollbar-thumb,
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]):hover *::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.15);
 }
 
-*::-webkit-scrollbar-thumb:hover,
-*:hover::-webkit-scrollbar-thumb:hover {
+:where(.sud-root, [class^="sud-"], [class*=" sud-"])::-webkit-scrollbar-thumb:hover,
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]):hover::-webkit-scrollbar-thumb:hover,
+:where(.sud-root, [class^="sud-"], [class*=" sud-"]):hover *::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.3);
 }
 /* 기본 호버 적용 */
@@ -718,13 +730,13 @@ a {
 }
 
 /* Shadow 기본 스타일 */
-.shadow-sm {
+:where(.sud-root .shadow-sm, [class^="sud-"].shadow-sm, [class*=" sud-"].shadow-sm) {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08) ;
 }
-.shadow-md {
+:where(.sud-root .shadow-md, [class^="sud-"].shadow-md, [class*=" sud-"].shadow-md) {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.16), 0 2px 4px -1px rgba(0, 0, 0, 0.12) ;
 }
-.shadow-lg {
+:where(.sud-root .shadow-lg, [class^="sud-"].shadow-lg, [class*=" sud-"].shadow-lg) {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.12) ;
 }
 
