@@ -1,6 +1,7 @@
-# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-1.9.0-blue)](https://www.npmjs.com/package/sud-ui)
-**Soon UI Design (SUD)** is a React UI library that helps you quickly build responsive and polished interfaces using reusable components and customizable design tokens.
----
+# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-1.9.2-blue)](https://www.npmjs.com/package/sud-ui)
+
+## **Soon UI Design (SUD)** is a React UI library that helps you quickly build responsive and polished interfaces using reusable components and customizable design tokens.
+
 ## ✨ Features
 
 - 🎨 Tailwind CSS utilities with SUD-specific animations and design tokens

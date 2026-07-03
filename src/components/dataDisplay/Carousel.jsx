@@ -10,6 +10,7 @@ export const Carousel = ({
   itemWidthRatio = 0.8,
   itemCount = 1,
   itemGap = 0,
+  overlapOffsetRatio = 0.55,
   autoPlay = false,
   autoPlayInterval = 3000,
   scaleRatio = 0.2,
@@ -85,9 +86,13 @@ export const Carousel = ({
   const total = items.length || 1;
   const clamped = Math.min(itemCount, total);
   const isMulti = clamped > 1;
-  const effectiveItemWidth = isMulti
+  const overlapItemWidth = containerSize.width * itemWidthRatio;
+  const gridItemWidth = isMulti
     ? (containerSize.width - itemGap * (clamped - 1)) / clamped
     : containerSize.width * itemWidthRatio;
+  const effectiveItemWidth =
+    isMulti && effectType !== "overlap" ? gridItemWidth : overlapItemWidth;
+  const safeOverlapOffsetRatio = Math.max(0, Math.min(overlapOffsetRatio, 1));
 
   const handlePrev = () => {
     if (!items.length) return;
@@ -194,7 +199,10 @@ export const Carousel = ({
 
     const dist = Math.abs(rel);
     const maxDist = Math.max(leftCount, rightCount) || 1;
-    const translateX = rel * (effectiveItemWidth + itemGap);
+    const translateX =
+      effectType === "overlap"
+        ? rel * (effectiveItemWidth * safeOverlapOffsetRatio)
+        : rel * (effectiveItemWidth + itemGap);
     const scale = 1 - scaleRatio * (dist / maxDist);
     const opacity = 1 - opacityRatio * (dist / maxDist);
     const zIndex = clamped - dist;

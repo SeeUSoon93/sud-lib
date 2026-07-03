@@ -5,6 +5,7 @@ export interface CarouselProps extends HTMLAttributes<HTMLDivElement> {
   itemWidthRatio?: number;
   itemCount?: number;
   itemGap?: number;
+  overlapOffsetRatio?: number;
   autoPlay?: boolean;
   autoPlayInterval?: number;
   scaleRatio?: number;
