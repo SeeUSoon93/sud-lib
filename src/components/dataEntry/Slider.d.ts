@@ -4,7 +4,8 @@ import type { defaultColorType, borderType, shadowType } from "../commonType";
 
 export type SliderSize = "sm" | "md" | "lg";
 
-export interface SliderProps extends HTMLAttributes<HTMLDivElement> {
+export interface SliderProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   min?: number;
   max?: number;
   value?: number;

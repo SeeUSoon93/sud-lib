@@ -1,4 +1,11 @@
-import type { ReactNode, CSSProperties, FC, HTMLAttributes } from "react";
+import type {
+  ReactNode,
+  CSSProperties,
+  FC,
+  ForwardRefExoticComponent,
+  InputHTMLAttributes,
+  RefAttributes
+} from "react";
 import type { defaultColorType } from "../commonType";
 
 export type CheckboxLabelPosition = "left" | "right" | "top" | "bottom";
@@ -11,7 +18,16 @@ export interface CheckboxOption {
 }
 
 export interface CheckboxProps
-  extends Omit<HTMLAttributes<HTMLLabelElement>, "onChange"> {
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    | "type"
+    | "onChange"
+    | "checked"
+    | "defaultChecked"
+    | "color"
+    | "style"
+    | "className"
+  > {
   checked?: boolean;
   defaultChecked?: boolean;
   onChange?: (checked: boolean) => void;
@@ -49,7 +65,9 @@ export interface CheckboxGroupProps {
   className?: string;
 }
 
-declare const Checkbox: FC<CheckboxProps> & {
+declare const Checkbox: ForwardRefExoticComponent<
+  CheckboxProps & RefAttributes<HTMLInputElement>
+> & {
   Group: FC<CheckboxGroupProps>;
 };
 

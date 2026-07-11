@@ -16,7 +16,8 @@ export interface SelectOption {
   content?: ReactNode;
 }
 
-export interface SelectProps extends HTMLAttributes<HTMLDivElement> {
+export interface SelectProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   background?: string;
   color?: string;
   border?: boolean;

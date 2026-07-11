@@ -142,7 +142,9 @@ export const Calendar = ({
   const [endDate, setEndDate] = useState(propEnd ? dayjs(propEnd) : null);
 
   const [hoverDate, setHoverDate] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(dayjs(value || new Date()));
+  const [selectedDate, setSelectedDate] = useState(
+    value === null ? null : dayjs(value || new Date())
+  );
   const [view, setView] = useState(defaultView);
   const [showYearMonthSelector, setShowYearMonthSelector] = useState(false);
   const [year, setYear] = useState(viewDate.year());
@@ -172,15 +174,23 @@ export const Calendar = ({
   const days = Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1);
 
   useEffect(() => {
-    if (value) {
-      setSelectedDate(dayjs(value));
-      setViewDate(dayjs(value));
+    if (value === undefined) return;
+    if (value === null) {
+      setSelectedDate(null);
+      return;
     }
+
+    const nextDate = dayjs(value);
+    setSelectedDate(nextDate);
+    setViewDate(nextDate);
+    setYear(nextDate.year());
+    setMonth(nextDate.month());
+    setDay(nextDate.date());
   }, [value]);
 
   useEffect(() => {
-    if (propStart) setStartDate(dayjs(propStart));
-    if (propEnd) setEndDate(dayjs(propEnd));
+    setStartDate(propStart ? dayjs(propStart) : null);
+    setEndDate(propEnd ? dayjs(propEnd) : null);
   }, [propStart, propEnd]);
 
   const isSameDate = (a, b) => {

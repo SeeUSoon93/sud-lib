@@ -13,7 +13,8 @@ export interface TimeSelectorValue {
   endTime?: Date;
 }
 
-export interface TimeSelectorProps extends HTMLAttributes<HTMLDivElement> {
+export interface TimeSelectorProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   value?: Date | TimeSelectorValue;
   onChange?: (value: Date | TimeSelectorValue) => void;
   range?: boolean;

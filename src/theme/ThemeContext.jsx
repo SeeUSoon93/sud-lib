@@ -35,6 +35,9 @@ export const ThemeProvider = ({
 
   // body 배경색 설정
   useEffect(() => {
+    const previousBackgroundColor = document.body.style.backgroundColor;
+    const previousColor = document.body.style.color;
+
     document.body.style.backgroundColor = resolveColor(
       activeTheme.body.backgroundColor,
       activeTheme
@@ -43,6 +46,11 @@ export const ThemeProvider = ({
       activeTheme.body.color,
       activeTheme
     );
+
+    return () => {
+      document.body.style.backgroundColor = previousBackgroundColor;
+      document.body.style.color = previousColor;
+    };
   }, [activeTheme]);
 
   return (

@@ -25,7 +25,8 @@ export interface MenuItem {
   title?: ReactNode;
 }
 
-export interface MenuProps extends HTMLAttributes<HTMLDivElement> {
+export interface MenuProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   items?: MenuItem[];
   selectedKey?: string;
   defaultSelectedKey?: string;

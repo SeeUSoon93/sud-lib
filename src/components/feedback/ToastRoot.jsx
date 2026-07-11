@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Card } from "../dataDisplay/Card";
 import { CheckCircleFill, ErrorCircleFill, XMarkCircleFill } from "sud-icons";
@@ -47,15 +47,23 @@ export const ToastRoot = () => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    addToastHandler = ({ type = "info", message, duration = 3000, icon }) => {
+    const handler = ({ type = "info", message, duration = 3000, icon }) => {
       const id = Date.now() + Math.random();
       setToasts((prev) => [...prev, { id, type, message, duration, icon }]);
     };
+
+    addToastHandler = handler;
+
+    return () => {
+      if (addToastHandler === handler) {
+        addToastHandler = null;
+      }
+    };
   }, []);
 
-  const removeToast = (id) => {
+  const removeToast = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
-  };
+  }, []);
   useEffect(() => {
     setMounted(true); // ✅ 클라이언트에서만 createPortal 실행되게 함
   }, []);
@@ -99,14 +107,16 @@ const ToastItem = ({ id, type, message, duration, onClose, icon }) => {
   const theme = useTheme();
   useEffect(() => {
     const show = setTimeout(() => setVisible(true), 10);
+    let removeTimer;
     const hide = setTimeout(() => {
       setVisible(false);
-      setTimeout(() => onClose?.(id), 300);
+      removeTimer = setTimeout(() => onClose?.(id), 300);
     }, duration);
 
     return () => {
       clearTimeout(show);
       clearTimeout(hide);
+      if (removeTimer) clearTimeout(removeTimer);
     };
   }, [id, duration, onClose]);
 

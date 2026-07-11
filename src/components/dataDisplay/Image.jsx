@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../../index.css";
 import { PhotoFill } from "sud-icons";
 import { useTheme } from "../../theme/ThemeContext";
@@ -11,17 +11,28 @@ import {
 } from "../../theme/themeUtils";
 import { Typography } from "../general/Typography";
 import { createPortal } from "react-dom";
+import { useDialogFocus } from "../../utils/useDialogFocus";
 
 const styles = `
   .sud-image {
-    cursor: pointer;
     position: relative;
+  }
+  .sud-image--interactive {
+    cursor: pointer;
   }
   .sud-image__mask {
     opacity: 0;
     pointer-events: none;
   }
   .sud-image:hover .sud-image__mask {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .sud-image--interactive:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+  .sud-image--interactive:focus-visible .sud-image__mask {
     opacity: 1;
     pointer-events: auto;
   }
@@ -64,6 +75,14 @@ export const Image = ({
 }) => {
   const theme = useTheme();
   const [showPreview, setShowPreview] = useState(false);
+  const previewRef = useRef(null);
+  const interactive = preview || typeof onClick === "function";
+
+  useDialogFocus({
+    open: showPreview,
+    containerRef: previewRef,
+    onClose: () => setShowPreview(false)
+  });
 
   // 스타일 시트 추가
   useEffect(() => {
@@ -76,10 +95,20 @@ export const Image = ({
   }, []);
 
   const handleClick = (e) => {
-    if (preview) {
+    onClick?.(e);
+
+    if (preview && !e.defaultPrevented) {
       setShowPreview(true);
-    } else if (onClick) {
-      onClick(e);
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    rest.onKeyDown?.(event);
+    if (event.defaultPrevented || !interactive) return;
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      event.currentTarget.click();
     }
   };
 
@@ -97,7 +126,9 @@ export const Image = ({
   const shadowStyle = getShadowStyle(shadow, theme);
   const shapeStyle = getShapeStyles(shape, theme);
 
-  const combinedClassName = `sud-image ${className}`;
+  const combinedClassName = `sud-image${
+    interactive ? " sud-image--interactive" : ""
+  } ${className}`.trim();
 
   // ✅ 인라인 스타일 처리
   const containerStyle = {
@@ -145,12 +176,20 @@ export const Image = ({
   return (
     <>
       <div
+        {...rest}
         className={combinedClassName}
         style={containerStyle}
-        onClick={handleClick}
-        role="img"
-        aria-label={alt}
-        {...rest}
+        onClick={interactive ? handleClick : undefined}
+        onKeyDown={handleKeyDown}
+        role={interactive ? rest.role ?? "button" : rest.role}
+        tabIndex={interactive ? rest.tabIndex ?? 0 : rest.tabIndex}
+        aria-label={
+          interactive
+            ? rest["aria-label"] ?? (alt ? `Preview ${alt}` : "Preview image")
+            : rest["aria-label"]
+        }
+        aria-haspopup={preview ? "dialog" : undefined}
+        aria-expanded={preview ? showPreview : undefined}
       >
         <img
           src={src}
@@ -191,6 +230,7 @@ export const Image = ({
       {showPreview &&
         createPortal(
           <div
+            ref={previewRef}
             className="sud-image__preview"
             style={{
               position: "fixed",
@@ -208,14 +248,38 @@ export const Image = ({
             role="dialog"
             aria-label="이미지 미리보기"
             aria-modal="true"
+            tabIndex={-1}
           >
+            <button
+              type="button"
+              data-autofocus
+              aria-label="이미지 미리보기 닫기"
+              onClick={() => setShowPreview(false)}
+              style={{
+                position: "absolute",
+                top: 24,
+                right: 24,
+                width: 40,
+                height: 40,
+                border: 0,
+                borderRadius: "50%",
+                color: resolveColor("white-10", theme),
+                background: resolveColor("black-7", theme),
+                cursor: "pointer",
+                fontSize: 28,
+                lineHeight: 1
+              }}
+            >
+              ×
+            </button>
             <img
               src={src}
               alt={alt}
+              onClick={(event) => event.stopPropagation()}
               style={{
                 maxWidth: "80%",
                 maxHeight: "80%",
-                boxShadow: resolveColor("black-8", theme)
+                boxShadow: `0 16px 48px ${resolveColor("black-8", theme)}`
               }}
             />
           </div>,

@@ -1,4 +1,11 @@
-import type { ReactNode, CSSProperties, FC, HTMLAttributes } from "react";
+import type {
+  ReactNode,
+  CSSProperties,
+  FC,
+  ForwardRefExoticComponent,
+  InputHTMLAttributes,
+  RefAttributes
+} from "react";
 import type { defaultColorType } from "../commonType";
 
 export type RadioLabelPosition = "left" | "right" | "top" | "bottom";
@@ -11,7 +18,16 @@ export interface RadioOption {
 }
 
 export interface RadioProps
-  extends Omit<HTMLAttributes<HTMLLabelElement>, "onChange"> {
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    | "type"
+    | "onChange"
+    | "checked"
+    | "defaultChecked"
+    | "color"
+    | "style"
+    | "className"
+  > {
   checked?: boolean;
   defaultChecked?: boolean;
   onChange?: (checked: boolean) => void;
@@ -47,7 +63,9 @@ export interface RadioGroupProps {
   className?: string;
 }
 
-declare const Radio: FC<RadioProps> & {
+declare const Radio: ForwardRefExoticComponent<
+  RadioProps & RefAttributes<HTMLInputElement>
+> & {
   Group: FC<RadioGroupProps>;
 };
 

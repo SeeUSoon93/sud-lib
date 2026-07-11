@@ -19,7 +19,8 @@ export interface ColorPickerColor {
   rgba: string;
 }
 
-export interface ColorPickerProps extends HTMLAttributes<HTMLDivElement> {
+export interface ColorPickerProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   color?: string;
   onChange?: (color: ColorPickerColor) => void;
   open?: boolean;

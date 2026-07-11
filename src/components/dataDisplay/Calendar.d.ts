@@ -12,8 +12,9 @@ export interface CalendarItem {
   itemProps?: HTMLAttributes<HTMLSpanElement>;
 }
 
-export interface CalendarProps extends HTMLAttributes<HTMLDivElement> {
-  value?: Date;
+export interface CalendarProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+  value?: Date | null;
   onChange?: (date: Date | { startDate: Date; endDate: Date | null }) => void;
   items?: CalendarItem[];
   view?: CalendarView;
@@ -34,8 +35,8 @@ export interface CalendarProps extends HTMLAttributes<HTMLDivElement> {
   width?: number | string;
   height?: number | string;
   range?: boolean;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: Date | null;
+  endDate?: Date | null;
   size?: CalendarSize;
   holidays?: string[];
   holidaysStyle?: CSSProperties;

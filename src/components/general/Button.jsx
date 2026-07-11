@@ -1,6 +1,6 @@
 "use client";
 import "../../index.css";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { Typography } from "./Typography";
 import {
   applyPulseEffect,
@@ -71,7 +71,7 @@ const styles = `
 
 const borderedButtonTypes = new Set(["default", "sub", "ghost"]);
 
-export const Button = ({
+export const Button = React.forwardRef(function Button({
   children,
   colorType = "default",
   background,
@@ -96,11 +96,12 @@ export const Button = ({
   ariaPressed,
   ariaExpanded,
   ariaControls,
-  role = "button",
-  size = "md"
-}) => {
+  role,
+  size = "md",
+  type = "button",
+  ...rest
+}, ref) {
   const theme = useTheme();
-  const ref = useRef();
   const resolvedBorder = border ?? (disabled || borderedButtonTypes.has(colorType));
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
@@ -153,6 +154,8 @@ export const Button = ({
 
   return (
     <button
+      {...rest}
+      type={type}
       className={mergeClassNames(
         "sud-button",
         disabled || loading ? "" : "sud-hover",
@@ -176,12 +179,13 @@ export const Button = ({
       }}
       onClick={!disabled ? handleClick : undefined}
       disabled={disabled || loading}
-      aria-label={ariaLabel}
-      aria-pressed={ariaPressed}
-      aria-expanded={ariaExpanded}
-      aria-controls={ariaControls}
+      aria-label={ariaLabel ?? rest["aria-label"]}
+      aria-pressed={ariaPressed ?? rest["aria-pressed"]}
+      aria-expanded={ariaExpanded ?? rest["aria-expanded"]}
+      aria-controls={ariaControls ?? rest["aria-controls"]}
       role={role}
       aria-disabled={disabled || loading}
+      aria-busy={loading || undefined}
     >
       {loading ? (
         <>
@@ -246,4 +250,6 @@ export const Button = ({
       )}
     </button>
   );
-};
+});
+
+Button.displayName = "Button";

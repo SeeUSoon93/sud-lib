@@ -194,18 +194,25 @@ export const TimeSelector = ({
   const renderColumn = (label, list, unit) => {
     const target = isRange && rangePhase === 1 ? "endTime" : "startTime";
     return (
-      <div style={{ flex: 1, overflowY: "auto", maxHeight: 160, padding: 4 }}>
+      <div
+        role="group"
+        aria-label={label}
+        style={{ flex: 1, overflowY: "auto", maxHeight: 160, padding: 4 }}
+      >
         {list.map((val) => {
           const formatted = val.toString().padStart(2, "0");
           const current = selected[target]?.[unit];
           const isSelected = current != null && current === val;
           const isHover = hoverTime && hoverTime[unit] === val;
           return (
-            <div
+            <button
+              type="button"
               key={val}
               onClick={() => handleSelect(unit, val)}
-              onMouseEnter={() => setHoverTime({ ...hoverTime, [unit]: val })}
+              onMouseEnter={() => setHoverTime({ [unit]: val })}
               onMouseLeave={() => setHoverTime(null)}
+              aria-label={`${label} ${formatted}`}
+              aria-pressed={isSelected}
               style={{
                 padding: "6px 12px",
                 cursor: "pointer",
@@ -215,7 +222,10 @@ export const TimeSelector = ({
                   ? hoverBgColor
                   : "transparent",
                 borderRadius: 6,
-                textAlign: "center"
+                textAlign: "center",
+                border: 0,
+                width: "100%",
+                font: "inherit"
               }}
             >
               <Typography
@@ -225,7 +235,7 @@ export const TimeSelector = ({
               >
                 {formatted}
               </Typography>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -236,19 +246,27 @@ export const TimeSelector = ({
     const target = isRange && rangePhase === 1 ? "endTime" : "startTime";
     const current = selected[target].ampm;
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div
+        role="group"
+        aria-label="오전 또는 오후"
+        style={{ display: "flex", flexDirection: "column", gap: 4 }}
+      >
         {["AM", "PM"].map((type) => {
           const isSelected = type === current;
           return (
-            <div
+            <button
+              type="button"
               key={type}
               onClick={() => handleAmPmSelect(type)}
+              aria-pressed={isSelected}
               style={{
                 padding: "6px 12px",
                 cursor: "pointer",
                 backgroundColor: isSelected ? bgColor : "transparent",
                 borderRadius: 6,
-                textAlign: "center"
+                textAlign: "center",
+                border: 0,
+                font: "inherit"
               }}
             >
               <Typography
@@ -258,7 +276,7 @@ export const TimeSelector = ({
               >
                 {type}
               </Typography>
-            </div>
+            </button>
           );
         })}
       </div>

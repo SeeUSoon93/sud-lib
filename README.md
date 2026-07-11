@@ -1,4 +1,4 @@
-# Soon UI Design Library [![npm version](https://img.shields.io/badge/npm-1.9.2-blue)](https://www.npmjs.com/package/sud-ui)
+# Soon UI Design Library [![npm version](https://img.shields.io/npm/v/sud-ui.svg)](https://www.npmjs.com/package/sud-ui)
 
 ## **Soon UI Design (SUD)** is a React UI library that helps you quickly build responsive and polished interfaces using reusable components and customizable design tokens.
 
@@ -13,7 +13,7 @@
 ## 📦 Installation
 
 ```bash
-npm install sud-ui
+npm install sud-ui sud-icons
 ```
 
 ## 🧪 Examples Built with Soon UI
@@ -33,6 +33,7 @@ Check out real projects built using the SUD component library:
 import React from "react";
 import { Card, Typography, Avatar, Tag } from "sud-ui";
 import { LogoGithub } from "sud-icons";
+import "sud-ui/dist/index.css";
 
 export default function App() {
   return (
@@ -99,7 +100,9 @@ checklist and surface rules.
 SUD provides full theming support via `SoonUIDesign`.
 
 ```jsx
-import { SoonUIDesign, defaultTheme, darkTheme } from "sud-ui";
+import { useState } from "react";
+import { Button, SoonUIDesign, defaultTheme, darkTheme } from "sud-ui";
+import "sud-ui/dist/index.css";
 
 const customTheme = {
   ...defaultTheme,
@@ -144,6 +147,21 @@ export default function App() {
   );
 }
 ```
+
+## 2.0 stability changes
+
+- `Button` now forwards native button attributes and refs, and defaults to
+  `type="button"`.
+- `Checkbox`, `Radio`, and `Switch` now use native form controls for keyboard and
+  form support.
+- `Modal` and `Drawer` now trap and restore focus, close with Escape, and lock
+  background scrolling.
+- `Image` preview is keyboard accessible, and library motion respects the
+  reduced-motion preference.
+- Controlled `Calendar` values and ranges can be cleared with `null`.
+- Notification `onClose` callbacks now run for manual and automatic dismissal.
+
+See [`CHANGELOG.md`](./CHANGELOG.md) for migration details.
 
 ## 📚 Documentation
 

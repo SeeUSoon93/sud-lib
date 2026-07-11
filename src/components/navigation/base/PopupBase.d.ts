@@ -38,7 +38,10 @@ export type PopupVariant =
   | "popconfirm";
 
 export interface PopupBaseProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
+  extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "content" | "style" | "title"
+  > {
   children: ReactNode;
   content: ReactNode | (() => ReactNode);
   title?: ReactNode;

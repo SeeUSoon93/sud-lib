@@ -1,7 +1,24 @@
-import type { ReactNode, CSSProperties, FC, HTMLAttributes } from "react";
+import type {
+  ReactNode,
+  CSSProperties,
+  ForwardRefExoticComponent,
+  InputHTMLAttributes,
+  RefAttributes
+} from "react";
 import type { defaultColorType, shadowType } from "../commonType";
 
-export interface SwitchProps extends HTMLAttributes<HTMLDivElement> {
+export interface SwitchProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    | "type"
+    | "onChange"
+    | "checked"
+    | "defaultChecked"
+    | "color"
+    | "size"
+    | "style"
+    | "className"
+  > {
   checked?: boolean;
   defaultChecked?: boolean;
   onChange?: (checked: boolean) => void;
@@ -22,5 +39,7 @@ export interface SwitchProps extends HTMLAttributes<HTMLDivElement> {
   ariaLabel?: string;
 }
 
-declare const Switch: FC<SwitchProps>;
+declare const Switch: ForwardRefExoticComponent<
+  SwitchProps & RefAttributes<HTMLInputElement>
+>;
 export default Switch;

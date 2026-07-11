@@ -1,5 +1,6 @@
 "use client";
 import "../../index.css";
+import React from "react";
 
 import { useTheme } from "../../theme/ThemeContext";
 import {
@@ -12,10 +13,9 @@ import {
 } from "../../theme/themeUtils";
 import { Typography } from "../general/Typography";
 import { Divider } from "../navigation/Divider";
-import { Div } from "../Div/Div";
 import { Close } from "sud-icons";
 
-export const Card = ({
+export const Card = React.forwardRef(function Card({
   title,
   children,
   footer,
@@ -41,7 +41,7 @@ export const Card = ({
   isDrawer,
   onClose,
   ...rest
-}) => {
+}, ref) {
   const theme = useTheme();
   const defaultSurface =
     surface ||
@@ -82,6 +82,7 @@ export const Card = ({
 
   return (
     <div
+      ref={ref}
       className={mergeClassNames(`sud-${variant}`, className)}
       style={{
         display: "flex",
@@ -119,9 +120,23 @@ export const Card = ({
                 >
                   {title}
                 </Typography>
-                <Div color={finalTxtColor} style={{ cursor: "pointer" }}>
-                  <Close size={20} onClick={onClose} />
-                </Div>
+                <button
+                  type="button"
+                  aria-label="Close modal"
+                  onClick={onClose}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 4,
+                    border: 0,
+                    background: "transparent",
+                    color: finalTxtColor,
+                    cursor: "pointer"
+                  }}
+                >
+                  <Close size={20} aria-hidden="true" />
+                </button>
               </div>
             ) : (
               <Typography
@@ -204,4 +219,6 @@ export const Card = ({
       )}
     </div>
   );
-};
+});
+
+Card.displayName = "Card";

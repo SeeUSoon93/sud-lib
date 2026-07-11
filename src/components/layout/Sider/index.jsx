@@ -28,6 +28,7 @@ export const Sider = forwardRef(
       onWidthChange,
       siderPosition = "below-header",
       headerHeight = 0,
+      footerHeight = 0,
       border = true,
       style = {},
       ...rest
@@ -78,7 +79,7 @@ export const Sider = forwardRef(
           position: "absolute",
           top: 0,
           left: 0,
-          height: "100%",
+          height: `calc(100% - ${footerHeight}px)`,
           width: typeof width === "number" ? `${width}px` : width,
           minWidth: 0, // ✅ 내부 요소가 밀리지 않도록
           zIndex: siderPosition === "below-header" ? 999 : 1000,

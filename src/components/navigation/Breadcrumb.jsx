@@ -71,9 +71,11 @@ export const Breadcrumb = ({
               }}
             >
               {item.href && !isLast ? (
-                <Typography
-                  as="span"
-                  className={mergeClassNames("sud-breadcrumb__link", className)}
+                <a
+                  href={item.href}
+                  target={item.target}
+                  rel={item.rel}
+                  className="sud-breadcrumb__link"
                   style={{
                     color: "inherit",
                     textDecoration: "none",
@@ -83,18 +85,15 @@ export const Breadcrumb = ({
                     ...resolvedTextStyle,
                     ...linkStyle
                   }}
-                  onClick={() => {
-                    window.location.href = item.href;
-                  }}
-                  pretendard="L"
-                  size={size}
                 >
-                  {isIcon ? (
-                    <span style={iconStyle}>{item.label}</span>
-                  ) : (
-                    item.label
-                  )}
-                </Typography>
+                  <Typography as="span" pretendard="L" size={size}>
+                    {isIcon ? (
+                      <span style={iconStyle}>{item.label}</span>
+                    ) : (
+                      item.label
+                    )}
+                  </Typography>
+                </a>
               ) : (
                 <Typography
                   as="div"

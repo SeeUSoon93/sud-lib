@@ -15,7 +15,8 @@ export interface CollapseItem {
   children: ReactNode;
 }
 
-export interface CollapseProps extends HTMLAttributes<HTMLDivElement> {
+export interface CollapseProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   items?: CollapseItem[];
   openKeys?: string[];
   defaultOpenKeys?: string[];

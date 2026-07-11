@@ -10,7 +10,7 @@ import type {
 } from "../commonType";
 
 export interface DropdownProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style" | "title"> {
   children: ReactNode;
   title?: ReactNode;
   trigger?: PopupTrigger;

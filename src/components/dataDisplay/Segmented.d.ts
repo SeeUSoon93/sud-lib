@@ -14,7 +14,8 @@ export interface SegmentedOption {
   disabled?: boolean;
 }
 
-export interface SegmentedProps extends HTMLAttributes<HTMLDivElement> {
+export interface SegmentedProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   options?: (SegmentedOption | string | number)[];
   value?: string | number;
   onChange?: (value: string | number) => void;

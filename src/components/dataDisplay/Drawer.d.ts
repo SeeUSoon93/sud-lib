@@ -9,9 +9,11 @@ import type {
 
 export type DrawerPlacement = "left" | "right" | "top" | "bottom";
 
-export interface DrawerProps extends HTMLAttributes<HTMLDivElement> {
+export interface DrawerProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   open?: boolean;
   onClose?: () => void;
+  onEsc?: boolean;
   title?: ReactNode;
   children?: ReactNode;
   footer?: ReactNode;

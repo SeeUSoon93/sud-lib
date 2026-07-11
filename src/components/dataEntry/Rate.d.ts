@@ -2,7 +2,8 @@ import type { ReactElement, CSSProperties, FC, HTMLAttributes } from "react";
 
 export type RateIcon = "star" | "heart" | ReactElement;
 
-export interface RateProps extends HTMLAttributes<HTMLDivElement> {
+export interface RateProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   count?: number;
   allowHalf?: boolean;
   defaultValue?: number;

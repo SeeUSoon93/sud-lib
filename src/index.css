@@ -783,3 +783,15 @@ a:where([class^="sud-"], [class*=" sud-"]) {
 .hover-shadow-10 {
   transition: box-shadow 0.3s ease-in-out;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.sud-root, [class^="sud-"], [class*=" sud-"]),
+  :where(.sud-root, [class^="sud-"], [class*=" sud-"]) *,
+  :where(.sud-root, [class^="sud-"], [class*=" sud-"]) *::before,
+  :where(.sud-root, [class^="sud-"], [class*=" sud-"]) *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

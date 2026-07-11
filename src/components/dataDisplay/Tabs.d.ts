@@ -21,7 +21,8 @@ export interface TabPaneProps {
   children?: ReactNode;
 }
 
-export interface TabsProps extends HTMLAttributes<HTMLDivElement> {
+export interface TabsProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "color" | "onChange"> {
   value?: string;
   defaultValue?: string;
   onChange?: (key: string) => void;

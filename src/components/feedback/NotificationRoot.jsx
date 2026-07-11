@@ -1,7 +1,7 @@
 // Notification.jsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Card } from "../dataDisplay/Card";
 import { Close } from "sud-icons";
@@ -67,7 +67,7 @@ export const NotificationRoot = () => {
 
   useEffect(() => {
     setMounted(true);
-    pushNotification = ({
+    const handler = ({
       title,
       message,
       footer,
@@ -109,11 +109,19 @@ export const NotificationRoot = () => {
         }
       ]);
     };
+
+    pushNotification = handler;
+
+    return () => {
+      if (pushNotification === handler) {
+        pushNotification = () => {};
+      }
+    };
   }, []);
 
-  const remove = (id) => {
+  const remove = useCallback((id) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
+  }, []);
 
   if (!mounted) return null;
 
@@ -150,7 +158,7 @@ export const NotificationRoot = () => {
               <NotificationItem
                 key={n.id}
                 {...n}
-                onClose={() => remove(n.id)}
+                onDismiss={remove}
               />
             ))}
           </div>
@@ -168,6 +176,7 @@ const NotificationItem = ({
   footer,
   duration,
   onClose,
+  onDismiss,
   colorType = "default",
   color,
   background,
@@ -181,21 +190,31 @@ const NotificationItem = ({
 }) => {
   const [visible, setVisible] = useState(false);
 
+  const close = useCallback(() => {
+    try {
+      onClose?.();
+    } finally {
+      onDismiss(id);
+    }
+  }, [id, onClose, onDismiss]);
+
   useEffect(() => {
     const show = setTimeout(() => setVisible(true), 10);
     let hide;
+    let removeTimer;
     if (duration !== false) {
       hide = setTimeout(() => {
         setVisible(false);
-        setTimeout(() => onClose?.(id), 300);
+        removeTimer = setTimeout(close, 300);
       }, duration);
     }
 
     return () => {
       clearTimeout(show);
       if (hide) clearTimeout(hide);
+      if (removeTimer) clearTimeout(removeTimer);
     };
-  }, [id, duration, onClose]);
+  }, [close, duration]);
 
   return (
     <Card
@@ -243,9 +262,10 @@ const NotificationItem = ({
             className="sud-notification__close"
             colorType="text"
             size="sm"
-            icon={<Close size={14} />}
-            onClick={onClose}
-          />
+             icon={<Close size={14} />}
+             onClick={close}
+             ariaLabel="Close notification"
+           />
         </div>
       )}
 

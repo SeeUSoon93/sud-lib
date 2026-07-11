@@ -4,6 +4,8 @@ import type { fontSizeType } from "../commonType";
 export interface BreadcrumbItem {
   label: ReactNode;
   href?: string;
+  target?: string;
+  rel?: string;
 }
 
 export interface BreadcrumbProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Check } from "sud-icons";
 import {
   applyPulseEffect,
@@ -14,7 +14,7 @@ import {
 import { useTheme } from "../../theme/ThemeContext";
 import { Typography } from "../general/Typography";
 
-function Checkbox({
+const Checkbox = React.forwardRef(function Checkbox({
   checked: controlled,
   defaultChecked,
   onChange,
@@ -28,8 +28,9 @@ function Checkbox({
   ariaLabel,
   ariaRequired,
   ariaInvalid,
-  ariaDescribedby
-}) {
+  ariaDescribedby,
+  ...rest
+}, ref) {
   const theme = useTheme();
 
   const { bgColor } = computeColorStyles({
@@ -42,6 +43,7 @@ function Checkbox({
 
   const [checked, setChecked] = useState(defaultChecked || false);
   const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
   const isControlled = controlled !== undefined;
   const isChecked = isControlled ? controlled : checked;
   const isVertical = labelPosition === "top" || labelPosition === "bottom";
@@ -51,10 +53,8 @@ function Checkbox({
   const borderColor =
     hovered || isChecked ? finalBgColor : resolveColor("cool-gray-3", theme);
 
-  const toggle = (e) => {
-    e.stopPropagation();
-    if (disabled) return;
-    const next = !isChecked;
+  const handleChange = (e) => {
+    const next = e.target.checked;
     if (!isControlled) setChecked(next);
     onChange?.(next);
 
@@ -88,17 +88,40 @@ function Checkbox({
         opacity: disabled ? 0.5 : 1,
         ...style
       }}
-      onClick={toggle}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      role="checkbox"
-      aria-checked={isChecked}
-      aria-label={ariaLabel}
-      aria-required={ariaRequired}
-      aria-invalid={ariaInvalid}
-      aria-describedby={ariaDescribedby}
-      aria-disabled={disabled}
     >
+      <input
+        {...rest}
+        ref={ref}
+        type="checkbox"
+        checked={isChecked}
+        disabled={disabled}
+        onChange={handleChange}
+        onFocus={(e) => {
+          setFocused(true);
+          rest.onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          setFocused(false);
+          rest.onBlur?.(e);
+        }}
+        aria-label={ariaLabel ?? rest["aria-label"]}
+        aria-required={ariaRequired ?? rest["aria-required"]}
+        aria-invalid={ariaInvalid ?? rest["aria-invalid"]}
+        aria-describedby={ariaDescribedby ?? rest["aria-describedby"]}
+        style={{
+          position: "absolute",
+          width: 1,
+          height: 1,
+          padding: 0,
+          margin: -1,
+          overflow: "hidden",
+          clip: "rect(0, 0, 0, 0)",
+          whiteSpace: "nowrap",
+          border: 0
+        }}
+      />
       <div
         ref={iconWrapperRef}
         className="sud-checkbox__box"
@@ -113,7 +136,9 @@ function Checkbox({
             : resolveColor("white-10", theme),
           border: `1px solid ${borderColor}`,
           borderRadius: 4,
-          transition: "border-color 0.2s ease, background 0.2s ease"
+          transition: "border-color 0.2s ease, background 0.2s ease",
+          outline: focused ? `2px solid ${finalBgColor}` : "none",
+          outlineOffset: 2
         }}
       >
         <div
@@ -142,7 +167,9 @@ function Checkbox({
         ))}
     </label>
   );
-}
+});
+
+Checkbox.displayName = "Checkbox";
 
 Checkbox.Group = function CheckboxGroup({
   options = [],
@@ -160,7 +187,7 @@ Checkbox.Group = function CheckboxGroup({
   ariaLabel,
   ariaRequired,
   name,
-  role = "checkboxgroup",
+  role = "group",
   className = "",
   style = {}
 }) {
@@ -205,12 +232,12 @@ Checkbox.Group = function CheckboxGroup({
           key={val}
           checked={value.includes(val)}
           onChange={() => toggle(val)}
+          value={val}
           disabled={disabled || itemDisabled.includes(val) || isItemDisabled}
           color={color}
           colorType={colorType}
           labelPosition={labelPosition}
           name={name}
-          ariaLabel={label}
         >
           {label}
         </Checkbox>

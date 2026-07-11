@@ -2,8 +2,9 @@ import type {
   ReactNode,
   MouseEvent,
   CSSProperties,
-  FC,
-  HTMLAttributes
+  ButtonHTMLAttributes,
+  ForwardRefExoticComponent,
+  RefAttributes
 } from "react";
 import type {
   defaultColorType,
@@ -17,7 +18,7 @@ export type IconPosition = "left" | "right" | "";
 export type ButtonSize = "sm" | "md" | "lg";
 
 export interface ButtonProps
-  extends Omit<HTMLAttributes<HTMLButtonElement>, "onClick"> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
   children?: ReactNode;
   colorType?: defaultColorType;
   background?: string;
@@ -45,4 +46,6 @@ export interface ButtonProps
   ariaControls?: string;
 }
 
-export declare const Button: FC<ButtonProps>;
+export declare const Button: ForwardRefExoticComponent<
+  ButtonProps & RefAttributes<HTMLButtonElement>
+>;

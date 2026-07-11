@@ -3,7 +3,8 @@ import type { defaultColorType, borderType } from "../commonType";
 
 export type DividerAlign = "left" | "center" | "right" | "top" | "bottom";
 
-export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
+export interface DividerProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "content"> {
   content?: ReactNode;
   align?: DividerAlign;
   borderWeight?: number;

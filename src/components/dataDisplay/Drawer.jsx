@@ -8,10 +8,12 @@ import { getShapeStyles } from "../../theme/themeUtils";
 import { Typography } from "../general/Typography";
 import { Button } from "../general/Button";
 import { createPortal } from "react-dom";
+import { useDialogFocus } from "../../utils/useDialogFocus";
 
 export const Drawer = ({
   open = false,
   onClose,
+  onEsc = true,
   title,
   children,
   footer,
@@ -43,6 +45,13 @@ export const Drawer = ({
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const drawerRef = useRef();
+
+  useDialogFocus({
+    open: open && mounted,
+    containerRef: drawerRef,
+    onClose,
+    closeOnEscape: onEsc
+  });
 
   // 1. open이 true로 바뀌면 mounted를 true로 먼저 설정
   useEffect(() => {
@@ -169,6 +178,7 @@ export const Drawer = ({
           colorType="text"
           icon={<Close size={14} />}
           onClick={onClose}
+          ariaLabel="Close drawer"
         />
       </div>
     ) : (
@@ -186,6 +196,7 @@ export const Drawer = ({
           colorType="text"
           icon={<Close />}
           onClick={onClose}
+          ariaLabel="Close drawer"
         />
       </div>
     ));
@@ -207,6 +218,7 @@ export const Drawer = ({
             aria-hidden="true"
           />
           <Card
+            {...rest}
             ref={drawerRef}
             title={finalTitle}
             children={children}
@@ -231,14 +243,16 @@ export const Drawer = ({
             variant="drawer"
             role="dialog"
             aria-modal="true"
-            aria-label={ariaLabel || title}
+            aria-label={
+              ariaLabel || (typeof title === "string" ? title : undefined)
+            }
             aria-describedby={ariaDescribedby}
+            tabIndex={rest.tabIndex ?? -1}
             style={{
               ...positionStyle,
               ...style,
               zIndex: zIndex + 1
             }}
-            {...rest}
           />
         </>,
         document.body

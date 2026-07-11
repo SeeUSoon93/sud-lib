@@ -1,4 +1,10 @@
-import type { ReactNode, CSSProperties, FC, HTMLAttributes } from "react";
+import type {
+  ReactNode,
+  CSSProperties,
+  ForwardRefExoticComponent,
+  HTMLAttributes,
+  RefAttributes
+} from "react";
 import type {
   defaultColorType,
   shapeType,
@@ -14,7 +20,8 @@ export type CardVariant =
   | "notification"
   | "toast";
 
-export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+export interface CardProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   /** 카드 제목 */
   title?: ReactNode;
   /** 카드 내용 */
@@ -65,4 +72,6 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   isDrawer?: boolean;
 }
 
-export declare const Card: FC<CardProps>;
+export declare const Card: ForwardRefExoticComponent<
+  CardProps & RefAttributes<HTMLDivElement>
+>;

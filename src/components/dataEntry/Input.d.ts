@@ -44,7 +44,7 @@ export type InputType =
 export interface InputProps
   extends Omit<
     HTMLAttributes<HTMLInputElement>,
-    "onChange" | "onClick" | "onKeyDown"
+    "onChange" | "onClick" | "onKeyDown" | "prefix"
   > {
   background?: string;
   color?: string;

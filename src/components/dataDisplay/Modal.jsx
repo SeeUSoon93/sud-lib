@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Card } from "./Card";
+import { useDialogFocus } from "../../utils/useDialogFocus";
 
 export const Modal = ({
   open = false,
@@ -32,30 +33,26 @@ export const Modal = ({
   thumb,
   ...rest
 }) => {
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === "Escape" && onEsc && open) {
-        onClose?.();
-      }
-    };
-    if (open) {
-      document.addEventListener("keydown", handleEsc);
-    }
-    return () => {
-      document.removeEventListener("keydown", handleEsc);
-    };
-  }, [onEsc, open, onClose]);
+  const [mounted, setMounted] = useState(false);
+  const dialogRef = useRef(null);
 
-  if (!open) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useDialogFocus({
+    open: open && mounted,
+    containerRef: dialogRef,
+    onClose,
+    closeOnEscape: onEsc
+  });
+
+  if (!open || !mounted) return null;
 
   return createPortal(
     <div
       className="sud-modal__overlay"
       onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label={ariaLabel || title}
-      aria-describedby={ariaDescribedby}
       style={{
         position: "fixed",
         inset: 0,
@@ -68,7 +65,18 @@ export const Modal = ({
         transition: "opacity 0.3s ease",
       }}
     >
-      <div onClick={(e) => e.stopPropagation()} {...rest}>
+      <div
+        {...rest}
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={
+          ariaLabel || (typeof title === "string" ? title : undefined)
+        }
+        aria-describedby={ariaDescribedby}
+        tabIndex={rest.tabIndex ?? -1}
+        onClick={(e) => e.stopPropagation()}
+      >
         <Card
           title={title}
           footer={footer}

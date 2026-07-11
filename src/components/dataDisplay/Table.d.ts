@@ -28,7 +28,8 @@ export type TableSorter<T> = {
   order: TableSortOrder;
 } | null;
 
-export interface TableProps<T = any> extends HTMLAttributes<HTMLDivElement> {
+export interface TableProps<T = any>
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   columns: TableColumn<T>[];
   dataSource: T[];
   rowKey?: string | ((record: T) => string);

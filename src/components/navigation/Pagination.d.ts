@@ -6,7 +6,8 @@ export interface PaginationStyle {
   shadow?: shadowType;
 }
 
-export interface PaginationProps extends HTMLAttributes<HTMLDivElement> {
+export interface PaginationProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   defaultCurrent?: number;
   total?: number;
   pageSize?: number;

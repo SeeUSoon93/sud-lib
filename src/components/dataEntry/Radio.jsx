@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { CircleFill } from "sud-icons";
 
 import {
@@ -16,7 +16,7 @@ import {
 import { useTheme } from "../../theme/ThemeContext";
 import { Typography } from "../general/Typography";
 
-function Radio({
+const Radio = React.forwardRef(function Radio({
   checked: controlled,
   defaultChecked,
   onChange,
@@ -29,8 +29,8 @@ function Radio({
   className = "",
   ariaLabel,
   ariaRequired,
-  name
-}) {
+  ...rest
+}, ref) {
   const theme = useTheme();
 
   const { bgColor } = computeColorStyles({
@@ -43,6 +43,7 @@ function Radio({
 
   const [checked, setChecked] = useState(defaultChecked || false);
   const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
   const isControlled = controlled !== undefined;
   const isChecked = isControlled ? controlled : checked;
   const isVertical = labelPosition === "top" || labelPosition === "bottom";
@@ -51,9 +52,8 @@ function Radio({
   const borderColor =
     hovered || isChecked ? finalBgColor : resolveColor("cool-gray-3", theme);
 
-  const toggle = (e) => {
-    e.stopPropagation();
-    if (disabled || isChecked) return; // 체크된 건 다시 선택 불가
+  const handleChange = () => {
+    if (isChecked) return;
     const next = true;
     if (!isControlled) setChecked(next);
     onChange?.(next);
@@ -86,16 +86,38 @@ function Radio({
         opacity: disabled ? 0.5 : 1,
         ...style
       }}
-      onClick={toggle}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      role="radio"
-      aria-checked={isChecked}
-      aria-label={ariaLabel}
-      aria-required={ariaRequired}
-      aria-disabled={disabled}
-      name={name}
     >
+      <input
+        {...rest}
+        ref={ref}
+        type="radio"
+        checked={isChecked}
+        disabled={disabled}
+        onChange={handleChange}
+        onFocus={(e) => {
+          setFocused(true);
+          rest.onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          setFocused(false);
+          rest.onBlur?.(e);
+        }}
+        aria-label={ariaLabel ?? rest["aria-label"]}
+        aria-required={ariaRequired ?? rest["aria-required"]}
+        style={{
+          position: "absolute",
+          width: 1,
+          height: 1,
+          padding: 0,
+          margin: -1,
+          overflow: "hidden",
+          clip: "rect(0, 0, 0, 0)",
+          whiteSpace: "nowrap",
+          border: 0
+        }}
+      />
       <div
         ref={iconWrapperRef}
         className="sud-radio__box"
@@ -110,7 +132,9 @@ function Radio({
             : resolveColor("white-10", theme),
           border: `1px solid ${borderColor}`,
           borderRadius: "50%",
-          transition: "border-color 0.2s ease, background 0.2s ease"
+          transition: "border-color 0.2s ease, background 0.2s ease",
+          outline: focused ? `2px solid ${finalBgColor}` : "none",
+          outlineOffset: 2
         }}
       >
         <div
@@ -140,7 +164,9 @@ function Radio({
         ))}
     </label>
   );
-}
+});
+
+Radio.displayName = "Radio";
 
 Radio.Group = function RadioGroup({
   options = [],
@@ -201,12 +227,12 @@ Radio.Group = function RadioGroup({
           key={val}
           checked={value === val}
           onChange={() => toggle(val)}
+          value={val}
           disabled={disabled || itemDisabled.includes(val) || isItemDisabled}
           color={color}
           colorType={colorType}
           labelPosition={labelPosition}
           name={name}
-          ariaLabel={label}
         >
           {label}
         </Radio>

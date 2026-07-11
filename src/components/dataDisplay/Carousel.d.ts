@@ -1,6 +1,7 @@
 import type { ReactNode, CSSProperties, FC, HTMLAttributes } from "react";
 
-export interface CarouselProps extends HTMLAttributes<HTMLDivElement> {
+export interface CarouselProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   items?: ReactNode[];
   itemWidthRatio?: number;
   itemCount?: number;

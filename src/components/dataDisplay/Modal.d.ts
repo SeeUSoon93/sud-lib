@@ -7,7 +7,8 @@ import type {
   surfaceType
 } from "../commonType";
 
-export interface ModalProps extends HTMLAttributes<HTMLDivElement> {
+export interface ModalProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   open?: boolean;
   onClose?: () => void;
   onEsc?: boolean;
