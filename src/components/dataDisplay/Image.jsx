@@ -78,7 +78,7 @@ export const Image = ({
   const previewRef = useRef(null);
   const interactive = preview || typeof onClick === "function";
 
-  useDialogFocus({
+  const dialogLayer = useDialogFocus({
     open: showPreview,
     containerRef: previewRef,
     onClose: () => setShowPreview(false)
@@ -242,7 +242,7 @@ export const Image = ({
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              zIndex: 1000
+              zIndex: dialogLayer
             }}
             onClick={() => setShowPreview(false)}
             role="dialog"

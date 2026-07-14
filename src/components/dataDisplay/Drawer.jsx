@@ -41,12 +41,11 @@ export const Drawer = ({
   const theme = useTheme();
 
   const shapeStyle = getShapeStyles(shape, theme);
-  const zIndex = 9999;
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const drawerRef = useRef();
 
-  useDialogFocus({
+  const dialogLayer = useDialogFocus({
     open: open && mounted,
     containerRef: drawerRef,
     onClose,
@@ -90,7 +89,7 @@ export const Drawer = ({
   const positionStyle = useMemo(() => {
     const base = {
       position: "fixed",
-      zIndex,
+      zIndex: dialogLayer + 1,
       transition:
         "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
       pointerEvents: visible ? "auto" : "none",
@@ -157,7 +156,15 @@ export const Drawer = ({
       default:
         return {};
     }
-  }, [placement, shapeStyle.borderRadius, width, height, visible, mounted]);
+  }, [
+    placement,
+    shapeStyle.borderRadius,
+    width,
+    height,
+    visible,
+    mounted,
+    dialogLayer
+  ]);
 
   const finalTitle =
     title &&
@@ -211,7 +218,7 @@ export const Drawer = ({
               position: "fixed",
               inset: 0,
               background: "rgba(0,0,0,0.5)",
-              zIndex: zIndex,
+              zIndex: dialogLayer,
               opacity: visible ? 1 : 0,
               transition: "opacity 0.3s ease"
             }}
@@ -251,7 +258,7 @@ export const Drawer = ({
             style={{
               ...positionStyle,
               ...style,
-              zIndex: zIndex + 1
+              zIndex: dialogLayer + 1
             }}
           />
         </>,

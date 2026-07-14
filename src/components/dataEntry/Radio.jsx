@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { CircleFill } from "sud-icons";
 
 import {
@@ -46,6 +46,8 @@ const Radio = React.forwardRef(function Radio({
   const [focused, setFocused] = useState(false);
   const isControlled = controlled !== undefined;
   const isChecked = isControlled ? controlled : checked;
+  const inputRef = useRef(null);
+  const name = rest.name;
   const isVertical = labelPosition === "top" || labelPosition === "bottom";
   const iconWrapperRef = useRef();
   const iconRef = useRef();
@@ -56,6 +58,11 @@ const Radio = React.forwardRef(function Radio({
     if (isChecked) return;
     const next = true;
     if (!isControlled) setChecked(next);
+    if (!isControlled && name && inputRef.current) {
+      document.dispatchEvent(
+        new CustomEvent("sud-radio-change", { detail: inputRef.current })
+      );
+    }
     onChange?.(next);
     if (iconWrapperRef.current) {
       applyPulseEffect(iconWrapperRef.current);
@@ -64,6 +71,48 @@ const Radio = React.forwardRef(function Radio({
       pulseThumbScaleWithBounce(iconRef.current);
     }
   };
+
+  useImperativeHandle(ref, () => inputRef.current, []);
+
+  useEffect(() => {
+    if (isControlled || !name) return undefined;
+
+    const syncNativeRadioGroup = (event) => {
+      const target = event.target;
+      const input = inputRef.current;
+      if (
+        !(target instanceof HTMLInputElement) ||
+        target.type !== "radio" ||
+        target.name !== name ||
+        !input ||
+        target.form !== input.form
+      ) {
+        return;
+      }
+      setChecked(input.checked);
+    };
+    const syncSUDRadioGroup = (event) => {
+      const source = event.detail;
+      const input = inputRef.current;
+      if (
+        !source ||
+        source === input ||
+        source.name !== name ||
+        source.form !== input?.form
+      ) {
+        return;
+      }
+      setChecked(false);
+    };
+
+    document.addEventListener("change", syncNativeRadioGroup);
+    document.addEventListener("sud-radio-change", syncSUDRadioGroup);
+    return () => {
+      document.removeEventListener("change", syncNativeRadioGroup);
+      document.removeEventListener("sud-radio-change", syncSUDRadioGroup);
+    };
+  }, [isControlled, name]);
+
   return (
     <label
       className={mergeClassNames(
@@ -91,7 +140,7 @@ const Radio = React.forwardRef(function Radio({
     >
       <input
         {...rest}
-        ref={ref}
+        ref={inputRef}
         type="radio"
         checked={isChecked}
         disabled={disabled}

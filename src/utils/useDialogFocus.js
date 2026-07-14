@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const FOCUSABLE_SELECTOR = [
   "a[href]",
@@ -15,6 +15,8 @@ const FOCUSABLE_SELECTOR = [
 const dialogStack = [];
 let bodyLockCount = 0;
 let previousBodyOverflow = "";
+const DIALOG_LAYER_BASE = 9999;
+let nextDialogLayer = DIALOG_LAYER_BASE;
 
 const lockBodyScroll = () => {
   if (bodyLockCount === 0) {
@@ -31,12 +33,51 @@ const lockBodyScroll = () => {
   };
 };
 
-const getFocusableElements = (container) =>
-  Array.from(container.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
+const hasHiddenOrInertAncestor = (element) => {
+  for (let current = element; current; current = current.parentElement) {
+    if (
+      current.hasAttribute("hidden") ||
+      current.getAttribute("aria-hidden") === "true" ||
+      current.hasAttribute("inert")
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const getFocusableElements = (container) => {
+  const candidates = Array.from(
+    container.querySelectorAll(FOCUSABLE_SELECTOR)
+  ).filter(
     (element) =>
-      !element.hasAttribute("hidden") &&
-      element.getAttribute("aria-hidden") !== "true"
+      element.tabIndex >= 0 &&
+      !element.disabled &&
+      !hasHiddenOrInertAncestor(element)
   );
+  const radioGroups = [];
+
+  candidates.forEach((element) => {
+    if (element.type !== "radio" || !element.name) return;
+    let group = radioGroups.find(
+      (entry) => entry.name === element.name && entry.form === element.form
+    );
+    if (!group) {
+      group = { name: element.name, form: element.form, radios: [] };
+      radioGroups.push(group);
+    }
+    group.radios.push(element);
+  });
+
+  return candidates.filter((element) => {
+    if (element.type !== "radio" || !element.name) return true;
+    const group = radioGroups.find(
+      (entry) => entry.name === element.name && entry.form === element.form
+    );
+    const checked = group.radios.find((radio) => radio.checked);
+    return element === (checked || group.radios[0]);
+  });
+};
 
 export const useDialogFocus = ({
   open,
@@ -46,12 +87,13 @@ export const useDialogFocus = ({
   lockScroll = true
 }) => {
   const onCloseRef = useRef(onClose);
+  const [layer, setLayer] = useState(DIALOG_LAYER_BASE);
 
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!open || !container) return undefined;
 
@@ -62,7 +104,10 @@ export const useDialogFocus = ({
         : null;
     const unlockBody = lockScroll ? lockBodyScroll() : () => {};
 
-    dialogStack.push(token);
+    const dialog = { token, layer: nextDialogLayer };
+    nextDialogLayer += 2;
+    dialogStack.push(dialog);
+    setLayer(dialog.layer);
 
     const focusFrame = requestAnimationFrame(() => {
       const focusTarget =
@@ -73,7 +118,7 @@ export const useDialogFocus = ({
     });
 
     const handleKeyDown = (event) => {
-      if (dialogStack[dialogStack.length - 1] !== token) return;
+      if (dialogStack[dialogStack.length - 1]?.token !== token) return;
 
       if (event.key === "Escape" && closeOnEscape) {
         event.preventDefault();
@@ -93,7 +138,10 @@ export const useDialogFocus = ({
 
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
+      if (!container.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus({ preventScroll: true });
+      } else if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus({ preventScroll: true });
       } else if (!event.shiftKey && document.activeElement === last) {
@@ -107,13 +155,16 @@ export const useDialogFocus = ({
     return () => {
       cancelAnimationFrame(focusFrame);
       document.removeEventListener("keydown", handleKeyDown);
-      const stackIndex = dialogStack.lastIndexOf(token);
+      const wasTop = dialogStack[dialogStack.length - 1]?.token === token;
+      const stackIndex = dialogStack.findIndex((entry) => entry.token === token);
       if (stackIndex >= 0) dialogStack.splice(stackIndex, 1);
       unlockBody();
 
-      if (previouslyFocused?.isConnected) {
+      if (wasTop && previouslyFocused?.isConnected) {
         previouslyFocused.focus({ preventScroll: true });
       }
     };
   }, [closeOnEscape, containerRef, lockScroll, open]);
+
+  return layer;
 };

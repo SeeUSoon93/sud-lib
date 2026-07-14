@@ -40,7 +40,7 @@ export const Modal = ({
     setMounted(true);
   }, []);
 
-  useDialogFocus({
+  const dialogLayer = useDialogFocus({
     open: open && mounted,
     containerRef: dialogRef,
     onClose,
@@ -57,7 +57,7 @@ export const Modal = ({
         position: "fixed",
         inset: 0,
         background: "rgba(0, 0, 0, 0.5)",
-        zIndex: 9999,
+        zIndex: dialogLayer,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -75,7 +75,10 @@ export const Modal = ({
         }
         aria-describedby={ariaDescribedby}
         tabIndex={rest.tabIndex ?? -1}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(event) => {
+          event.stopPropagation();
+          rest.onClick?.(event);
+        }}
       >
         <Card
           title={title}

@@ -102,6 +102,32 @@ describe("native form controls", () => {
     );
   });
 
+  it("synchronizes same-name uncontrolled Radio indicators with native selection", async () => {
+    const user = userEvent.setup();
+    render(
+      <form>
+        <Radio name="plan" value="free" defaultChecked>
+          Free
+        </Radio>
+        <Radio name="plan" value="pro">
+          Pro
+        </Radio>
+      </form>
+    );
+
+    await user.click(screen.getByRole("radio", { name: "Pro" }));
+
+    const radios = screen.getAllByRole("radio");
+    expect(radios.filter((radio) => radio.checked)).toHaveLength(1);
+    const selectedRadio = screen.getByRole("radio", { name: "Pro" });
+    expect(selectedRadio).toBeChecked();
+    const selectedVisual = selectedRadio.nextElementSibling;
+    const visuals = Array.from(document.querySelectorAll(".sud-radio__box"));
+    expect(
+      visuals.filter((visual) => visual.style.background === selectedVisual.style.background)
+    ).toHaveLength(1);
+  });
+
   it("submits Switch values and forwards its input ref", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

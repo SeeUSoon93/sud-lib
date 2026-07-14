@@ -201,7 +201,7 @@ export const Calendar = ({
     triggerAnimation();
     setView(v);
     if (v === "daily") {
-      setViewDate(selectedDate);
+      setViewDate(selectedDate ?? viewDate);
     }
   };
   const calendarGrid = useMemo(() => {
@@ -665,7 +665,8 @@ export const Calendar = ({
                 (item) => item.date.slice(0, 7) === yearMonthStr
               );
 
-              const isSelected = selectedDate.isSame(monthDate, "month");
+              const isSelected =
+                selectedDate?.isSame(monthDate, "month") ?? false;
               const isHovered =
                 hoverDate && dayjs(hoverDate).isSame(monthDate, "month");
 
