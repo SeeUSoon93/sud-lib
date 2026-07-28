@@ -5,6 +5,7 @@ import {
   computeColorStyles,
   getShadowStyle,
   getShapeStyles,
+  mergeClassNames,
   resolveColor
 } from "../../theme/themeUtils";
 import { useTheme } from "../../theme/ThemeContext";
@@ -142,7 +143,7 @@ export const Avatar = ({
 
   return (
     <div
-      className={`sud-avatar ${className}`}
+      className={mergeClassNames("sud-avatar", className)}
       role="img"
       aria-label={alt || "아바타 이미지"}
       tabIndex={onClick ? tabIndex : undefined}
@@ -209,7 +210,7 @@ const AvatarGroup = ({
     typeof size === "number" ? size : SIZE_MAP[size] || SIZE_MAP.md;
   return (
     <div
-      className={`sud-avatar-group ${className}`}
+      className={mergeClassNames("sud-avatar-group", className)}
       role="group"
       aria-label={ariaLabel}
       style={{

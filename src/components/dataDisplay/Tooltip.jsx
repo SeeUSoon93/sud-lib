@@ -12,7 +12,7 @@ export const Tooltip = ({
   onOpenChange,
   closeOnClick = true,
   disabled = false,
-  className,
+  className = "",
   background,
   color,
   border,
@@ -40,7 +40,7 @@ export const Tooltip = ({
       onOpenChange={onOpenChange}
       closeOnClick={closeOnClick}
       disabled={disabled}
-      className={`sud-tooltip ${className}`}
+      className={className}
       background={background}
       color={color}
       borderColor={borderColor}

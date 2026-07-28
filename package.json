@@ -1,7 +1,7 @@
 {
   "name": "sud-ui",
   "description": "A React UI component library with dark mode support, customizable styles, reusable components, and utility-style class names.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": false,
   "type": "module",
   "main": "./dist/index.js",
@@ -17,14 +17,19 @@
   },
   "files": [
     "dist",
-    "docs"
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "docs/surface-guidelines.md"
   ],
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/copy-types.mjs",
     "check:exports": "node scripts/check-exports.mjs",
     "check:package": "node scripts/check-package.mjs",
-    "prepack": "npm run lint && npm test && npm run test:types && npm run check:exports && npm run check:package",
+    "check:pack": "node scripts/check-pack.mjs",
+    "check:packed-install": "node scripts/check-packed-install.mjs",
+    "prepack": "npm run lint && npm test && npm run test:types && npm run check:exports && npm run check:package && npm run check:pack",
     "lint": "eslint .",
     "test": "vitest run",
     "test:types": "npm run build && tsc -p tests/types/tsconfig.json",
@@ -64,6 +69,12 @@
   "sideEffects": [
     "**/*.css"
   ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SeeUSoon93/sud-lib.git"

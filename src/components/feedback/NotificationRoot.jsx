@@ -219,6 +219,9 @@ const NotificationItem = ({
   return (
     <Card
       className="sud-notification"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
       variant="notification"
       shape={shape}
       shadow={shadow}
@@ -241,15 +244,15 @@ const NotificationItem = ({
       }}
     >
       {/* Title + Close */}
-      {title && (
-        <div
-          className="sud-notification__header"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}
-        >
+      <div
+        className="sud-notification__header"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
+        {title && (
           <Typography
             className="sud-notification__title"
             as="h3"
@@ -258,16 +261,16 @@ const NotificationItem = ({
           >
             {title}
           </Typography>
-          <Button
-            className="sud-notification__close"
-            colorType="text"
-            size="sm"
-             icon={<Close size={14} />}
-             onClick={close}
-             ariaLabel="Close notification"
-           />
-        </div>
-      )}
+        )}
+        <Button
+          className="sud-notification__close"
+          colorType="text"
+          size="sm"
+          icon={<Close size={14} />}
+          onClick={close}
+          ariaLabel="Close notification"
+        />
+      </div>
 
       {/* Message */}
       {message && (

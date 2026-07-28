@@ -97,12 +97,30 @@ export const getColorWithIntensity = (color, intensity = 1, theme) => {
   return theme.colors[color][intensity] || color;
 };
 
+const collectClassNames = (value) => {
+  if (!value) return [];
+  if (typeof value === "string" || typeof value === "number") {
+    return [String(value)];
+  }
+  if (Array.isArray(value)) {
+    return value.flatMap(collectClassNames);
+  }
+  if (typeof value === "object") {
+    return Object.entries(value)
+      .filter(([, enabled]) => Boolean(enabled))
+      .map(([className]) => className);
+  }
+  return [];
+};
+
 /**
  * 조건부 클래스 네이밍 유틸
- * @param {...string} args - 클래스 이름들
+ * 문자열, 중첩 배열, `{ className: condition }` 객체를 지원한다.
+ * @param {...(string | number | object | Array)} args - 클래스 이름들
  * @returns {string} 병합된 클래스 문자열
  */
-export const mergeClassNames = (...args) => args.filter(Boolean).join(" ");
+export const mergeClassNames = (...args) =>
+  args.flatMap(collectClassNames).join(" ");
 
 export const normalizeShadow = (shadow = "none") => {
   if (shadow === true) return "sm";

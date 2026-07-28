@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import { AngleDown } from "sud-icons";
 import { useTheme } from "../../theme/ThemeContext";
 import {
@@ -38,6 +38,7 @@ export const Collapse = ({
   ...rest
 }) => {
   const theme = useTheme();
+  const generatedId = useId().replace(/:/g, "");
   const [internalOpenKeys, setInternalOpenKeys] = useState(defaultOpenKeys);
   const openKeys = controlledOpenKeys ?? internalOpenKeys;
   const { border: resolvedBorder, shadow: resolvedShadow } =
@@ -125,6 +126,8 @@ export const Collapse = ({
       {items.map((item, index) => {
         const isOpen = openKeys.includes(item.key);
         const isDisabled = disabledKeys.includes(item.key);
+        const headerId = `sud-collapse-${generatedId}-header-${index}`;
+        const contentId = `sud-collapse-${generatedId}-content-${index}`;
 
         return (
           <div
@@ -135,11 +138,10 @@ export const Collapse = ({
               background: finalHeaderBgColor,
               color: finalHeaderTxtColor
             }}
-            role="region"
-            aria-labelledby={`collapse-header-${item.key}`}
           >
-            <div
-              id={`collapse-header-${item.key}`}
+            <button
+              type="button"
+              id={headerId}
               className="sud-collapse__header flex cursor-pointer items-center justify-between"
               onClick={() => {
                 if (!isDisabled) toggle(item.key);
@@ -148,14 +150,17 @@ export const Collapse = ({
                 padding: spacing,
                 cursor: isDisabled ? "not-allowed" : "pointer",
                 height: sizeStyle.lineHeight,
+                width: "100%",
+                border: 0,
+                font: "inherit",
+                textAlign: "left",
                 background: isDisabled ? disabledBgColor : finalHeaderBgColor,
                 color: isDisabled ? disabledTxtColor : finalHeaderTxtColor,
                 transition: "background 0.3s ease"
               }}
-              role="button"
               aria-expanded={isOpen}
-              aria-disabled={isDisabled}
-              aria-controls={`collapse-content-${item.key}`}
+              disabled={isDisabled}
+              aria-controls={contentId}
             >
               <Typography
                 as="div"
@@ -174,9 +179,9 @@ export const Collapse = ({
                   color: isDisabled ? disabledTxtColor : finalHeaderTxtColor
                 }}
               />
-            </div>
+            </button>
             <div
-              id={`collapse-content-${item.key}`}
+              id={contentId}
               className="sud-collapse__content"
               style={{
                 height: isOpen ? "auto" : 0,
@@ -187,6 +192,7 @@ export const Collapse = ({
                 color: finalContentTxtColor
               }}
               role="region"
+              aria-labelledby={headerId}
               aria-hidden={!isOpen}
             >
               {typeof item.children === "string" ? (

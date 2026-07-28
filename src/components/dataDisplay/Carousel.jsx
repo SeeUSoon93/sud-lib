@@ -29,14 +29,23 @@ export const Carousel = ({
   ...rest
 }) => {
   const isControlled = currentIndex !== undefined;
-  const [internalIndex, setInternalIndex] = useState(currentIndex ?? 0);
+  const clampIndex = useCallback(
+    (index) => {
+      if (!items.length) return 0;
+      const numeric = Number.isFinite(Number(index)) ? Math.floor(Number(index)) : 0;
+      return Math.min(items.length - 1, Math.max(0, numeric));
+    },
+    [items.length]
+  );
+  const [internalIndex, setInternalIndex] = useState(() => clampIndex(currentIndex ?? 0));
 
   // 외부 인덱스 동기화 (제어 모드)
   useEffect(() => {
-    if (isControlled && currentIndex !== internalIndex) {
-      setInternalIndex(currentIndex);
+    const nextIndex = clampIndex(currentIndex ?? internalIndex);
+    if ((isControlled || internalIndex !== nextIndex) && nextIndex !== internalIndex) {
+      setInternalIndex(nextIndex);
     }
-  }, [isControlled, currentIndex, internalIndex]);
+  }, [isControlled, currentIndex, internalIndex, clampIndex]);
 
   // 인덱스 변경은 여기로만 (onChange 단일 호출 지점)
   const setCurrentIndex = useCallback(
@@ -58,6 +67,16 @@ export const Carousel = ({
   const startXRef = useRef(0);
 
   const itemRefs = useRef([]);
+
+  const setItemRef = useCallback(
+    (index) => (element) => {
+      itemRefs.current[index] = element;
+      if (!element) return;
+      if (index === internalIndex) element.removeAttribute("inert");
+      else element.setAttribute("inert", "");
+    },
+    [internalIndex]
+  );
 
   // 아이템 최대 높이 계산 (Infinity 방지)
   useLayoutEffect(() => {
@@ -290,7 +309,7 @@ export const Carousel = ({
         {items.map((item, index) => (
           <div
             key={index}
-            ref={(el) => (itemRefs.current[index] = el)}
+            ref={setItemRef(index)}
             style={{
               position: "absolute",
               left: "50%",

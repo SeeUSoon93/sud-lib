@@ -1,5 +1,38 @@
 # Changelog
 
+## 2.0.1
+
+### Accessibility and behavior
+
+- Pagination now uses SUD `Button` controls, supports controlled `current`
+  values, clamps invalid ranges, and exposes the active page with
+  `aria-current`.
+- Menu selection now works in uncontrolled popover mode without serializing
+  conditional class objects into the DOM.
+- Accordion, Collapse, Tabs, Rate, Calendar, Upload, ColorPicker, and Carousel
+  now provide stronger keyboard, focus, and ARIA behavior.
+- Popup and Tooltip triggers open from keyboard focus, close with Escape, avoid
+  duplicate tab stops around interactive children, and restore trigger focus.
+- Persistent notifications remain dismissible even when no title is supplied.
+- FloatButton exposes its actual expanded state, keeps closed actions out of
+  the tab order, and supports Escape dismissal with focus restoration.
+- Temporary pulse effects restore the element's original inline styles and
+  honor reduced-motion preferences.
+
+### Packaging
+
+- Keep `dayjs` and `sud-icons` external to the library bundle so consuming
+  applications resolve the declared dependencies instead of receiving duplicate
+  copies.
+- Exclude local demo assets and internal planning notes from the npm tarball.
+- Retain source maps for production debugging, with package-content checks to
+  prevent accidental asset or documentation leakage.
+- Add package, packed-install, and React 18/19 CI verification.
+
+### Tooling
+
+- Declare the supported Node.js runtime and public npm publish access.
+
 ## 2.0.0
 
 This release establishes the first fully audited stability baseline for SUD UI.

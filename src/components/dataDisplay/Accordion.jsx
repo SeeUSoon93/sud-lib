@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useId } from "react";
 import { AngleDown } from "sud-icons";
 import {
   resolveColor,
@@ -74,6 +74,8 @@ const MenuItem = ({
   theme,
   divider,
   finalDividerColor,
+  idPrefix,
+  itemPath,
   ...rest
 }) => {
   const [hovered, setHovered] = useState(false);
@@ -121,6 +123,8 @@ const MenuItem = ({
                 theme={theme}
                 divider={divider}
                 finalDividerColor={finalDividerColor}
+                idPrefix={idPrefix}
+                itemPath={`${itemPath}-${index}`}
               />
               {divider && index < item.children.length - 1 && (
                 <Divider
@@ -137,12 +141,13 @@ const MenuItem = ({
 
   return (
     <li className="sud-accordion__item" style={{ marginBottom: 6 }}>
-      <div
+      <button
+        type="button"
+        id={`${idPrefix}-header-${itemPath}`}
         className="sud-accordion__item-inner"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
-          paddingLeft,
           backgroundColor,
           color,
           transition: "all 0.2s ease",
@@ -150,6 +155,10 @@ const MenuItem = ({
           cursor: "pointer",
           padding: `6px 12px 6px ${paddingLeft}px`,
           display: "flex",
+          width: "100%",
+          border: 0,
+          font: "inherit",
+          textAlign: "left",
           justifyContent: "space-between",
           alignItems: "center"
         }}
@@ -160,11 +169,9 @@ const MenuItem = ({
             toggleOpen(item.key);
           }
         }}
-        role={hasChildren ? "button" : "menuitem"}
         aria-expanded={hasChildren ? isOpen : undefined}
-        aria-haspopup={hasChildren ? "true" : undefined}
         aria-controls={
-          hasChildren ? `accordion-content-${item.key}` : undefined
+          hasChildren ? `${idPrefix}-content-${itemPath}` : undefined
         }
         aria-label={item.label}
         {...rest}
@@ -200,14 +207,14 @@ const MenuItem = ({
             />
           </span>
         )}
-      </div>
+      </button>
 
       {hasChildren && (
         <SubMenuWrapper isOpen={isOpen}>
           <div
-            id={`accordion-content-${item.key}`}
+            id={`${idPrefix}-content-${itemPath}`}
             role="region"
-            aria-labelledby={`accordion-header-${item.key}`}
+            aria-labelledby={`${idPrefix}-header-${itemPath}`}
           >
             {item.children.map((child, index) => (
               <React.Fragment key={child.key || `${item.key}-sub-${index}`}>
@@ -222,6 +229,8 @@ const MenuItem = ({
                   theme={theme}
                   divider={divider}
                   finalDividerColor={finalDividerColor}
+                  idPrefix={idPrefix}
+                  itemPath={`${itemPath}-${index}`}
                 />
                 {divider && index < item.children.length - 1 && (
                   <Divider borderColor={finalDividerColor} />
@@ -259,6 +268,8 @@ export const Accordion = ({
   style = {}
 }) => {
   const theme = useTheme();
+  const generatedId = useId().replace(/:/g, "");
+  const idPrefix = `sud-accordion-${generatedId}`;
   const shapeStyle = getShapeStyles(shape, theme);
   const boxShadow = getShadowStyle(shadow, theme);
   const [internalSelected, setInternalSelected] = useState(
@@ -364,6 +375,8 @@ export const Accordion = ({
               theme={theme}
               divider={divider}
               finalDividerColor={finalDividerColor}
+              idPrefix={idPrefix}
+              itemPath={`${index}`}
             />
             {divider && index < items.length - 1 && (
               <Divider

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { StarFill, HeartFill } from "sud-icons";
 import { useTheme } from "../../theme/ThemeContext";
 import {
@@ -30,10 +30,16 @@ export const Rate = ({
   ...rest
 }) => {
   const theme = useTheme();
+  const safeCount = Math.max(1, Math.floor(Number(count) || 5));
   const [internal, setInternal] = useState(defaultValue);
   const [hoverValue, setHoverValue] = useState(null);
+  const starRefs = useRef([]);
   const isControlled = controlled !== undefined;
-  const selected = isControlled ? controlled : internal;
+  const rawSelected = isControlled ? controlled : internal;
+  const selected = Math.min(
+    safeCount,
+    Math.max(0, Number(rawSelected) || 0)
+  );
 
   const _colorType = useMemo(() => {
     if (typeof icon === "string") {
@@ -151,14 +157,20 @@ export const Rate = ({
     (e) => {
       if (disabled) return;
       let next = selected;
-      if (e.key === "ArrowRight") next = Math.min(selected + 1, count);
-      else if (e.key === "ArrowLeft") next = Math.max(selected - 1, 0);
+      const step = allowHalf ? 0.5 : 1;
+      if (e.key === "ArrowRight")
+        next = Math.min(selected + step, safeCount);
+      else if (e.key === "ArrowLeft") next = Math.max(selected - step, 0);
       else if (e.key === "Home") next = 0;
-      else if (e.key === "End") next = count;
+      else if (e.key === "End") next = safeCount;
+      else return;
+      e.preventDefault();
       if (!isControlled) setInternal(next);
       onChange?.(next);
+      const focusIndex = Math.max(0, Math.ceil(next || 1) - 1);
+      starRefs.current[focusIndex]?.focus();
     },
-    [disabled, selected, count, isControlled, onChange]
+    [allowHalf, disabled, selected, safeCount, isControlled, onChange]
   );
 
   return (
@@ -166,8 +178,6 @@ export const Rate = ({
       className={mergeClassNames("sud-rate", className)}
       role="radiogroup"
       aria-label={ariaLabel}
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -178,25 +188,42 @@ export const Rate = ({
       data-testid={testId}
       {...rest}
     >
-      {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          role="radio"
-          aria-checked={selected > i}
-          aria-label={`${i + 1}점`}
-          onClick={() => handleChange(i + 1)}
-          onMouseMove={(e) => handleMouseMove(e, i)}
-          onMouseLeave={handleMouseLeave}
-          style={{
-            cursor: disabled ? "not-allowed" : "pointer",
-            width: size,
-            height: size
-          }}
-          data-testid={`${testId}-star-${i + 1}`}
-        >
-          {renderIcon(i)}
-        </div>
-      ))}
+      {Array.from({ length: safeCount }).map((_, i) => {
+        const isCurrent = selected > 0 && Math.ceil(selected) === i + 1;
+
+        return (
+          <button
+            type="button"
+            key={i}
+            ref={(element) => {
+              starRefs.current[i] = element;
+            }}
+            role="radio"
+            aria-checked={isCurrent}
+            aria-label={isCurrent ? `${selected}점` : `${i + 1}점`}
+            onClick={() => handleChange(i + 1)}
+            onKeyDown={handleKeyDown}
+            onMouseMove={(e) => handleMouseMove(e, i)}
+            onMouseLeave={handleMouseLeave}
+            disabled={disabled}
+            tabIndex={
+              disabled ? -1 : Math.ceil(selected || 1) === i + 1 ? 0 : -1
+            }
+            style={{
+              cursor: disabled ? "not-allowed" : "pointer",
+              width: size,
+              height: size,
+              padding: 0,
+              border: 0,
+              background: "transparent",
+              display: "flex"
+            }}
+            data-testid={`${testId}-star-${i + 1}`}
+          >
+            {renderIcon(i)}
+          </button>
+        );
+      })}
       {showValue && (
         <Typography
           as="span"

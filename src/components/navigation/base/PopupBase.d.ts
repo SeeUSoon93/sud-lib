@@ -69,6 +69,8 @@ export interface PopupBaseProps
   followTrigger?: boolean;
   contentRef?: RefObject<HTMLElement>;
   parentRef?: RefObject<HTMLElement>;
+  /** HTML attributes applied to the popup trigger wrapper. */
+  triggerProps?: HTMLAttributes<HTMLDivElement>;
   variant?: PopupVariant;
   footer?: boolean | ReactNode;
   onCancel?: () => void;

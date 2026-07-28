@@ -4,7 +4,8 @@ import { useTheme } from "../../theme/ThemeContext";
 import {
   computeColorStyles,
   resolveColor,
-  getShadowStyle
+  getShadowStyle,
+  mergeClassNames
 } from "../../theme/themeUtils";
 
 const SIZE_STYLE_MAP = {
@@ -150,7 +151,7 @@ export const Badge = ({
       {children}
       {show && (
         <span
-          className={`sud-badge ${className}`}
+          className={mergeClassNames("sud-badge", className)}
           role="status"
           aria-label={getBadgeLabel()}
           aria-live="polite"

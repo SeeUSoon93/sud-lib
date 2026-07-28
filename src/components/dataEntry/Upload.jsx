@@ -8,6 +8,13 @@ import { Tag } from "../dataDisplay/Tag";
 import { Image } from "../dataDisplay/Image";
 import { toast } from "../feedback/ToastRoot";
 
+const activateOnKeyboard = (event, callback) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    callback();
+  }
+};
+
 const FilePreview = ({
   file,
   index,
@@ -107,16 +114,17 @@ const FilePreview = ({
                 </div>
               </div>
             </div>
-            <TrashOutline
+            <button
+              type="button"
               className="sud-upload__file-delete"
-              size={16}
               onClick={() => onRemove(index)}
               onMouseEnter={() => setIsTrashHover(true)}
               onMouseLeave={() => setIsTrashHover(false)}
-              style={{ cursor: "pointer" }}
-              role="button"
+              style={{ cursor: "pointer", border: 0, background: "transparent", padding: 0, display: "inline-flex" }}
               aria-label={`Remove ${file.name}`}
-            />
+            >
+              <TrashOutline size={16} />
+            </button>
           </Tag>
         );
       case "card":
@@ -186,16 +194,17 @@ const FilePreview = ({
               <span>{file.name}</span>
               <span>({formatFileSize(file.size)})</span>
             </div>
-            <TrashOutline
+            <button
+              type="button"
               className="sud-upload__file-delete"
-              size={16}
               onClick={() => onRemove(index)}
               onMouseEnter={() => setIsTrashHover(true)}
               onMouseLeave={() => setIsTrashHover(false)}
-              style={{ cursor: "pointer" }}
-              role="button"
+              style={{ cursor: "pointer", border: 0, background: "transparent", padding: 0, display: "inline-flex" }}
               aria-label={`Remove ${file.name}`}
-            />
+            >
+              <TrashOutline size={16} />
+            </button>
           </Tag>
         );
 
@@ -237,16 +246,17 @@ const FilePreview = ({
                 {file.size && ` (${formatFileSize(file.size)})`}
               </div>
             </div>
-            <TrashOutline
+            <button
+              type="button"
               className="sud-upload__file-delete"
-              size={16}
               onClick={() => onRemove(index)}
               onMouseEnter={() => setIsTrashHover(true)}
               onMouseLeave={() => setIsTrashHover(false)}
-              style={{ cursor: "pointer" }}
-              role="button"
+              style={{ cursor: "pointer", border: 0, background: "transparent", padding: 0, display: "inline-flex" }}
               aria-label={`Remove ${file.name}`}
-            />
+            >
+              <TrashOutline size={16} />
+            </button>
           </Tag>
         );
     }
@@ -456,8 +466,11 @@ export const Upload = ({
       <div
         className="sud-upload__trigger"
         onClick={triggerUpload}
+        onKeyDown={(event) => activateOnKeyboard(event, triggerUpload)}
         role={role}
         aria-label={ariaLabel}
+        aria-disabled={disabled || isUploading || undefined}
+        tabIndex={disabled || isUploading ? -1 : 0}
         style={{ cursor: disabled || isUploading ? "not-allowed" : "pointer" }}
         {...(drag && {
           onDragOver: handleDragEnter,

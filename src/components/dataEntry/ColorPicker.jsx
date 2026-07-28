@@ -522,6 +522,53 @@ export const ColorPicker = ({
     [hue, updateAllFromRGB]
   );
 
+  const handlePaletteKeyDown = useCallback(
+    (event) => {
+      const step = event.shiftKey ? 10 : 2;
+      let nextX = cursorPos.x;
+      let nextY = cursorPos.y;
+
+      if (event.key === "ArrowLeft") nextX -= step;
+      else if (event.key === "ArrowRight") nextX += step;
+      else if (event.key === "ArrowUp") nextY -= step;
+      else if (event.key === "ArrowDown") nextY += step;
+      else if (event.key === "Home") {
+        nextX = 0;
+        nextY = 0;
+      } else if (event.key === "End") {
+        nextX = 100;
+        nextY = 100;
+      } else return;
+
+      event.preventDefault();
+      nextX = Math.min(100, Math.max(0, nextX));
+      nextY = Math.min(100, Math.max(0, nextY));
+      setCursorPos({ x: nextX, y: nextY });
+      const saturation = nextX / 100;
+      const brightness = 1 - nextY / 100;
+      const f = (n, k = (n + hue / 60) % 6) =>
+        brightness - brightness * saturation * Math.max(Math.min(k, 4 - k, 1), 0);
+      updateAllFromRGB({
+        r: Math.round(f(5) * 255),
+        g: Math.round(f(3) * 255),
+        b: Math.round(f(1) * 255)
+      });
+    },
+    [cursorPos, hue, updateAllFromRGB]
+  );
+
+  const handleAlphaChange = useCallback(
+    (event) => {
+      const parsed = Number(event.target.value);
+      const nextAlpha = Number.isFinite(parsed)
+        ? Math.min(100, Math.max(0, parsed))
+        : 0;
+      setAlpha(nextAlpha);
+      updateAllFromRGB(rgb, nextAlpha);
+    },
+    [rgb, updateAllFromRGB]
+  );
+
   const removeDragListeners = useCallback(() => {
     if (dragCleanupRef.current) {
       dragCleanupRef.current();
@@ -544,9 +591,12 @@ export const ColorPicker = ({
       {Object.entries(SUD_PALETTES).map(([colorName, levels]) => (
         <React.Fragment key={colorName}>
           {Object.entries(levels).map(([level, hex]) => (
-            <div
+            <button
+              type="button"
               key={`${colorName}-${level}`}
               onClick={() => updateAllFromRGB(hexToRgb(hex))}
+              aria-label={`${colorName} ${level}`}
+              aria-pressed={rgbToHex(rgb.r, rgb.g, rgb.b) === hex.toUpperCase()}
               title={`${colorName}-${level}`}
               style={{
                 width: "100%",
@@ -559,6 +609,7 @@ export const ColorPicker = ({
                     ? "2px solid #000" // 선택된 색상 강조
                     : "1px solid rgba(0,0,0,0.1)",
                 boxSizing: "border-box",
+                padding: 0,
               }}
             />
           ))}
@@ -571,19 +622,29 @@ export const ColorPicker = ({
       <div
         ref={paletteRef}
         className="sud-color-picker__palette"
-        onMouseDown={(e) => {
+        onPointerDown={(e) => {
           removeDragListeners();
           handleMouseMove(e);
           const move = (e) => handleMouseMove(e);
           const up = () => {
-            window.removeEventListener("mousemove", move);
-            window.removeEventListener("mouseup", up);
+            window.removeEventListener("pointermove", move);
+            window.removeEventListener("pointerup", up);
+            window.removeEventListener("pointercancel", up);
             dragCleanupRef.current = null;
           };
           dragCleanupRef.current = up;
-          window.addEventListener("mousemove", move);
-          window.addEventListener("mouseup", up);
+          window.addEventListener("pointermove", move);
+          window.addEventListener("pointerup", up);
+          window.addEventListener("pointercancel", up);
         }}
+        onKeyDown={handlePaletteKeyDown}
+        role="slider"
+        tabIndex={0}
+        aria-label="색상 채도와 명도"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(cursorPos.x)}
+        aria-valuetext={`채도 ${Math.round(cursorPos.x)}%, 명도 ${Math.round(100 - cursorPos.y)}%`}
         style={{
           position: "relative",
           width: "100%",
@@ -637,8 +698,8 @@ export const ColorPicker = ({
         <Input
           size="sm"
           value={alpha}
-          onChange={(e) => setAlpha(Number(e.target.value))} // Alpha는 여기서 간략화
           {...inputProps}
+          onChange={handleAlphaChange}
         />
       </div>
       <Slider

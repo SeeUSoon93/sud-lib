@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Children, isValidElement, useRef } from "react";
+import { useState, Children, isValidElement, useRef, useId } from "react";
 import {
   computeColorStyles,
   resolveColor,
@@ -31,10 +31,11 @@ export const Tabs = ({
 }) => {
   const theme = useTheme();
   const tabs = options
-    ? options.map((opt) => ({
+    ? options.map((opt, index) => ({
         key: opt.key,
         label: opt.label,
-        content: opt.children || null
+        content: opt.children || null,
+        index
       }))
     : Children.toArray(children)
         .filter((child) => isValidElement(child) && child.type === TabPane)
@@ -43,14 +44,20 @@ export const Tabs = ({
           return {
             key,
             label: child.props.label,
-            content: child.props.children
+            content: child.props.children,
+            index
           };
         });
   const firstTabKey = tabs[0]?.key;
   const [internal, setInternal] = useState(defaultValue ?? firstTabKey);
-  const activeKey = controlled ?? internal;
+  const enabledTabs = tabs.filter((tab) => !disabledKeys.includes(tab.key));
+  const requestedKey = controlled ?? internal;
+  const activeKey = enabledTabs.some((tab) => tab.key === requestedKey)
+    ? requestedKey
+    : enabledTabs[0]?.key;
   const isControlled = controlled !== undefined;
   const tabsRef = useRef([]);
+  const generatedId = useId().replace(/:/g, "");
 
   const sizeMap = {
     xs: {
@@ -80,37 +87,40 @@ export const Tabs = ({
   };
 
   const handleChange = (key) => {
+    if (disabledKeys.includes(key) || key === activeKey) return;
     if (!isControlled) setInternal(key);
     onChange?.(key);
-    const targetTab = tabsRef.current[key];
+    const targetIndex = tabs.findIndex((tab) => tab.key === key);
+    const targetTab = tabsRef.current[targetIndex];
     if (targetTab) {
       targetTab.focus();
     }
   };
 
   const handleKeyDown = (event, key) => {
-    const currentIndex = tabs.findIndex((tab) => tab.key === key);
+    if (!enabledTabs.length) return;
+    const currentIndex = enabledTabs.findIndex((tab) => tab.key === key);
 
     switch (event.key) {
       case "ArrowRight": {
         event.preventDefault();
-        const nextIndex = (currentIndex + 1) % tabs.length;
-        handleChange(tabs[nextIndex].key);
+        const nextIndex = (currentIndex + 1) % enabledTabs.length;
+        handleChange(enabledTabs[nextIndex].key);
         break;
       }
       case "ArrowLeft": {
         event.preventDefault();
-        const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-        handleChange(tabs[prevIndex].key);
+        const prevIndex = (currentIndex - 1 + enabledTabs.length) % enabledTabs.length;
+        handleChange(enabledTabs[prevIndex].key);
         break;
       }
       case "Home":
         event.preventDefault();
-        handleChange(tabs[0].key);
+        handleChange(enabledTabs[0].key);
         break;
       case "End":
         event.preventDefault();
-        handleChange(tabs[tabs.length - 1].key);
+        handleChange(enabledTabs[enabledTabs.length - 1].key);
         break;
       default:
         break;
@@ -200,11 +210,11 @@ export const Tabs = ({
     <div
       className={mergeClassNames("sud-tabs", className)}
       style={{ width: "100%", ...style }}
-      role="tablist"
       {...rest}
     >
       <div
         className="sud-tabs__header"
+        role="tablist"
         style={{
           display: "flex",
           gap: 2,
@@ -212,7 +222,7 @@ export const Tabs = ({
           justifyContent: alignMap[align]
         }}
       >
-        {tabs.map(({ key, label }) => {
+        {tabs.map(({ key, label, index }) => {
           const selected = key === activeKey;
           const isDisabled = disabledKeys.includes(key);
           const currentStyle = selected
@@ -220,17 +230,20 @@ export const Tabs = ({
             : colorStyles.inactive;
 
           return (
-            <div
+            <button
+              type="button"
               key={key}
-              ref={(el) => (tabsRef.current[key] = el)}
+              ref={(el) => {
+                tabsRef.current[index] = el;
+              }}
               onClick={() => !isDisabled && handleChange(key)}
-              onKeyDown={(e) => !isDisabled && handleKeyDown(e, key)}
+              onKeyDown={(e) => handleKeyDown(e, key)}
               tabIndex={selected && !isDisabled ? 0 : -1}
               role="tab"
               aria-selected={selected}
-              aria-disabled={isDisabled}
-              aria-controls={`tabpanel-${key}`}
-              id={`tab-${key}`}
+              disabled={isDisabled}
+              aria-controls={`sud-tabs-${generatedId}-panel-${index}`}
+              id={`sud-tabs-${generatedId}-tab-${index}`}
               style={{
                 padding: `calc(${sizeMap[size].padding}/2) ${sizeMap[size].padding}`,
                 background: isDisabled ? disabledBg : currentStyle.bgColor,
@@ -248,6 +261,7 @@ export const Tabs = ({
                   isDisabled ? disabledBorColor : currentStyle.borColor
                 }`,
                 borderBottom: "none",
+                font: "inherit",
                 marginBottom: -1,
                 transition: "all 0.2s ease-in-out",
                 opacity: isDisabled ? 0.5 : 1
@@ -265,24 +279,26 @@ export const Tabs = ({
               ) : (
                 label
               )}
-            </div>
+            </button>
           );
         })}
       </div>
-      <div
-        className="sud-tabs__content"
-        role="tabpanel"
-        id={`tabpanel-${activeKey}`}
-        aria-labelledby={`tab-${activeKey}`}
-        style={{
-          borderTop: "none",
-          padding: 16,
-          background: "transparent",
-          transition: "opacity 0.2s ease-in-out"
-        }}
-      >
-        {activeTab?.content}
-      </div>
+      {activeTab ? (
+        <div
+          className="sud-tabs__content"
+          role="tabpanel"
+          id={`sud-tabs-${generatedId}-panel-${activeTab.index}`}
+          aria-labelledby={`sud-tabs-${generatedId}-tab-${activeTab.index}`}
+          style={{
+            borderTop: "none",
+            padding: 16,
+            background: "transparent",
+            transition: "opacity 0.2s ease-in-out"
+          }}
+        >
+          {activeTab.content}
+        </div>
+      ) : null}
     </div>
   );
 };

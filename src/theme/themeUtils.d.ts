@@ -47,9 +47,15 @@ export declare const getColorWithIntensity: (
   intensity?: number,
   theme?: SUDTheme
 ) => string;
-export declare const mergeClassNames: (
-  ...args: Array<string | false | null | undefined>
-) => string;
+export type ClassValue =
+  | string
+  | number
+  | false
+  | null
+  | undefined
+  | ClassValue[]
+  | Record<string, unknown>;
+export declare const mergeClassNames: (...args: ClassValue[]) => string;
 export declare const normalizeShadow: (
   shadow?: shadowType | boolean | null | ""
 ) => shadowType;

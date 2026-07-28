@@ -5,7 +5,8 @@ import React, {
   useRef,
   useEffect,
   useCallback,
-  useLayoutEffect
+  useLayoutEffect,
+  useId
 } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -28,6 +29,14 @@ import { Button } from "../../general/Button";
 
 const TRIGGER_GAP = 8;
 const ARROW_SIZE = 8;
+const FOCUSABLE_TRIGGER_SELECTOR = [
+  "button:not([disabled])",
+  "a[href]",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])"
+].join(",");
 
 // 전역 변수들을 WeakMap으로 변경
 const popupGroup = new WeakMap();
@@ -61,6 +70,7 @@ export const PopupBase = ({
   followTrigger = false,
   contentRef: externalContentRef = null,
   parentRef = null,
+  triggerProps = {},
   variant = "popup",
   footer = false,
   onCancel,
@@ -74,7 +84,13 @@ export const PopupBase = ({
   const contentRef = externalContentRef || internalContentRef;
   const leaveTimer = useRef(null);
   const popupId = useRef({});
+  const contentId = useId();
   const [mounted, setMounted] = useState(false);
+  const [hasFocusableChild, setHasFocusableChild] = useState(false);
+  const getFocusableTriggerChild = useCallback(
+    () => triggerRef.current?.querySelector(FOCUSABLE_TRIGGER_SELECTOR),
+    []
+  );
 
   // 초기 스타일 (보이지 않게)
   const [positionStyle, setPositionStyle] = useState({
@@ -110,6 +126,12 @@ export const PopupBase = ({
       if (!value) {
         setIsPositioned(false);
 
+        if (contentRef.current?.contains(document.activeElement)) {
+          requestAnimationFrame(() =>
+            (getFocusableTriggerChild() || triggerRef.current)?.focus()
+          );
+        }
+
         // 팝업이 닫힐 때 자식 팝업들도 함께 닫기
         if (contentRef.current) {
           const childPopups = popupGroup.get(contentRef.current);
@@ -126,7 +148,7 @@ export const PopupBase = ({
         }
       }
     },
-    [isControlled, onOpenChange, contentRef]
+    [isControlled, onOpenChange, contentRef, getFocusableTriggerChild]
   );
 
   const show = useCallback(() => {
@@ -191,6 +213,20 @@ export const PopupBase = ({
     return () =>
       document.removeEventListener("click", handleClickOutside, true);
   }, [trigger, actualOpen, hide, contentRef]);
+
+  useEffect(() => {
+    if (!actualOpen) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpenState(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [actualOpen, setOpenState]);
 
   const { bgColor, txtColor, borColor } = computeColorStyles({
     theme,
@@ -529,6 +565,23 @@ export const PopupBase = ({
     };
   }, [trigger, parentRef, show, hide, toggle, contentRef]);
 
+  useLayoutEffect(() => {
+    setHasFocusableChild(Boolean(getFocusableTriggerChild()));
+  }, [children, getFocusableTriggerChild]);
+
+  const canEnhanceSingleChild =
+    hasFocusableChild &&
+    React.Children.count(children) === 1 &&
+    React.isValidElement(children);
+  const triggerChild = canEnhanceSingleChild
+    ? React.cloneElement(children, {
+        "aria-expanded": trigger === "hover" ? undefined : actualOpen,
+        "aria-controls": actualOpen ? contentId : undefined,
+        "aria-describedby":
+          trigger === "hover" && actualOpen ? contentId : undefined
+      })
+    : children;
+
   return (
     <div
       className={mergeClassNames(`sud-${variant}`, className)}
@@ -542,6 +595,24 @@ export const PopupBase = ({
       <div
         ref={triggerRef}
         onClick={trigger === "click" ? toggle : undefined}
+        onFocus={trigger === "hover" ? show : undefined}
+        onBlur={
+          trigger === "hover"
+            ? (event) => {
+                if (!contentRef.current?.contains(event.relatedTarget)) hide();
+              }
+            : undefined
+        }
+        onKeyDown={(event) => {
+          if (event.target !== event.currentTarget) return;
+          if (
+            (trigger === "click" || trigger === "contextMenu") &&
+            (event.key === "Enter" || event.key === " ")
+          ) {
+            event.preventDefault();
+            toggle();
+          }
+        }}
         onContextMenu={
           trigger === "contextMenu"
             ? (e) => {
@@ -550,8 +621,21 @@ export const PopupBase = ({
               }
             : undefined
         }
+        role={hasFocusableChild || trigger === "hover" ? undefined : "button"}
+        tabIndex={hasFocusableChild || disabled ? -1 : 0}
+        aria-disabled={!hasFocusableChild && disabled ? true : undefined}
+        aria-expanded={
+          hasFocusableChild || trigger === "hover" ? undefined : actualOpen
+        }
+        aria-controls={hasFocusableChild || !actualOpen ? undefined : contentId}
+        aria-describedby={
+          hasFocusableChild || trigger !== "hover" || !actualOpen
+            ? undefined
+            : contentId
+        }
+        {...triggerProps}
       >
-        {children}
+        {triggerChild}
       </div>
 
       {mounted &&
@@ -559,6 +643,8 @@ export const PopupBase = ({
         createPortal(
           <div
             ref={contentRef}
+            id={contentId}
+            role={variant === "tooltip" ? "tooltip" : undefined}
             style={positionStyle}
             onClick={(e) => {
               e.stopPropagation();

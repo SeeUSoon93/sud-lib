@@ -15,11 +15,19 @@ export default defineConfig({
       formats: ["es"]
     },
     outDir: "dist",
+    // Keep source maps in the published artifact: they make production stack
+    // traces actionable, while externalizing third-party packages keeps their
+    // size bounded.
     sourcemap: true,
     minify: true,
     cssCodeSplit: false,
+    // `public/` is only used by the local demo. Copying it into a library
+    // build leaks demo assets into every npm tarball.
+    publicDir: false,
     rollupOptions: {
-      external: ["react", "react-dom"],
+      // These are declared package dependencies/peers and must be resolved by
+      // the consuming app. Bundling them duplicates sud-icons and dayjs.
+      external: ["react", "react-dom", "dayjs", "sud-icons"],
       output: {
         banner: '"use client";',
         globals: {

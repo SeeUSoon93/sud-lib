@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Button } from "../general/Button";
 import { mergeClassNames } from "../../theme/themeUtils";
 
@@ -64,6 +64,9 @@ export const FloatButton = ({
 }) => {
   const [open, setOpen] = useState(false);
   const hasActions = actions.length > 0;
+  const mainButtonRef = useRef(null);
+  const generatedId = useId().replace(/:/g, "");
+  const actionsId = `sud-float-button-actions-${generatedId}`;
 
   const anchorStyle = POSITION_MAP[placement] || POSITION_MAP["bottom-right"];
   const finalDirection = direction || anchorStyle.direction;
@@ -81,6 +84,13 @@ export const FloatButton = ({
   return (
     <div
       className="sud-float-button__container"
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && open) {
+          event.preventDefault();
+          setOpen(false);
+          mainButtonRef.current?.focus();
+        }
+      }}
       style={{
         position: isExample ? "absolute" : "fixed",
         zIndex: 1000,
@@ -88,8 +98,9 @@ export const FloatButton = ({
       }}
     >
       {/* 확장 버튼들 */}
-      {hasActions &&
-        actions.map((action, idx) => {
+      {hasActions && (
+        <div id={actionsId} aria-hidden={!open}>
+          {actions.map((action, idx) => {
           const offset = (idx + 1) * (buttonSize * 1.2);
           const delay = `${idx * 40}ms`;
 
@@ -137,6 +148,7 @@ export const FloatButton = ({
                 borderType={action.borderType}
                 borderWeight={action.borderWeight}
                 disabled={action.disabled}
+                tabIndex={open ? action.tabIndex : -1}
                 shadow={action.shadow || shadow}
                 style={{
                   width: buttonSize,
@@ -151,13 +163,16 @@ export const FloatButton = ({
               />
             </div>
           );
-        })}
+          })}
+        </div>
+      )}
 
       {/* 메인 버튼 */}
       <Button
+        ref={mainButtonRef}
         className={mergeClassNames("sud-float-button", className)}
         icon={icon}
-        onClick={hasActions ? () => setOpen(!open) : onClick}
+        onClick={hasActions ? () => setOpen((current) => !current) : onClick}
         shape={shape}
         colorType={colorType}
         background={background}
@@ -168,8 +183,8 @@ export const FloatButton = ({
         borderWeight={borderWeight}
         ariaLabel={ariaLabel}
         ariaPressed={ariaPressed}
-        ariaExpanded={ariaExpanded}
-        ariaControls={ariaControls}
+        ariaExpanded={hasActions ? open : ariaExpanded}
+        ariaControls={hasActions ? actionsId : ariaControls}
         role={role}
         disabled={disabled}
         shadow={shadow}

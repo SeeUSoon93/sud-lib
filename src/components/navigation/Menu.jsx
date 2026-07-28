@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { Accordion } from "../dataDisplay/Accordion";
 import { PopupBase } from "./base/PopupBase";
 import { AngleDown, AngleRight } from "sud-icons";
@@ -48,26 +48,21 @@ const PopoverItem = ({
     ? styleProps.selectedTextColor || computed.txtColor
     : styleProps.hoverTextColor || computed.txtColor;
 
-  useEffect(() => {
-    const handleMove = (e) => {
-      const el = e.target;
-      const insideTrigger = triggerRef.current?.contains(el);
-      if (insideTrigger) {
-        if (!isHovered) setIsHovered(true);
-      } else {
-        if (isHovered) setIsHovered(false);
-      }
-    };
-    document.addEventListener("pointermove", handleMove);
-    return () => document.removeEventListener("pointermove", handleMove);
-  }, [isHovered]);
+  const activate = () => {
+    if (!hasChildren) {
+      onSelect?.(item.key);
+      item.onClick?.();
+    }
+  };
 
   const triggerNode = (
-    <div
+    <button
+      type="button"
       ref={triggerRef}
-      className={mergeClassNames("sud-menu__item", {
-        "sud-menu__item--active": isActive
-      })}
+      className={mergeClassNames(
+        "sud-menu__item",
+        isActive && "sud-menu__item--active"
+      )}
       style={{
         ...(isActive && {
           backgroundColor: bgColor,
@@ -77,6 +72,9 @@ const PopoverItem = ({
         padding: 12,
         borderRadius: 10,
         cursor: "pointer",
+        border: 0,
+        font: "inherit",
+        textAlign: "left",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -85,17 +83,22 @@ const PopoverItem = ({
       role="menuitem"
       aria-haspopup={hasChildren ? "true" : undefined}
       aria-expanded={hasChildren ? isHovered : undefined}
-      onClick={() => {
-        if (!hasChildren) {
-          onSelect?.(item.key);
-          item.onClick?.();
+      onClick={activate}
+      onPointerEnter={() => setIsHovered(true)}
+      onPointerLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
+      onKeyDown={(event) => {
+        if (!hasChildren && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          activate();
         }
       }}
     >
       <span>{item.label}</span>
       {hasChildren &&
         (level === 0 ? <AngleDown size={16} /> : <AngleRight size={16} />)}
-    </div>
+    </button>
   );
 
   if (!hasChildren) return triggerNode;
@@ -167,11 +170,17 @@ export const Menu = ({
   ...rest
 }) => {
   const theme = useTheme();
+  const [internalSelectedKey, setInternalSelectedKey] = useState(defaultSelectedKey);
+  const effectiveSelectedKey = selectedKey ?? internalSelectedKey;
+  const handleSelect = (key) => {
+    if (selectedKey === undefined) setInternalSelectedKey(key);
+    onSelect?.(key);
+  };
   const commonProps = {
     items,
-    selectedKey,
+    selectedKey: effectiveSelectedKey,
     defaultSelectedKey,
-    onSelect,
+    onSelect: handleSelect,
     selectedColor,
     selectedTextColor,
     hoverColor,
@@ -240,8 +249,8 @@ export const Menu = ({
               item={item}
               level={level}
               parentRef={parentContentRef}
-              selectedKey={selectedKey}
-              onSelect={onSelect}
+              selectedKey={effectiveSelectedKey}
+              onSelect={handleSelect}
               styleProps={styleProps}
               popupBaseStyleProps={popupBaseStyleProps}
               placement={placement}

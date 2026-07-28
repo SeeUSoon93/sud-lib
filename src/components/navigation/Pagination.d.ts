@@ -8,6 +8,7 @@ export interface PaginationStyle {
 
 export interface PaginationProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+  current?: number;
   defaultCurrent?: number;
   total?: number;
   pageSize?: number;

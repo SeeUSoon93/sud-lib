@@ -682,8 +682,13 @@ export const Calendar = ({
                 <div
                   key={m}
                   onClick={() => handleDateClick(monthDate.toDate())}
+                  onKeyDown={(e) => handleKeyDown(e, monthDate.toDate())}
                   onMouseEnter={() => setHoverDate(monthDate.toDate())}
                   onMouseLeave={() => setHoverDate(null)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${monthDate.year()}년 ${monthDate.month() + 1}월`}
+                  aria-pressed={isSelected}
                   style={{
                     cursor: "pointer",
                     transition: "background-color 0.2s ease",
