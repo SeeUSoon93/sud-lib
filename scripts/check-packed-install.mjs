@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
 
 const root = process.cwd();
 const expectedVersion = JSON.parse(
@@ -35,9 +35,26 @@ try {
     stdio: "inherit"
   });
 
-  const requireFromConsumer = createRequire(path.join(tempDir, "package.json"));
-  const entry = requireFromConsumer.resolve("sud-ui");
-  const css = requireFromConsumer.resolve("sud-ui/dist/index.css");
+  const smokeFile = path.join(tempDir, "smoke.mjs");
+  fs.writeFileSync(
+    smokeFile,
+    [
+      'const entry = import.meta.resolve("sud-ui");',
+      'const css = import.meta.resolve("sud-ui/dist/index.css");',
+      'const library = await import("sud-ui");',
+      'if (!library.Button) throw new Error("Packed ESM entry is missing the Button export.");',
+      "process.stdout.write(JSON.stringify({ entry, css }));"
+    ].join("\n")
+  );
+  const smoke = JSON.parse(
+    execFileSync(process.execPath, [smokeFile], {
+      cwd: tempDir,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "inherit"]
+    })
+  );
+  const entry = fileURLToPath(smoke.entry);
+  const css = fileURLToPath(smoke.css);
   const packageJson = JSON.parse(
     fs.readFileSync(path.resolve(entry, "..", "..", "package.json"), "utf8")
   );
