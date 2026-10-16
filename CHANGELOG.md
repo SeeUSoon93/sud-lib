@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.1.1
+
+### Fixes
+
+- `Splitter` and `Skeleton` default colors used the dark end of the
+  `neutral` scale, so dividers and placeholders rendered almost black in the
+  light theme. The defaults are now `barColor="neutral-3"`,
+  `iconColor="neutral-6"`, `baseColor="neutral-2"`, and
+  `highlightColor="neutral-3"`, which also map correctly in the dark theme.
+
 ## 2.1.0
 
 ### New components

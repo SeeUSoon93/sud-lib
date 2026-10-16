@@ -2,6 +2,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Skeleton } from "../src/components/feedback/Skeleton";
 import { Slider } from "../src/components/dataEntry/Slider";
+import { Splitter } from "../src/components/layout/Splitter";
+import { ThemeProvider } from "../src/theme/ThemeContext";
 
 describe("Skeleton", () => {
   it("renders a busy placeholder with title and paragraph rows", () => {
@@ -18,6 +20,36 @@ describe("Skeleton", () => {
     render(<Skeleton loading={false}>Loaded</Skeleton>);
     expect(screen.getByText("Loaded")).toBeInTheDocument();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+});
+
+describe("default surface colors", () => {
+  const renderBoth = (isDarkMode) =>
+    render(
+      <ThemeProvider isDarkMode={isDarkMode}>
+        <Skeleton />
+        <Splitter>
+          <Splitter.Panel>A</Splitter.Panel>
+          <Splitter.Panel>B</Splitter.Panel>
+        </Splitter>
+      </ThemeProvider>
+    );
+
+  it("uses the light end of the neutral scale in the light theme", () => {
+    const { container } = renderBoth(false);
+    const skeleton = container.querySelector(".sud-skeleton").style;
+    const splitter = container.querySelector(".sud-splitter").style;
+    expect(skeleton.getPropertyValue("--sud-skeleton-base")).toBe("#f5f5f5");
+    expect(skeleton.getPropertyValue("--sud-skeleton-highlight")).toBe("#e0e0e0");
+    expect(splitter.getPropertyValue("--sud-splitter-bar-color")).toBe("#e0e0e0");
+  });
+
+  it("maps the same defaults to dark greys in the dark theme", () => {
+    const { container } = renderBoth(true);
+    const skeleton = container.querySelector(".sud-skeleton").style;
+    const splitter = container.querySelector(".sud-splitter").style;
+    expect(skeleton.getPropertyValue("--sud-skeleton-base")).toBe("#2e2e2e");
+    expect(splitter.getPropertyValue("--sud-splitter-bar-color")).toBe("#4d4d4d");
   });
 });
 

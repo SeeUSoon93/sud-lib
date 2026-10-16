@@ -16,17 +16,6 @@
 npm install sud-ui sud-icons
 ```
 
-## 🧪 Examples Built with Soon UI
-
-Check out real projects built using the SUD component library:
-
-- [🗂️ CBT Exam App](https://cbt-app-self.vercel.app/)
-- [📍 Korea Map Vector Tool](https://map-vector.vercel.app/)
-- [🎣 어기어때 - Fishing Spot Search](https://fishing-search.vercel.app/)
-- [📝 Soonlog - Personal Blog](https://soonlog.site/)
-
-👉 These showcase the flexibility and visual consistency of SUD components in actual products.
-
 ## 🚀 Quick Start
 
 ```jsx
@@ -85,6 +74,8 @@ Sud UI provides a comprehensive suite of ready-to-use components:
 - **Table** – Sort, filter, pagination
 - **Input**, **Select** – Single/multi, number, password
 - **Toast**, **Notification**, **Spinner**
+- **Splitter** – Resizable, collapsible panel layouts
+- **Skeleton** – Loading placeholders
 - ...and **45+ more components**
 
 📘 [See full list and API →](https://www.sud.co.kr/component/component-overview)
