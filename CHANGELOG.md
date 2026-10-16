@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.1.0
+
+### New components
+
+- `Splitter` and `Splitter.Panel`: resizable panel layouts (horizontal or
+  vertical) with controlled or uncontrolled sizes, px/percent `min`/`max`,
+  collapsible panels, keyboard resizing (arrow keys, Shift, Home/End, Enter),
+  and `onResizeStart` / `onResize` / `onResizeEnd` / `onCollapse` callbacks
+  that report px sizes. Each panel is its own stacking context, so positioned
+  panel content cannot cover the resize bar or its collapse buttons.
+- `Skeleton`: loading placeholder with title, paragraph rows, avatar, and an
+  optional shimmer animation that honors reduced-motion preferences.
+
+### Behavior
+
+- Slider dragging now uses Pointer Events, so it works with touch and pen
+  input as well as the mouse. Pressing the track or thumb starts one drag
+  instead of two.
+- `Menu` in popover mode now resolves theme color tokens such as `"red-8"`
+  for `selectedColor`, `selectedTextColor`, `hoverColor`, and
+  `hoverTextColor`, matching accordion mode.
+- Accordion (and `Menu` in its default accordion mode) no longer sets
+  `aria-label="[object Object]"` when an item label is a React node.
+
 ## 2.0.1
 
 ### Accessibility and behavior

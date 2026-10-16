@@ -784,6 +784,186 @@ a:where([class^="sud-"], [class*=" sud-"]) {
   transition: box-shadow 0.3s ease-in-out;
 }
 
+/* Splitter */
+.sud-splitter {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.sud-splitter--vertical {
+  flex-direction: column;
+}
+.sud-splitter__panel {
+  position: relative;
+  /* Panel content z-indexes stay inside the panel, so bars remain on top. */
+  isolation: isolate;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+}
+.sud-splitter__bar {
+  position: relative;
+  z-index: 1;
+  background-color: var(--sud-splitter-bar-color);
+  transition: background-color 0.15s ease;
+}
+.sud-splitter__bar:hover,
+.sud-splitter__bar:focus-within,
+.sud-splitter__bar--active {
+  background-color: var(--sud-splitter-active-color);
+}
+.sud-splitter__dragger {
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  touch-action: none;
+  outline: none;
+}
+.sud-splitter--horizontal .sud-splitter__dragger {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: col-resize;
+}
+.sud-splitter--vertical .sud-splitter__dragger {
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: row-resize;
+}
+.sud-splitter__dragger--disabled {
+  cursor: default !important;
+}
+.sud-splitter__dragger:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--sud-splitter-active-color);
+  border-radius: 4px;
+}
+.sud-splitter__dragger-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sud-splitter-icon-color);
+  pointer-events: none;
+  transition: color 0.15s ease;
+}
+.sud-splitter__bar:hover .sud-splitter__dragger-icon,
+.sud-splitter__bar--active .sud-splitter__dragger-icon {
+  color: var(--sud-splitter-icon-active-color);
+}
+.sud-splitter__collapse {
+  --sud-splitter-gap: 2px;
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: var(--sud-splitter-button-bg);
+  color: var(--sud-splitter-icon-color);
+  cursor: pointer;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+.sud-splitter__collapse:hover,
+.sud-splitter__collapse:focus-visible {
+  color: var(--sud-splitter-icon-active-color);
+}
+.sud-splitter__collapse:focus-visible {
+  outline: 2px solid var(--sud-splitter-active-color);
+  outline-offset: 1px;
+}
+.sud-splitter__collapse--offset {
+  --sud-splitter-gap: 9px;
+}
+.sud-splitter--horizontal .sud-splitter__collapse {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.sud-splitter--horizontal .sud-splitter__collapse--start {
+  right: calc(50% + var(--sud-splitter-gap));
+}
+.sud-splitter--horizontal .sud-splitter__collapse--end {
+  left: calc(50% + var(--sud-splitter-gap));
+}
+.sud-splitter--vertical .sud-splitter__collapse {
+  left: 50%;
+  width: 24px;
+  height: 16px;
+  transform: translateX(-50%);
+}
+.sud-splitter--vertical .sud-splitter__collapse--start {
+  bottom: calc(50% + var(--sud-splitter-gap));
+}
+.sud-splitter--vertical .sud-splitter__collapse--end {
+  top: calc(50% + var(--sud-splitter-gap));
+}
+/* Hidden auto buttons stay hoverable, so moving onto one reveals it. */
+.sud-splitter__collapse--auto {
+  opacity: 0;
+}
+.sud-splitter__bar:hover .sud-splitter__collapse--auto,
+.sud-splitter__bar:focus-within .sud-splitter__collapse--auto {
+  opacity: 1;
+}
+
+/* Skeleton */
+.sud-skeleton {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+.sud-skeleton__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.sud-skeleton__block {
+  display: block;
+  flex-shrink: 0;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--sud-skeleton-base);
+}
+.sud-skeleton__block--round {
+  border-radius: 9999px;
+}
+.sud-skeleton__title {
+  margin-bottom: 8px;
+}
+.sud-skeleton--active .sud-skeleton__block {
+  background: linear-gradient(
+    90deg,
+    var(--sud-skeleton-base) 25%,
+    var(--sud-skeleton-highlight) 37%,
+    var(--sud-skeleton-base) 63%
+  );
+  background-size: 400% 100%;
+  animation: sud-skeleton-shimmer 1.4s ease infinite;
+}
+@keyframes sud-skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   :where(.sud-root, [class^="sud-"], [class*=" sud-"]),
   :where(.sud-root, [class^="sud-"], [class*=" sud-"]) *,

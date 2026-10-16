@@ -14,6 +14,8 @@ import {
   Radio,
   Rate,
   Select,
+  Skeleton,
+  Splitter,
   Tabs,
   Tooltip,
   Upload
@@ -43,6 +45,27 @@ export const radio = (
   <Radio ref={radioRef} name="plan" value="pro" required>
     Pro
   </Radio>
+);
+
+export const splitter = (
+  <Splitter
+    layout="horizontal"
+    onResize={(sizes: number[]) => sizes}
+    onCollapse={(collapsed: boolean[], sizes: number[]) => [collapsed, sizes]}
+    classNames={{ dragger: { default: "bar", active: "bar-active" } }}
+    collapsibleIcon={{ start: "<", end: ">" }}
+  >
+    <Splitter.Panel size={240} min="10%" max="40%" collapsible={{ start: true, end: true, showCollapsibleIcon: "auto" }}>
+      Side
+    </Splitter.Panel>
+    <Splitter.Panel>Main</Splitter.Panel>
+  </Splitter>
+);
+
+export const skeleton = (
+  <Skeleton active avatar={{ size: 32 }} paragraph={{ rows: 2, width: ["80%", "60%"] }}>
+    Loaded
+  </Skeleton>
 );
 
 type AssertComponent<T extends ComponentType<any>> = T;

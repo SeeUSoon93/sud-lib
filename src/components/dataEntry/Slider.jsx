@@ -8,6 +8,7 @@ import {
   getShadowStyle
 } from "../../theme/themeUtils";
 import { applyPulseEffect } from "../../utils/styleUtils";
+import { useDrag } from "../../utils/useDrag";
 import { PopupBase } from "../navigation/base/PopupBase";
 import { useTheme } from "../../theme/ThemeContext";
 import { Typography } from "../general/Typography";
@@ -49,7 +50,6 @@ export const Slider = ({
   const theme = useTheme();
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
-  const [dragging, setDragging] = useState(false);
   const [internalValue, setInternalValue] = useState(value);
   const autoId = useId();
   const sliderId = id || autoId;
@@ -94,9 +94,6 @@ export const Slider = ({
 
   const percent = ((internalValue - min) / (max - min)) * 100;
 
-  useEffect(() => {
-    if (!dragging) setInternalValue(value);
-  }, [value, dragging]);
 
   const updateValue = useCallback(
     (clientX, clientY) => {
@@ -121,33 +118,21 @@ export const Slider = ({
     [min, max, step, onChange, vertical]
   );
 
-  const handleMouseDown = (e) => {
-    if (disabled) return;
-    setDragging(true);
-    applyPulseEffect(thumbRef.current);
-    updateValue(e.clientX, e.clientY);
-  };
-
-  const handleMouseMove = useCallback((e) => {
-    if (!dragging || disabled) return;
-    updateValue(e.clientX, e.clientY);
-  }, [dragging, disabled, updateValue]);
-
-  const handleMouseUp = useCallback(() => {
-    if (disabled) return;
-    setDragging(false);
-  }, [disabled]);
+  const { dragging, onPointerDown } = useDrag({
+    disabled,
+    preventDefault: true,
+    onStart: (e) => {
+      // 마우스 기본 동작을 막으면 포커스가 옮겨지지 않으므로 직접 지정한다.
+      thumbRef.current?.focus({ preventScroll: true });
+      applyPulseEffect(thumbRef.current);
+      updateValue(e.clientX, e.clientY);
+    },
+    onMove: (e) => updateValue(e.clientX, e.clientY)
+  });
 
   useEffect(() => {
-    if (dragging) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
-    }
-  }, [dragging, handleMouseMove, handleMouseUp]);
+    if (!dragging) setInternalValue(value);
+  }, [value, dragging]);
 
   const handleKeyDown = (e) => {
     if (disabled) return;
@@ -259,9 +244,10 @@ export const Slider = ({
       <div
         ref={trackRef}
         className="sud-slider__track"
-        onMouseDown={handleMouseDown}
+        onPointerDown={onPointerDown}
         style={{
           position: "relative",
+          touchAction: "none",
           background: trackColor
             ? resolveColor(trackColor, theme)
             : resolveColor("cool-gray-2", theme),
@@ -299,7 +285,6 @@ export const Slider = ({
           id={sliderId}
           onKeyDown={handleKeyDown}
           style={thumbStyle}
-          onMouseDown={handleMouseDown}
         >
           <div
             className="sud-slider__thumb-inner"

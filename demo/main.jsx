@@ -6,7 +6,7 @@ import {
   Drawer, Dropdown, Empty, FloatButton, Footer, Header, Image, Input, Layout,
   List, Menu, Modal, notification, OTP, Pagination, PopConfirm, Popover,
   Progress, Radio, Rate, Segmented, Select, Sider, Slider, SoonUIDesign,
-  Spinner, Switch, Table, Tabs, Tag, Textarea, TimePicker, Timeline, toast,
+  Skeleton, Spinner, Splitter, Switch, Table, Tabs, Tag, Textarea, TimePicker, Timeline, toast,
   Tooltip, Typography, Upload, Content
 } from "../src/index.js";
 import "./demo.css";
@@ -238,6 +238,25 @@ function App() {
             <Spinner />
             <DotSpinner />
           </div>
+        </div>
+      </Card>
+      <Card title="Splitter & Skeleton" style={{ width: "100%" }}>
+        <div style={{ height: 220, border: "1px solid #e0e0e0", borderRadius: 8, overflow: "hidden" }}>
+          <Splitter draggerIcon={<span style={{ fontSize: 12 }}>⋮</span>}>
+            <Splitter.Panel defaultSize="30%" min={80} collapsible>
+              <div className="p-4"><Skeleton active paragraph={{ rows: 3 }} /></div>
+            </Splitter.Panel>
+            <Splitter.Panel min="30%">
+              <Splitter layout="vertical">
+                <Splitter.Panel defaultSize="50%" collapsible>
+                  <div className="p-4"><Typography>Drag bars, use arrow keys, or press Enter.</Typography></div>
+                </Splitter.Panel>
+                <Splitter.Panel>
+                  <div className="p-4"><Skeleton avatar title={false} /></div>
+                </Splitter.Panel>
+              </Splitter>
+            </Splitter.Panel>
+          </Splitter>
         </div>
       </Card>
       <Card title="Calendar" style={{ width: "100%" }}>

@@ -54,6 +54,7 @@ export { default as Spinner } from "./components/feedback/Spinner.d";
 export * from "./components/feedback/Spinner.d";
 export { default as DotSpinner } from "./components/feedback/DotSpinner.d";
 export * from "./components/feedback/DotSpinner.d";
+export * from "./components/feedback/Skeleton.d";
 export * from "./components/feedback/ToastRoot.d";
 export * from "./components/feedback/NotificationRoot.d";
 export * from "./components/layout";

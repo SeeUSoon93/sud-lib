@@ -42,6 +42,7 @@ export { PopConfirm } from "./components/feedback/PopConfirm";
 export { Progress } from "./components/feedback/Progress";
 export { DotSpinner } from "./components/feedback/DotSpinner";
 export { Spinner } from "./components/feedback/Spinner";
+export { Skeleton } from "./components/feedback/Skeleton";
 
 export * from "./components/feedback/ToastRoot";
 export * from "./components/feedback/NotificationRoot";

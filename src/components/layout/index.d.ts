@@ -8,3 +8,5 @@ export { default as Content } from "./Content/index.d";
 export * from "./Content/index.d";
 export { default as Footer } from "./Footer/index.d";
 export * from "./Footer/index.d";
+export { default as Splitter } from "./Splitter/index.d";
+export * from "./Splitter/index.d";

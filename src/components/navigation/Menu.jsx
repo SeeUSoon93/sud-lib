@@ -41,12 +41,14 @@ const PopoverItem = ({
     fallback
   });
 
+  // Accordion 모드와 같이 "red-8" 같은 테마 토큰도 받는다.
+  const resolveProp = (value) => (value ? resolveColor(value, theme) : undefined);
   const bgColor = isSelected
-    ? styleProps.selectedColor || computed.bgColor
-    : styleProps.hoverColor || computed.bgColor;
+    ? resolveProp(styleProps.selectedColor) || computed.bgColor
+    : resolveProp(styleProps.hoverColor) || computed.bgColor;
   const txtColor = isSelected
-    ? styleProps.selectedTextColor || computed.txtColor
-    : styleProps.hoverTextColor || computed.txtColor;
+    ? resolveProp(styleProps.selectedTextColor) || computed.txtColor
+    : resolveProp(styleProps.hoverTextColor) || computed.txtColor;
 
   const activate = () => {
     if (!hasChildren) {

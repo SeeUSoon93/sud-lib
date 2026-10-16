@@ -173,7 +173,8 @@ const MenuItem = ({
         aria-controls={
           hasChildren ? `${idPrefix}-content-${itemPath}` : undefined
         }
-        aria-label={item.label}
+        // 노드 라벨은 버튼 내용이 이름이 되므로 문자열만 aria-label로 쓴다.
+        aria-label={typeof item.label === "string" ? item.label : undefined}
         {...rest}
       >
         <div

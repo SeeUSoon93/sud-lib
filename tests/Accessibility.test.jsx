@@ -5,8 +5,24 @@ import { Image } from "../src/components/dataDisplay/Image";
 import { TimeSelector } from "../src/components/dataEntry/TimeSelector";
 import { Breadcrumb } from "../src/components/navigation/Breadcrumb";
 import { Sider } from "../src/components/layout/Sider";
+import { Menu } from "../src/components/navigation/Menu";
 
 describe("accessible component interactions", () => {
+  it("names accordion menu items from node labels instead of [object Object]", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(
+      <Menu
+        items={[{ key: "convert", label: <span>Convert note</span>, onClick }]}
+      />
+    );
+
+    const item = screen.getByRole("button", { name: "Convert note" });
+    expect(item).not.toHaveAttribute("aria-label");
+    await user.click(item);
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
   it("renders Breadcrumb destinations as native links", () => {
     render(
       <Breadcrumb

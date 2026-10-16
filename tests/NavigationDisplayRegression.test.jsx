@@ -37,6 +37,25 @@ describe("navigation and display accessibility regressions", () => {
     expect(screen.getByRole("menuitem", { name: "Second" }).className).toContain("active");
   });
 
+  it("resolves theme color tokens for popover menu selection and hover colors", async () => {
+    const user = userEvent.setup();
+    render(
+      <Menu
+        expandType="popover"
+        defaultSelectedKey="first"
+        selectedColor="red-2"
+        selectedTextColor="red-8"
+        hoverColor="red-1"
+        items={[{ key: "first", label: "First" }, { key: "second", label: "Second" }]}
+      />
+    );
+    const first = screen.getByRole("menuitem", { name: "First" });
+    expect(first).toHaveStyle({ backgroundColor: "#ffccc7", color: "#a8071a" });
+    const second = screen.getByRole("menuitem", { name: "Second" });
+    await user.hover(second);
+    expect(second).toHaveStyle({ backgroundColor: "#fff1f0" });
+  });
+
   it("creates unique accordion and collapse ARIA relationships", () => {
     const accordionItems = [{ key: "same key", label: "Section", children: [{ key: "child key", label: "Child" }] }];
     const collapseItems = [{ key: "same key", label: "Panel", children: "Content" }];
