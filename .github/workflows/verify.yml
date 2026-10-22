@@ -14,8 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # jsdom 29, used by the test suite, requires Node 20.19+ or 22.13+.
-        node: [20, 22]
+        # Supported LTS releases with the October 2026 security fixes.
+        node: ['22.23.4', '24.22.1']
         react: [18, 19]
     steps:
       - uses: actions/checkout@v4
